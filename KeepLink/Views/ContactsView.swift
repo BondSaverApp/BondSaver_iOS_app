@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  ContactsView.swift
 //  KeepLink
 //
 //  Created by Андрей Степанов on 06.12.2024.
@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct ContactsView: View {
     var body: some View {
-        ContactsView()
+        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
 
 #Preview {
-    ContentView()
+    ContactsView()
 }
