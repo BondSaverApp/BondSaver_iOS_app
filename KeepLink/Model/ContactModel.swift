@@ -6,17 +6,25 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct Contact{
-    var name: String
+    var name: String?
     var surname: String?
     var secondName: String?
     
-    let dateOfBirth: Date?
+    var tag: Tag = .defaultTag
+    var photo: Image? = Image(systemName: "person.circle")
+    
+    var dateOfBirth: Date?
     var age: Int?
     
     var meetingContext: String?
     var communicationAims: String?
     
     var notes: String?
+    
+    mutating func setTag(_ tag: Tag){
+        self.tag = tag
+    }
 }
