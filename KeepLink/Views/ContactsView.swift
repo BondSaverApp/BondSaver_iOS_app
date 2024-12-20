@@ -29,6 +29,8 @@ struct ContactsView: View {
     
     @State private var searchText = ""
     @State private var selectedTag: String = "Выбрать тег "
+    @State var isEditViewPresented: Bool = false
+        
     
     var filteredContacts: [Contact] {
         guard !searchText.isEmpty else { return contacts }
@@ -43,7 +45,7 @@ struct ContactsView: View {
                     Text("По вашему запросу ничего не найдено")
                 } else {
                     List(filteredContacts) { contact in
-                        HStack(spacing: 20) {
+                        HStack (spacing: 20) {
                             
                             contact.avatarView
                             
@@ -52,35 +54,50 @@ struct ContactsView: View {
                                 .fontWeight(.regular)
                             
                             Spacer()
-                            Button(action: {
-                                           
-                            }) { Image(systemName: "phone.fill")
-                                    .scaledToFit()
-                                    .background(Circle()
-                                        .fill(Color(.systemGray6))
-                                        .frame(width: 30, height: 30)
-                                    )
-                            }
-                        
-                            Button(action: {
-                                           
-                            }) { Image(systemName: "square.and.pencil")
-                                    .scaledToFit()
-                                    .background(Circle()
-                                        .fill(Color(.systemGray6))
-                                        .frame(width: 30, height: 30)
-                                    )
-                            }
+                            phoneButton
+                            editButton
                         }
                         .padding(.vertical, 4)
+                    }
                 }
-            }
-            
             }
             .padding(.bottom, 90)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(leading: menuButton)
             .searchable(text: $searchText, prompt: "Найти контакт...")
+            
+        }
+    }
+    
+    var phoneButton: some View {
+        Button {
+            // some action
+        } label: {
+            Image(systemName: "phone.fill")
+                .scaledToFit()
+                .background(Circle()
+                    .fill(Color(.systemGray6))
+                    .frame(width: 30, height: 30)
+                )
+        }
+    }
+    
+    var editButton: some View {
+        Button {
+            print("Button tapped")
+            isEditViewPresented = true
+            print("isEditViewPresented: \(isEditViewPresented)")
+        } label: {
+            Image(systemName: "square.and.pencil")
+                .scaledToFit()
+                .foregroundColor(.blue)
+                .background(Circle()
+                    .fill(Color(.systemGray6))
+                    .frame(width: 30, height: 30)
+                )
+        }
+        .fullScreenCover(isPresented: $isEditViewPresented) {
+            ContactEditView(isShowSheet: $isEditViewPresented)
         }
     }
     
