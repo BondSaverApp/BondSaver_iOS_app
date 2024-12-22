@@ -29,6 +29,7 @@ struct ContactsView: View {
     
     @State private var searchText = ""
     @State private var selectedTag: String = "Выбрать тег "
+    @State private var selectedContact: Contact?
     @State var isEditViewPresented: Bool = false
         
     
@@ -55,7 +56,7 @@ struct ContactsView: View {
                             
                             Spacer()
                             phoneButton
-                            editButton
+                            editButton(for: contact)
                         }
                         .padding(.vertical, 4)
                     }
@@ -65,7 +66,9 @@ struct ContactsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(leading: menuButton)
             .searchable(text: $searchText, prompt: "Найти контакт...")
-            
+        }
+        .fullScreenCover(item: $selectedContact) { contact in
+            ContactEditView(contact: contact, isPresented: $isEditViewPresented)
         }
     }
     
@@ -82,11 +85,10 @@ struct ContactsView: View {
         }
     }
     
-    var editButton: some View {
+    func editButton(for contact: Contact) -> some View {
         Button {
-            print("Button tapped")
+            selectedContact = contact
             isEditViewPresented = true
-            print("isEditViewPresented: \(isEditViewPresented)")
         } label: {
             Image(systemName: "square.and.pencil")
                 .scaledToFit()
@@ -96,9 +98,7 @@ struct ContactsView: View {
                     .frame(width: 30, height: 30)
                 )
         }
-        .fullScreenCover(isPresented: $isEditViewPresented) {
-            ContactEditView(isShowSheet: $isEditViewPresented)
-        }
+        
     }
     
     var menuButton: some View {

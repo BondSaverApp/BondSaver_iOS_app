@@ -8,9 +8,8 @@
 import SwiftUI
 
 struct ContactAddView: View {
-    @Binding var isShowSheet: Bool
-    
-    @State var newContact = Contact()
+    var newContact = Contact()
+    @Binding var isPresented: Bool
     
     @State var nameTextField: String = ""
     @State var surnameTextField: String = ""
@@ -31,7 +30,7 @@ struct ContactAddView: View {
                     Menu("Выбрать тег") {
                         ForEach(Tag.allCases, id: \.rawValue){ tag in
                             Button(tag.rawValue){
-                                newContact.tag = tag
+                                
                             }
                         }
                     }
@@ -85,7 +84,7 @@ struct ContactAddView: View {
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Закрыть") {
-                        isShowSheet = false
+                        isPresented = false
                     }
                 }
             }
@@ -95,6 +94,6 @@ struct ContactAddView: View {
 }
 
 #Preview {
-    @Previewable @State var isShowSheet: Bool = true
-    ContactAddView(isShowSheet: $isShowSheet)
+    @Previewable @State var isPresented: Bool = true
+    ContactAddView(isPresented: $isPresented)
 }

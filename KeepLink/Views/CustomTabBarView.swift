@@ -33,7 +33,7 @@ struct CustomTabBarView: View {
         }
         .frame(maxWidth: .infinity)
         .fullScreenCover(isPresented: $isSheetPresented) {
-            ContactAddView(isShowSheet: $isSheetPresented)
+            ContactAddView(isPresented: $isSheetPresented)
         }
     }
     
