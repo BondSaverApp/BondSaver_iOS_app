@@ -67,8 +67,13 @@ struct ContactsView: View {
             .navigationBarItems(leading: menuButton)
             .searchable(text: $searchText, prompt: "Найти контакт...")
         }
-        .fullScreenCover(item: $selectedContact) { contact in
-            ContactEditView(contact: contact, isPresented: $isEditViewPresented)
+        .fullScreenCover(isPresented: $isEditViewPresented, onDismiss: {selectedContact = nil}) {
+            ContactEditView(contact: selectedContact!, isPresented: $isEditViewPresented)
+        }
+        .onChange(of: selectedContact) { _, newValue in
+            if newValue != nil {
+                isEditViewPresented = true
+            }
         }
     }
     
@@ -88,7 +93,6 @@ struct ContactsView: View {
     func editButton(for contact: Contact) -> some View {
         Button {
             selectedContact = contact
-            isEditViewPresented = true
         } label: {
             Image(systemName: "square.and.pencil")
                 .scaledToFit()

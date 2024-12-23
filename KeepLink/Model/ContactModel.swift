@@ -8,8 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct Contact: Identifiable {
-    
+struct Contact: Identifiable, Equatable {
     let id = UUID()
     var name: String?
     var surname: String?
