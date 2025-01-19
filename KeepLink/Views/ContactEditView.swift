@@ -1,128 +1,80 @@
 //
 //  ContactEditView.swift
+//  keeplinkskelenot
+//
+//  Created by Андрей Степанов on 19.01.2025.
+//
+
+
+//
+//  ContactEditView.swift
 //  KeepLink
 //
 //  Created by Maria Mayorova on 20.12.2024.
 //
 
 import SwiftUI
+import RealmSwift
 
 struct ContactEditView: View {
-    var contact: Contact
+    @ObservedRealmObject var contact: Contact // Привязка объекта Realm
     @Binding var isPresented: Bool
     
     @State var nameTextField: String = ""
     @State var surnameTextField: String = ""
     @State var patronymicTextField: String = ""
     @State var dateOfBirthPicker: Date = Date.now
-    @State var ageTextField: String = ""
     @State var contextTextField: String = ""
     @State var aimTextField: String = ""
     @State var noteTextField: String = ""
+    @State var avatarUrl: String = "" // URL для аватара (опционально)
+    
     @State var selectedTags: [String] = []
-        
     @State var isShowingContextsOfMeeting = false
     @State var isShowingTags = false
     
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    Button {
-                        isShowingTags = true
-                    } label: {
-                        HStack {
-                            Text("Теги: ")
-                            ForEach(selectedTags, id: \.self) {
-                                Text($0)
-                            }
-                        }
-                    }
-                }
-                Section {
-                    Button {
-                        // Выбор фото
-                    } label: {
-                        HStack {
-                            contact.photo
-                                .font(.largeTitle)
-                            Text("Выбрать фото")
-                        }
-                    }
-                }
-                Section {
-                    TextField("Имя", text: $nameTextField)
-                    TextField("Фамилия", text: $surnameTextField)
-                    TextField("Отчество", text: $patronymicTextField)
-                }
-                Section {
-                    DatePicker("Дата рождения", selection: $dateOfBirthPicker, in: ...Date.now, displayedComponents: .date)
-                        .datePickerStyle(.compact)
-                }
-                Section {
-                    TextField("", text: $ageTextField)
-                } header: {
-                    Text("Возраст")
-                }
-                Section {
-                    Button {
-                        isShowingContextsOfMeeting = true
-                    } label: {
-                        if !contextTextField.isEmpty {
-                            HStack(spacing: 20){
-                                Image(systemName: "plus.circle.fill")
-                                Text(contextTextField)
-                            }
-                        } else {
-                            HStack(spacing: 20){
-                                Image(systemName: "plus.circle.fill")
-                                Text("Добавить место")
-                            }
-                        }
-                    }
-                } header: {
-                    Text("Контекст знакомства")
-                }
-                Section {
-                    TextField("", text: $aimTextField)
-                } header: {
-                    Text("Цель общения")
-                }
-                Section {
-                    TextField("Заметка...", text: $noteTextField)
-                }
-                Section {
-                    Button {
-                        
-                    } label: {
-                        Text("Удалить контакт")
-                            .foregroundColor(.red)
-                    }
-                }
+                tagSection
+                
+                avatarSection
+                
+                nameSection
+                
+                meetingContextSection
+                
+                aimSection
+                
+                noteSection
+                
+                deleteSection
             }
             .navigationTitle("Редактировать контакт")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Сохранить") {
-                        // Сохранение изменений
+                        saveContact()
                     }
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Отменить") {
                         isPresented = false
-                        print(isPresented)
                     }
                 }
             }
             .onAppear {
-                nameTextField = contact.name ?? ""
-                surnameTextField = contact.surname ?? ""
-                patronymicTextField = contact.secondName ?? ""
-                dateOfBirthPicker = contact.dateOfBirth ?? Date()
-//                contextTextField = contact.meetingContext ?? ""
-                aimTextField = contact.communicationAims ?? ""
-                noteTextField = contact.notes ?? ""
+                nameTextField = contact.firstName
+                surnameTextField = contact.lastName
+                patronymicTextField = contact.middleName
+                aimTextField = contact.appearance
+                noteTextField = contact.notes
+                avatarUrl = contact.avatar
+                selectedTags = contact.tags.map { tag in
+                    tag.name
+                }
+                contextTextField = contact.meetingPlace?.name ?? ""
             }
             .sheet(isPresented: $isShowingContextsOfMeeting) {
                 ContactMeetingPlaceView(isShowingContextsOfMeeting: $isShowingContextsOfMeeting, contextTextField: $contextTextField)
@@ -132,21 +84,167 @@ struct ContactEditView: View {
             }
         }
     }
+    
+    private var tagSection: some View {
+        Section {
+            Button {
+                isShowingTags = true
+            } label: {
+                HStack {
+                    Text("Теги: ")
+                    ForEach(selectedTags, id: \.self) {
+                        Text($0)
+                            .padding(5)
+                            .background{
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(UIColor.systemGray6))
+                            }
+                    }
+                }
+            }
+        }
+    }
+    
+    private var avatarSection: some View {
+        Section {
+            Button {
+                // Действие для выбора фотографии
+            } label: {
+                HStack {
+                    if !avatarUrl.isEmpty, let url = URL(string: avatarUrl), let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .clipShape(Circle())
+                            .frame(width: 50, height: 50)
+                    } else {
+                        Image(systemName: "person.crop.circle")
+                            .resizable()
+                            .clipShape(Circle())
+                            .frame(width: 50, height: 50)
+                            .foregroundColor(.gray)
+                    }
+                    Text("Выбрать фото")
+                }
+            }
+        }
+    }
+    
+    private var nameSection: some View {
+        Section {
+            TextField("Имя", text: $nameTextField)
+            TextField("Фамилия", text: $surnameTextField)
+            TextField("Отчество", text: $patronymicTextField)
+        }
+    }
+    
+    private var meetingContextSection: some View {
+        Section {
+            Button {
+                isShowingContextsOfMeeting = true
+            } label: {
+                if !contextTextField.isEmpty {
+                    HStack(spacing: 20){
+                        Image(systemName: "plus.circle.fill")
+                        Text(contextTextField)
+                    }
+                } else {
+                    HStack(spacing: 20){
+                        Image(systemName: "plus.circle.fill")
+                        Text("Добавить место")
+                    }
+                }
+            }
+        } header: {
+            Text("Контекст знакомства")
+        }
+    }
+    
+    private var aimSection: some View {
+        Section {
+            TextField("Цель общения", text: $aimTextField)
+        } header: {
+            Text("Цель общения")
+        }
+    }
+    
+    private var noteSection: some View {
+        Section {
+            TextField("Заметка...", text: $noteTextField)
+        }
+    }
+    
+    private var deleteSection: some View {
+        Section {
+            Button {
+                deleteContact()
+                isPresented = false
+            } label: {
+                Text("Удалить контакт")
+                    .foregroundColor(.red)
+            }
+        }
+    }
+
+    
+    /// Сохранение изменений в базе данных
+    private func saveContact() {
+        guard let thawedContact = contact.thaw() else {
+            print("Ошибка: Не удалось разморозить объект.")
+            return
+        }
+        
+        do {
+            let realm = try Realm()
+            
+            let tags = selectedTags.map { tagString -> Tag in
+                let tag = Tag()
+                tag.name = tagString
+                return tag
+            }
+            
+            let tagsList = RealmSwift.List<Tag>()
+            tagsList.append(objectsIn: tags)
+            
+            let meetingPlace = MeetingPlace()
+            meetingPlace.name = contextTextField
+            
+            try realm.write {
+                thawedContact.firstName = nameTextField
+                thawedContact.lastName = surnameTextField
+                thawedContact.middleName = patronymicTextField
+                thawedContact.meetingContext = contextTextField
+                thawedContact.appearance = aimTextField
+                thawedContact.notes = noteTextField
+                thawedContact.tags = tagsList
+                thawedContact.meetingPlace = meetingPlace
+            }
+            isPresented = false
+        } catch {
+            print("Ошибка сохранения в Realm: \(error.localizedDescription)")
+        }
+    }
+    
+    private func deleteContact() {
+        do {
+            let realm = try Realm()
+            
+            // Поиск контакта по id в текущем Realm
+            guard let contactToDelete = realm.object(ofType: Contact.self, forPrimaryKey: contact.id) else {
+                print("Ошибка: Контакт с id \(contact.id) не найден в текущем Realm.")
+                return
+            }
+            
+            try realm.write {
+                realm.delete(contactToDelete)
+            }
+            
+            isPresented = false
+        } catch {
+            print("Ошибка удаления контакта из Realm: \(error.localizedDescription)")
+        }
+    }
 }
+
 #Preview {
-    @Previewable @State var isPresented: Bool = true
-    
-    
-    ContactEditView(contact: Contact(name: "andrey",
-                                     surname: "stepanov",
-                                     secondName: "sergeevich",
-//                                     tag: .defaultTag,
-                                     photo: nil,
-                                     avatarColor: .blue,
-                                     dateOfBirth: nil,
-                                     age: nil,
-                                     meetingContext: "asd",
-                                     communicationAims: "awad",
-                                     notes: "blablabla"),
-                    isPresented: $isPresented)
+    ContentView()
 }

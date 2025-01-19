@@ -6,6 +6,25 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3858877B2D3D0BCE00C79EA6 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3858877A2D3D0BCE00C79EA6 /* RealmSwift */; };
+		3858877C2D3D0BE100C79EA6 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 3858877A2D3D0BCE00C79EA6 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3858877D2D3D0BE100C79EA6 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				3858877C2D3D0BE100C79EA6 /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		38DB0F592D036C1A00285C9B /* KeepLink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeepLink.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3858877B2D3D0BCE00C79EA6 /* RealmSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,6 +75,7 @@
 				38DB0F552D036C1A00285C9B /* Sources */,
 				38DB0F562D036C1A00285C9B /* Frameworks */,
 				38DB0F572D036C1A00285C9B /* Resources */,
+				3858877D2D3D0BE100C79EA6 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -65,6 +86,7 @@
 			);
 			name = KeepLink;
 			packageProductDependencies = (
+				3858877A2D3D0BCE00C79EA6 /* RealmSwift */,
 			);
 			productName = KeepLink;
 			productReference = 38DB0F592D036C1A00285C9B /* KeepLink.app */;
@@ -94,6 +116,9 @@
 			);
 			mainGroup = 38DB0F502D036C1900285C9B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				385887772D3D0BCE00C79EA6 /* XCRemoteSwiftPackageReference "realm-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 38DB0F5A2D036C1A00285C9B /* Products */;
 			projectDirPath = "";
@@ -252,7 +277,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"KeepLink/Preview Content\"";
-				DEVELOPMENT_TEAM = 38PC9VM7ZB;
+				DEVELOPMENT_TEAM = 3DZAF454Q2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -260,12 +285,13 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = mariamayorova.KeepLink;
+				PRODUCT_BUNDLE_IDENTIFIER = Keeplink.KeepLink;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -281,7 +307,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"KeepLink/Preview Content\"";
-				DEVELOPMENT_TEAM = 38PC9VM7ZB;
+				DEVELOPMENT_TEAM = 3DZAF454Q2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -289,12 +315,13 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = mariamayorova.KeepLink;
+				PRODUCT_BUNDLE_IDENTIFIER = Keeplink.KeepLink;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -324,6 +351,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		385887772D3D0BCE00C79EA6 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3858877A2D3D0BCE00C79EA6 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 385887772D3D0BCE00C79EA6 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 38DB0F512D036C1900285C9B /* Project object */;
 }
