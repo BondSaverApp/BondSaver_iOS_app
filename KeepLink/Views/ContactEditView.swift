@@ -19,15 +19,22 @@ struct ContactEditView: View {
     @State var contextTextField: String = ""
     @State var aimTextField: String = ""
     @State var noteTextField: String = ""
+    @State var selectedTags: [String] = []
+        
+    @State var isShowingContextsOfMeeting = false
+    @State var isShowingTags = false
     
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    Menu("Тег: \(contact.tag.rawValue)") {
-                        ForEach(Tag.allCases, id: \.rawValue) { tag in
-                            Button(tag.rawValue) {
-                                // Выбор тега
+                    Button {
+                        isShowingTags = true
+                    } label: {
+                        HStack {
+                            Text("Теги: ")
+                            ForEach(selectedTags, id: \.self) {
+                                Text($0)
                             }
                         }
                     }
@@ -58,7 +65,21 @@ struct ContactEditView: View {
                     Text("Возраст")
                 }
                 Section {
-                    TextField("", text: $contextTextField)
+                    Button {
+                        isShowingContextsOfMeeting = true
+                    } label: {
+                        if !contextTextField.isEmpty {
+                            HStack(spacing: 20){
+                                Image(systemName: "plus.circle.fill")
+                                Text(contextTextField)
+                            }
+                        } else {
+                            HStack(spacing: 20){
+                                Image(systemName: "plus.circle.fill")
+                                Text("Добавить место")
+                            }
+                        }
+                    }
                 } header: {
                     Text("Контекст знакомства")
                 }
@@ -69,6 +90,14 @@ struct ContactEditView: View {
                 }
                 Section {
                     TextField("Заметка...", text: $noteTextField)
+                }
+                Section {
+                    Button {
+                        
+                    } label: {
+                        Text("Удалить контакт")
+                            .foregroundColor(.red)
+                    }
                 }
             }
             .navigationTitle("Редактировать контакт")
@@ -91,9 +120,15 @@ struct ContactEditView: View {
                 surnameTextField = contact.surname ?? ""
                 patronymicTextField = contact.secondName ?? ""
                 dateOfBirthPicker = contact.dateOfBirth ?? Date()
-                contextTextField = contact.meetingContext ?? ""
+//                contextTextField = contact.meetingContext ?? ""
                 aimTextField = contact.communicationAims ?? ""
                 noteTextField = contact.notes ?? ""
+            }
+            .sheet(isPresented: $isShowingContextsOfMeeting) {
+                ContactMeetingPlaceView(isShowingContextsOfMeeting: $isShowingContextsOfMeeting, contextTextField: $contextTextField)
+            }
+            .sheet(isPresented: $isShowingTags) {
+                ContactTagView(isShowingTags: $isShowingTags, selectedTags: $selectedTags)
             }
         }
     }
@@ -105,7 +140,7 @@ struct ContactEditView: View {
     ContactEditView(contact: Contact(name: "andrey",
                                      surname: "stepanov",
                                      secondName: "sergeevich",
-                                     tag: .defaultTag,
+//                                     tag: .defaultTag,
                                      photo: nil,
                                      avatarColor: .blue,
                                      dateOfBirth: nil,

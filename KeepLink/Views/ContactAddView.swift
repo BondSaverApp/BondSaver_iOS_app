@@ -26,13 +26,11 @@ struct ContactAddView: View {
     var body: some View {
         NavigationStack{
             Form {
-                Section{
-                    Menu("Выбрать тег") {
-                        ForEach(Tag.allCases, id: \.rawValue){ tag in
-                            Button(tag.rawValue){
-                                
-                            }
-                        }
+                Section {
+                    Button{
+                        
+                    } label: {
+                        Text("Выбрать тег")
                     }
                 }
                 Section{

@@ -14,7 +14,7 @@ struct Contact: Identifiable, Equatable {
     var surname: String?
     var secondName: String?
     
-    var tag: Tag = .defaultTag
+//    var tag: Tag = .defaultTag
     var photo: Image? = Image(systemName: "person.circle")
     
     var avatarColor: Color = .random()
@@ -28,9 +28,9 @@ struct Contact: Identifiable, Equatable {
     
     var notes: String?
     
-    mutating func setTag(_ tag: Tag){
-        self.tag = tag
-    }
+//    mutating func setTag(_ tag: Tag){
+//        self.tag = tag
+//    }
     
     var avatarView: some View {
         
