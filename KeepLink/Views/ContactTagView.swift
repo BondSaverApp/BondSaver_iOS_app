@@ -116,9 +116,13 @@ struct ContactTagView: View {
             tags.append(newTag)
             selectedTags.append(newTag)
             UserDefaults.standard.set(tags, forKey: "Tags")
+            NotificationCenter.default.post(name: .tagsUpdated, object: nil)
         }
     }
-    
+}
+
+extension Notification.Name {
+    static let tagsUpdated = Notification.Name("tagsUpdated")
 }
 
 #Preview {

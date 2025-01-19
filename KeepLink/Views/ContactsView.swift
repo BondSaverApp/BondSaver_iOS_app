@@ -17,9 +17,27 @@ struct ContactsView: View {
     @State private var selectedContact: Contact?
     @State var isEditViewPresented: Bool = false
     
+    @State private var tags: [String] = UserDefaults.standard.stringArray(forKey: "Tags") ?? [
+        "Web",
+        "iOS",
+        "Дизайн",
+        "Бизнес"
+    ]
+    
     var filteredContacts: Results<Contact> {
-        guard !searchText.isEmpty else { return contacts }
-        return contacts.filter("firstName CONTAINS[c] %@ OR lastName CONTAINS[c] %@", searchText, searchText)
+        var result = contacts
+        
+        // Фильтрация по тексту поиска
+        if !searchText.isEmpty {
+            result = result.filter("firstName CONTAINS[c] %@ OR lastName CONTAINS[c] %@", searchText, searchText)
+        }
+        
+        // Фильтрация по выбранному тегу
+        if selectedTag != "Выбрать тег" {
+            result = result.filter("ANY tags.name == %@", selectedTag)
+        }
+        
+        return result
     }
     
     var body: some View {
@@ -36,6 +54,16 @@ struct ContactsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(leading: menuButton)
             .searchable(text: $searchText, prompt: "Найти контакт...")
+            .onAppear {
+                // Добавляем наблюдателя обновления тегов
+                NotificationCenter.default.addObserver(forName: .tagsUpdated, object: nil, queue: .main) { _ in
+                    updateTags()
+                }
+            }
+            .onDisappear {
+                // Удаляем наблюдателя
+                NotificationCenter.default.removeObserver(self, name: .tagsUpdated, object: nil)
+            }
         }
         .fullScreenCover(isPresented: $isEditViewPresented, onDismiss: { selectedContact = nil }) {
             if let selectedContact = selectedContact {
@@ -67,7 +95,6 @@ struct ContactsView: View {
                                 .foregroundColor(.gray)
                         }
                     }
-                    
                     Spacer()
                     phoneButton(for: contact)
                     editButton(for: contact)
@@ -130,14 +157,14 @@ struct ContactsView: View {
     // Кнопка выбора тега
     var menuButton: some View {
         Menu {
-            Button("Тег 1") {
-                selectedTag = "Тег 1"
+            Button("Выбрать тег") {
+                selectedTag = "Выбрать тег"
             }
-            Button("Тег 2") {
-                selectedTag = "Тег 2"
-            }
-            Button("Тег 3") {
-                selectedTag = "Тег 3"
+        
+            ForEach(tags, id: \.self) { tag in
+                Button(tag) {
+                    selectedTag = tag
+                }
             }
         } label: {
             HStack {
@@ -149,6 +176,10 @@ struct ContactsView: View {
             .padding(10)
             .cornerRadius(8)
         }
+    }
+    
+    private func updateTags() {
+        tags = UserDefaults.standard.stringArray(forKey: "Tags") ?? []
     }
 }
 

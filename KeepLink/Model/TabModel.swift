@@ -1,13 +1,5 @@
 //
 //  TabModel.swift
-//  keeplinkskelenot
-//
-//  Created by Андрей Степанов on 19.01.2025.
-//
-
-
-//
-//  Tab.swift
 //  KeepLink
 //
 //  Created by Андрей Степанов on 06.12.2024.

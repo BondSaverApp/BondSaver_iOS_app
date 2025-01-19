@@ -1,13 +1,5 @@
 //
 //  ContactEditView.swift
-//  keeplinkskelenot
-//
-//  Created by Андрей Степанов on 19.01.2025.
-//
-
-
-//
-//  ContactEditView.swift
 //  KeepLink
 //
 //  Created by Maria Mayorova on 20.12.2024.
@@ -33,11 +25,11 @@ struct ContactEditView: View {
     @State var isShowingContextsOfMeeting = false
     @State var isShowingTags = false
     
+    @State private var isAlertPresented = false // адерт для удаления
+    
     var body: some View {
         NavigationStack {
             Form {
-                tagSection
-                
                 avatarSection
                 
                 nameSection
@@ -47,6 +39,8 @@ struct ContactEditView: View {
                 aimSection
                 
                 noteSection
+                
+                tagSection
                 
                 deleteSection
             }
@@ -90,15 +84,19 @@ struct ContactEditView: View {
             Button {
                 isShowingTags = true
             } label: {
-                HStack {
+                HStack(alignment: .top){
                     Text("Теги: ")
-                    ForEach(selectedTags, id: \.self) {
-                        Text($0)
-                            .padding(5)
-                            .background{
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color(UIColor.systemGray6))
-                            }
+                        .padding(.vertical, 5)
+                    LazyVStack(alignment: .leading) {
+                        
+                        ForEach(selectedTags, id: \.self) {
+                            Text($0)
+                                .padding(5)
+                                .background{
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(Color(UIColor.systemGray6))
+                                }
+                        }
                     }
                 }
             }
@@ -176,11 +174,21 @@ struct ContactEditView: View {
     private var deleteSection: some View {
         Section {
             Button {
-                deleteContact()
-                isPresented = false
+                isAlertPresented = true
             } label: {
                 Text("Удалить контакт")
                     .foregroundColor(.red)
+            }
+            .alert(isPresented: $isAlertPresented) {
+                Alert(
+                    title: Text("Удалить контакт?"),
+                    message: Text("Вы уверены, что хотите удалить этот контакт?"),
+                    primaryButton: .destructive(Text("Удалить")) {
+                        deleteContact()
+                        isPresented = false
+                    },
+                    secondaryButton: .cancel(Text("Отменить"))
+                )
             }
         }
     }

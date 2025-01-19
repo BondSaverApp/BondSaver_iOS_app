@@ -1,9 +1,16 @@
+//
+//  ContactsView.swift
+//  KeepLink
+//
+//  Created by Андрей Степанов on 06.12.2024.
+//
+
 import SwiftUI
 import RealmSwift
 
 struct ContactAddView: View {
-    @ObservedRealmObject var newContact = Contact() // Используем для привязки к Realm
-    @Binding var isPresented: Bool // Для закрытия окна добавления контакта
+    @ObservedRealmObject var newContact = Contact()
+    @Binding var isPresented: Bool
     
     @State var nameTextField: String = ""
     @State var surnameTextField: String = ""
@@ -12,7 +19,7 @@ struct ContactAddView: View {
     @State var aimTextField: String = ""
     @State var noteTextField: String = ""
     
-    @State var avatarUrl: String = "" // URL для аватара (если используется)
+    @State var avatarUrl: String = ""
     
     @State var selectedTags: [String] = []
     @State var isShowingContextsOfMeeting = false
@@ -21,80 +28,17 @@ struct ContactAddView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    Button {
-                        isShowingTags = true
-                    } label: {
-                        HStack {
-                            Text("Теги: ")
-                            ForEach(selectedTags, id: \.self) {
-                                Text($0)
-                                    .padding(5)
-                                    .background{
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .fill(Color(UIColor.systemGray6))
-                                    }
-                            }
-                        }
-                    }
-                }
-                Section {
-                    Button {
-                        // Действие для выбора фотографии
-                    } label: {
-                        HStack {
-                            if !avatarUrl.isEmpty, let url = URL(string: avatarUrl), let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .clipShape(Circle())
-                                    .frame(width: 50, height: 50)
-                            } else {
-                                Image(systemName: "person.crop.circle")
-                                    .resizable()
-                                    .clipShape(Circle())
-                                    .frame(width: 50, height: 50)
-                                    .foregroundColor(.gray)
-                            }
-                            Text("Выбрать фото")
-                        }
-                    }
-                }
+                avatarSection
                 
-                Section {
-                    TextField("Имя", text: $nameTextField)
-                    TextField("Фамилия", text: $surnameTextField)
-                    TextField("Отчество", text: $patronymicTextField)
-                }
+                nameSection
                 
-                Section {
-                    Button {
-                        isShowingContextsOfMeeting = true
-                    } label: {
-                        if !contextTextField.isEmpty {
-                            HStack(spacing: 20){
-                                Image(systemName: "plus.circle.fill")
-                                Text(contextTextField)
-                            }
-                        } else {
-                            HStack(spacing: 20){
-                                Image(systemName: "plus.circle.fill")
-                                Text("Добавить место")
-                            }
-                        }
-                    }
-                } header: {
-                    Text("Контекст знакомства")
-                }
+                meetingContextSection
                 
-                Section {
-                    TextField("Цель общения", text: $aimTextField)
-                } header: {
-                    Text("Цель общения")
-                }
+                aimSection
                 
-                Section {
-                    TextField("Заметка...", text: $noteTextField)
-                }
+                noteSection
+                
+                tagSection
             }
             .navigationTitle("Добавить контакт")
             .navigationBarTitleDisplayMode(.inline)
@@ -116,6 +60,98 @@ struct ContactAddView: View {
             .sheet(isPresented: $isShowingTags) {
                 ContactTagView(isShowingTags: $isShowingTags, selectedTags: $selectedTags)
             }
+        }
+    }
+    
+    private var tagSection: some View {
+        Section {
+            Button {
+                isShowingTags = true
+            } label: {
+                
+                HStack(alignment: .top){
+                    Text("Теги: ")
+                        .padding(.vertical, 5)
+                    LazyVStack(alignment: .leading) {
+                        ForEach(selectedTags, id: \.self) {
+                            Text($0)
+                                .padding(5)
+                                .background{
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(Color(UIColor.systemGray6))
+                                }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private var avatarSection: some View {
+        Section {
+            Button {
+                // Действие для выбора фотографии
+            } label: {
+                HStack {
+                    if !avatarUrl.isEmpty, let url = URL(string: avatarUrl), let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .clipShape(Circle())
+                            .frame(width: 50, height: 50)
+                    } else {
+                        Image(systemName: "person.crop.circle")
+                            .resizable()
+                            .clipShape(Circle())
+                            .frame(width: 50, height: 50)
+                            .foregroundColor(.gray)
+                    }
+                    Text("Выбрать фото")
+                }
+            }
+        }
+    }
+    
+    private var nameSection: some View {
+        Section {
+            TextField("Имя", text: $nameTextField)
+            TextField("Фамилия", text: $surnameTextField)
+            TextField("Отчество", text: $patronymicTextField)
+        }
+    }
+    
+    private var meetingContextSection: some View {
+        Section {
+            Button {
+                isShowingContextsOfMeeting = true
+            } label: {
+                if !contextTextField.isEmpty {
+                    HStack(spacing: 20){
+                        Image(systemName: "plus.circle.fill")
+                        Text(contextTextField)
+                    }
+                } else {
+                    HStack(spacing: 20){
+                        Image(systemName: "plus.circle.fill")
+                        Text("Добавить место")
+                    }
+                }
+            }
+        } header: {
+            Text("Контекст знакомства")
+        }
+    }
+    
+    private var aimSection: some View {
+        Section {
+            TextField("Цель общения", text: $aimTextField)
+        } header: {
+            Text("Цель общения")
+        }
+    }
+    
+    private var noteSection: some View {
+        Section {
+            TextField("Заметка...", text: $noteTextField)
         }
     }
     
@@ -142,15 +178,12 @@ struct ContactAddView: View {
             newContact.meetingContext = contextTextField
             newContact.notes = noteTextField
             newContact.appearance = aimTextField
-            newContact.avatar = avatarUrl // Сохраняем URL аватара
+            newContact.avatar = avatarUrl
             newContact.tags = tagsList
             newContact.meetingPlace = meetingPlace
             
-            // Сохраняем объект в базу данных
             realm.add(newContact)
         }
-        
-        // Закрываем окно после сохранения
         isPresented = false
     }
 }

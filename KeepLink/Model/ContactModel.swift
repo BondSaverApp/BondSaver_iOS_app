@@ -1,6 +1,6 @@
 //
 //  ContactModel.swift
-//  keeplinkskelenot
+//  KeepLink
 //
 //  Created by Андрей Степанов on 15.01.2025.
 //
