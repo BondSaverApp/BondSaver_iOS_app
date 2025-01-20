@@ -12,12 +12,49 @@ struct CustomTabBarView: View {
     @State var isSheetPresented: Bool = false
     
     var body: some View {
-        HStack {
-            tabBarItem(.contacts)
-            tabBarItem(.settings)
-            plusButton
-            tabBarItem(.notifications)
-            tabBarItem(.profile)
+        ZStack{
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .mask {
+                    VStack(spacing: 0) {
+                        LinearGradient(
+                            colors: [
+                                Color.black.opacity(1),
+                                Color.black.opacity(0)
+                            ],
+                            startPoint: .bottom,
+                            endPoint: .center
+                        )
+                        Rectangle()
+                    }
+                }
+                .ignoresSafeArea()
+                .frame(height: 150)
+            Color(UIColor.systemBackground)
+                .opacity(0.7)
+                .mask {
+                    VStack(spacing: 0) {
+                        LinearGradient(
+                            colors: [
+                                Color.black.opacity(1),
+                                Color.black.opacity(0)
+                            ],
+                            startPoint: .bottom,
+                            endPoint: .center
+                        )
+                        Rectangle()
+                    }
+                }
+                .ignoresSafeArea()
+                .frame(height: 150)
+            HStack {
+                tabBarItem(.contacts)
+                tabBarItem(.profile)
+                plusButton
+                tabBarItem(.notifications)
+                tabBarItem(.settings)
+            }
+            .offset(y: 50)
         }
     }
     
@@ -29,11 +66,11 @@ struct CustomTabBarView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 60, height: 60)
-                .offset(y: -20)
         }
         .frame(maxWidth: .infinity)
+        .offset(y: -20)
         .fullScreenCover(isPresented: $isSheetPresented) {
-            ContactAddView(isShowSheet: $isSheetPresented)
+            ContactAddView(isPresented: $isSheetPresented)
         }
     }
     
@@ -46,6 +83,9 @@ struct CustomTabBarView: View {
                     .font(.title2)
                     .frame(width: 30, height: 30)
             }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 5)
+            .contentShape(Rectangle())
             .foregroundStyle(activeTab == tab ? Color.accentColor : Color.accentColor.opacity(0.2))
             .padding(5)
         }
@@ -62,5 +102,16 @@ struct TabBarItem: Identifiable{
 }
 
 #Preview {
-    ContentView()
+    @Previewable @State var active: TabModel = .contacts
+    HStack(){
+        Color.black
+        Color.white
+    }
+    .ignoresSafeArea()
+    .overlay {
+        VStack{
+            Spacer()
+            CustomTabBarView(activeTab: $active)
+        }
+    }
 }
