@@ -275,10 +275,11 @@ struct ContactEditView: View {
     }
     
     private var emailSection: some View {
-        Section {
+        Section(header: Text("Email")) {
             TextField("Email", text: $emailTextField)
-        } header: {
-            Text("Email")
+                .keyboardType(.emailAddress)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
         }
         .transition(.move(edge: .top))
     }
