@@ -18,12 +18,25 @@ struct ContactAddView: View {
     @State var contextTextField: String = ""
     @State var aimTextField: String = ""
     @State var noteTextField: String = ""
+    @State var phoneTextField: String = ""
+    @State var appearanceTextField: String = ""
+    @State var cityTextField: String = ""
+    @State var streetTextField: String = ""
+    @State var houseTextField: String = ""
+    @State var flatTextField: String = ""
+    @State var websiteTextField: String = ""
+    @State var networkTextField: String = ""
+    @State var professionTextField: String = ""
+    @State var emailTextField: String = ""
+    @State var dateOfBirth = Date()
+    
     
     @State var avatarUrl: String = ""
     
     @State var selectedTags: [String] = []
     @State var isShowingContextsOfMeeting = false
     @State var isShowingTags = false
+    @State var isShowingMore = false
 
     var body: some View {
         NavigationStack {
@@ -32,13 +45,40 @@ struct ContactAddView: View {
                 
                 nameSection
                 
+                phoneSection
+                
                 meetingContextSection
                 
                 aimSection
                 
+                appearanceSection
+                
                 noteSection
                 
                 tagSection
+                
+                if isShowingMore {
+                    dateSection
+                    
+                    adressSection
+                    
+                    websiteSection
+                    
+                    networkSection
+                    
+                    professionSection
+                    
+                    emailSection
+                }
+                
+                Button {
+                    withAnimation(.easeInOut(duration: 1.0)) {
+                        isShowingMore.toggle()
+                    }
+                } label: {
+                    Text(isShowingMore ? "Show Less" : "Show More...")
+                }
+               
             }
             .navigationTitle("Добавить контакт")
             .navigationBarTitleDisplayMode(.inline)
@@ -60,6 +100,7 @@ struct ContactAddView: View {
             .sheet(isPresented: $isShowingTags) {
                 ContactTagView(isShowingTags: $isShowingTags, selectedTags: $selectedTags)
             }
+            
         }
     }
     
@@ -119,6 +160,14 @@ struct ContactAddView: View {
         }
     }
     
+    private var phoneSection: some View {
+        Section {
+            TextField("Номер телефона", text: $phoneTextField)
+        } header: {
+            Text("Номер телефона")
+        }
+    }
+    
     private var meetingContextSection: some View {
         Section {
             Button {
@@ -149,11 +198,77 @@ struct ContactAddView: View {
         }
     }
     
+    private var appearanceSection: some View {
+        Section {
+            TextField("Внешние особенности", text: $appearanceTextField)
+        } header: {
+            Text("Внешность")
+        }
+    }
+    
     private var noteSection: some View {
         Section {
             TextField("Заметка...", text: $noteTextField)
         }
     }
+    
+    private var dateSection: some View {
+        Section {
+            DatePicker("Дата рождения", selection: $dateOfBirth, displayedComponents: .date)
+        } header: {
+            Text("Дата")
+        }
+        .transition(.move(edge: .top))
+    }
+    
+    private var adressSection: some View {
+        Section {
+            TextField("Город", text: $cityTextField)
+            TextField("Улица", text: $streetTextField)
+            TextField("Дом", text: $houseTextField)
+            TextField("Квартира", text: $flatTextField)
+        } header: {
+            Text("Адрес")
+        }
+        .transition(.move(edge: .top))
+    }
+    
+    private var websiteSection: some View {
+        Section {
+            TextField("Сайт", text: $websiteTextField)
+        } header: {
+            Text("Сайт")
+        }
+        .transition(.move(edge: .top))
+    }
+    
+    private var networkSection: some View {
+        Section {
+            TextField("Социальная сеть", text: $networkTextField)
+        } header: {
+            Text("Социальная сеть")
+        }
+        .transition(.move(edge: .top))
+    }
+    
+    private var professionSection: some View {
+        Section {
+            TextField("Профессия", text: $professionTextField)
+        } header: {
+            Text("Профессия")
+        }
+        .transition(.move(edge: .top))
+    }
+    
+    private var emailSection: some View {
+        Section {
+            TextField("Email", text: $emailTextField)
+        } header: {
+            Text("Email")
+        }
+        .transition(.move(edge: .top))
+    }
+    
     
     /// Сохранение контакта в базу данных Realm
     private func saveContact() {
