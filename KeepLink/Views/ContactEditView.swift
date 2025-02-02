@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PhotosUI
+import SwiftyCrop
 import RealmSwift
 
 struct ContactEditView: View {
@@ -28,8 +29,11 @@ struct ContactEditView: View {
     @State var isShowingContextsOfMeeting = false
     @State var isShowingTags = false
     
-    @State private var isAlertPresented = false // адерт для удаления
-    
+    @State private var isAlertPresented = false // алерт для удаления
+    @State private var showActionSheet = false // менюшка выбора обрезки или нового фото
+    @State private var showPhotosPicker = false
+    @State private var showImageCropper = false
+
     var body: some View {
         NavigationStack {
             Form {
@@ -108,37 +112,66 @@ struct ContactEditView: View {
     
     private var avatarSection: some View {
         Section {
-            Button {
+            HStack {
+                if let selectedImageData,
+                   let uiImage = UIImage(data: selectedImageData) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .clipShape(Circle())
+                        .frame(width: 50, height: 50)
+                } else {
+                    Image(systemName: "person.crop.circle")
+                        .resizable()
+                        .clipShape(Circle())
+                        .frame(width: 50, height: 50)
+                        .foregroundColor(.gray)
+                }
                 
-            } label: {
-                HStack {
+                Button("Выбрать фото") {
+                    if let selectedImageData,
+                       let _ = UIImage(data: selectedImageData) {
+                        showActionSheet = true
+                    } else {
+                        showPhotosPicker = true
+                    }
+                }
+                .confirmationDialog("Выберите действие", isPresented: $showActionSheet, titleVisibility: .visible) {
+                    Button("Обрезать текущее фото") {
+                        showImageCropper = true
+                    }
+                    Button("Выбрать новое фото") {
+                        showPhotosPicker = true
+                    }
+                    Button("Отмена", role: .cancel) {}
+                }
+                .fullScreenCover(isPresented: $showImageCropper) {
                     if let selectedImageData,
                        let uiImage = UIImage(data: selectedImageData) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .clipShape(Circle())
-                            .frame(width: 50, height: 50)
-                    } else {
-                        Image(systemName: "person.crop.circle")
-                            .resizable()
-                            .clipShape(Circle())
-                            .frame(width: 50, height: 50)
-                            .foregroundColor(.gray)
+                        SwiftyCropView(
+                            imageToCrop: uiImage,
+                            maskShape: .circle,
+                            configuration: SwiftyCropConfiguration(
+                                maxMagnificationScale: 4.0,
+                                maskRadius: 130.0,
+                                cropImageCircular: false,
+                                rotateImage: false,
+                                zoomSensitivity: 10.0,
+                                rectAspectRatio: 1
+                            )
+                        ) { croppedImage in
+                            // Do something with the returned, cropped image
+                            self.selectedImageData = compressImage(croppedImage)
+                        }
                     }
-                    PhotosPicker(
-                        selection: $selectedItem,
-                        matching: .images,
-                        photoLibrary: .shared()) {
-                            Text("Выбрать фото")
+                }
+                .photosPicker(isPresented: $showPhotosPicker, selection: $selectedItem, matching: .images)
+                .onChange(of: selectedItem) { _, newItem in
+                    Task {
+                        if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                            selectedImageData = data
+                            showImageCropper = true
                         }
-                        .onChange(of: selectedItem) { _ , newItem in
-                            Task {
-                                // Retrieve selected asset in the form of Data
-                                if let data = try? await newItem?.loadTransferable(type: Data.self) {
-                                    selectedImageData = data
-                                }
-                            }
-                        }
+                    }
                 }
             }
         }
@@ -269,6 +302,24 @@ struct ContactEditView: View {
             print("Ошибка удаления контакта из Realm: \(error.localizedDescription)")
         }
     }
+}
+
+
+func compressImage(_ image: UIImage?, maxSizeMB: Double = 1.0) -> Data? {
+    let maxSizeBytes = Int(maxSizeMB * 1024 * 1024) // 1MB в байтах
+    var compression: CGFloat = 1.0 // Начинаем с максимального качества
+    if let image {
+        var imageData = image.jpegData(compressionQuality: compression)
+        
+        while let data = imageData, data.count > maxSizeBytes, compression > 0.1 {
+            compression -= 0.1 // Понижаем качество на 10%
+            imageData = image.jpegData(compressionQuality: compression)
+        }
+        
+        return imageData
+    }
+    
+    return .none
 }
 
 #Preview {

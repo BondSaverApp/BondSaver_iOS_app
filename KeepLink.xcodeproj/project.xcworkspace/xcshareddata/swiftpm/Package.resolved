@@ -1,5 +1,5 @@
 {
-  "originHash" : "182db11c87d1734fe53a6366b674339f70901a93290bd85def29b63e25e34c43",
+  "originHash" : "5d7839d2db0f72da269a200bba59f8466a3ef6d1fc27ac6403995a6297eb32df",
   "pins" : [
     {
       "identity" : "realm-core",
@@ -17,6 +17,15 @@
       "state" : {
         "branch" : "master",
         "revision" : "1f09fb14dd9d275b5686016fe8508d491b87cb0b"
+      }
+    },
+    {
+      "identity" : "swiftycrop",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/benedom/SwiftyCrop.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "d07b19085919a0b2adf95cf0ebe8de38ab63ea45"
       }
     }
   ],
