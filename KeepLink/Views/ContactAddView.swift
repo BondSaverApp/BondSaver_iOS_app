@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PhotosUI
+import SwiftyCrop
 import RealmSwift
 
 struct ContactAddView: View {
@@ -26,6 +27,9 @@ struct ContactAddView: View {
     @State var selectedTags: [String] = []
     @State var isShowingContextsOfMeeting = false
     @State var isShowingTags = false
+    @State private var showActionSheet = false // менюшка выбора обрезки или нового фото
+    @State private var showPhotosPicker = false
+    @State private var showImageCropper = false
 
     var body: some View {
         NavigationStack {
@@ -91,37 +95,66 @@ struct ContactAddView: View {
     
     private var avatarSection: some View {
         Section {
-            Button {
+            HStack {
+                if let selectedImageData,
+                   let uiImage = UIImage(data: selectedImageData) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .clipShape(Circle())
+                        .frame(width: 50, height: 50)
+                } else {
+                    Image(systemName: "person.crop.circle")
+                        .resizable()
+                        .clipShape(Circle())
+                        .frame(width: 50, height: 50)
+                        .foregroundColor(.gray)
+                }
                 
-            } label: {
-                HStack {
+                Button("Выбрать фото") {
+                    if let selectedImageData,
+                       let _ = UIImage(data: selectedImageData) {
+                        showActionSheet = true
+                    } else {
+                        showPhotosPicker = true
+                    }
+                }
+                .confirmationDialog("Выберите действие", isPresented: $showActionSheet, titleVisibility: .visible) {
+                    Button("Обрезать текущее фото") {
+                        showImageCropper = true
+                    }
+                    Button("Выбрать новое фото") {
+                        showPhotosPicker = true
+                    }
+                    Button("Отмена", role: .cancel) {}
+                }
+                .fullScreenCover(isPresented: $showImageCropper) {
                     if let selectedImageData,
                        let uiImage = UIImage(data: selectedImageData) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .clipShape(Circle())
-                            .frame(width: 50, height: 50)
-                    } else {
-                        Image(systemName: "person.crop.circle")
-                            .resizable()
-                            .clipShape(Circle())
-                            .frame(width: 50, height: 50)
-                            .foregroundColor(.gray)
+                        SwiftyCropView(
+                            imageToCrop: uiImage,
+                            maskShape: .circle,
+                            configuration: SwiftyCropConfiguration(
+                                maxMagnificationScale: 4.0,
+                                maskRadius: 130.0,
+                                cropImageCircular: false,
+                                rotateImage: false,
+                                zoomSensitivity: 10.0,
+                                rectAspectRatio: 1
+                            )
+                        ) { croppedImage in
+                            // Do something with the returned, cropped image
+                            self.selectedImageData = compressImage(croppedImage)
+                        }
                     }
-                    PhotosPicker(
-                        selection: $selectedItem,
-                        matching: .images,
-                        photoLibrary: .shared()) {
-                            Text("Выбрать фото")
+                }
+                .photosPicker(isPresented: $showPhotosPicker, selection: $selectedItem, matching: .images)
+                .onChange(of: selectedItem) { _, newItem in
+                    Task {
+                        if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                            selectedImageData = data
+                            showImageCropper = true
                         }
-                        .onChange(of: selectedItem) { _ , newItem in
-                            Task {
-                                // Retrieve selected asset in the form of Data
-                                if let data = try? await newItem?.loadTransferable(type: Data.self) {
-                                    selectedImageData = data
-                                }
-                            }
-                        }
+                    }
                 }
             }
         }
