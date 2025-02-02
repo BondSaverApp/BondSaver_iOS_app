@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 import RealmSwift
 
 struct ContactAddView: View {
@@ -19,7 +20,8 @@ struct ContactAddView: View {
     @State var aimTextField: String = ""
     @State var noteTextField: String = ""
     
-    @State var avatarUrl: String = ""
+    @State private var selectedItem: PhotosPickerItem? = nil
+    @State private var selectedImageData: Data? = nil
     
     @State var selectedTags: [String] = []
     @State var isShowingContextsOfMeeting = false
@@ -90,11 +92,12 @@ struct ContactAddView: View {
     private var avatarSection: some View {
         Section {
             Button {
-                // Действие для выбора фотографии
+                
             } label: {
                 HStack {
-                    if !avatarUrl.isEmpty, let url = URL(string: avatarUrl), let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
-                        Image(uiImage: image)
+                    if let selectedImageData,
+                       let uiImage = UIImage(data: selectedImageData) {
+                        Image(uiImage: uiImage)
                             .resizable()
                             .clipShape(Circle())
                             .frame(width: 50, height: 50)
@@ -105,7 +108,20 @@ struct ContactAddView: View {
                             .frame(width: 50, height: 50)
                             .foregroundColor(.gray)
                     }
-                    Text("Выбрать фото")
+                    PhotosPicker(
+                        selection: $selectedItem,
+                        matching: .images,
+                        photoLibrary: .shared()) {
+                            Text("Выбрать фото")
+                        }
+                        .onChange(of: selectedItem) { _ , newItem in
+                            Task {
+                                // Retrieve selected asset in the form of Data
+                                if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                                    selectedImageData = data
+                                }
+                            }
+                        }
                 }
             }
         }
@@ -157,7 +173,7 @@ struct ContactAddView: View {
     
     /// Сохранение контакта в базу данных Realm
     private func saveContact() {
-        let realm = try! Realm()
+        lazy var realm = try! Realm()
         
         let tags = selectedTags.map { tagString -> Tag in
             let tag = Tag()
@@ -178,7 +194,7 @@ struct ContactAddView: View {
             newContact.meetingContext = contextTextField
             newContact.notes = noteTextField
             newContact.appearance = aimTextField
-            newContact.avatar = avatarUrl
+            newContact.avatarData = selectedImageData
             newContact.tags = tagsList
             newContact.meetingPlace = meetingPlace
             

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 import RealmSwift
 
 struct ContactEditView: View {
@@ -19,7 +20,9 @@ struct ContactEditView: View {
     @State var contextTextField: String = ""
     @State var aimTextField: String = ""
     @State var noteTextField: String = ""
-    @State var avatarUrl: String = "" // URL для аватара (опционально)
+
+    @State private var selectedItem: PhotosPickerItem? = nil
+    @State private var selectedImageData: Data? = nil
     
     @State var selectedTags: [String] = []
     @State var isShowingContextsOfMeeting = false
@@ -64,7 +67,7 @@ struct ContactEditView: View {
                 patronymicTextField = contact.middleName
                 aimTextField = contact.appearance
                 noteTextField = contact.notes
-                avatarUrl = contact.avatar
+                selectedImageData = contact.avatarData
                 selectedTags = contact.tags.map { tag in
                     tag.name
                 }
@@ -106,11 +109,12 @@ struct ContactEditView: View {
     private var avatarSection: some View {
         Section {
             Button {
-                // Действие для выбора фотографии
+                
             } label: {
                 HStack {
-                    if !avatarUrl.isEmpty, let url = URL(string: avatarUrl), let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
-                        Image(uiImage: image)
+                    if let selectedImageData,
+                       let uiImage = UIImage(data: selectedImageData) {
+                        Image(uiImage: uiImage)
                             .resizable()
                             .clipShape(Circle())
                             .frame(width: 50, height: 50)
@@ -121,12 +125,25 @@ struct ContactEditView: View {
                             .frame(width: 50, height: 50)
                             .foregroundColor(.gray)
                     }
-                    Text("Выбрать фото")
+                    PhotosPicker(
+                        selection: $selectedItem,
+                        matching: .images,
+                        photoLibrary: .shared()) {
+                            Text("Выбрать фото")
+                        }
+                        .onChange(of: selectedItem) { _ , newItem in
+                            Task {
+                                // Retrieve selected asset in the form of Data
+                                if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                                    selectedImageData = data
+                                }
+                            }
+                        }
                 }
             }
         }
     }
-    
+
     private var nameSection: some View {
         Section {
             TextField("Имя", text: $nameTextField)
@@ -222,6 +239,7 @@ struct ContactEditView: View {
                 thawedContact.middleName = patronymicTextField
                 thawedContact.meetingContext = contextTextField
                 thawedContact.appearance = aimTextField
+                thawedContact.avatarData = selectedImageData
                 thawedContact.notes = noteTextField
                 thawedContact.tags = tagsList
                 thawedContact.meetingPlace = meetingPlace
