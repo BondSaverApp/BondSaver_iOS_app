@@ -10,7 +10,7 @@ import RealmSwift
 
 struct ContentView: View {
     @State private var activeTab: TabModel = .contacts
-    @State private var isTabBarHidden: Bool = false
+    @EnvironmentObject var tabBarState: TabBarState
     
     var body: some View {
         Group {
@@ -37,13 +37,6 @@ struct ContentView: View {
                 TabView(selection: $activeTab) {
                     ContactsView()
                         .tag(TabModel.contacts)
-                        .background {
-                            if !isTabBarHidden{
-                                HideTabBar {
-                                    isTabBarHidden = true
-                                }
-                            }
-                        }
                     Text("Settings")
                         .tag(TabModel.settings)
                     Text("Notifications")

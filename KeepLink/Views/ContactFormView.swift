@@ -1,119 +1,92 @@
 //
-//  ContactsView.swift
+//  ContactStructureView.swift
 //  KeepLink
 //
-//  Created by Андрей Степанов on 06.12.2024.
+//  Created by Maria Mayorova on 09.02.2025.
 //
 
 import SwiftUI
-import RealmSwift
 
-struct ContactAddView: View {
-    @ObservedRealmObject var newContact = Contact()
-    @Binding var isPresented: Bool
+struct ContactFormView: View {
     
-    @State var nameTextField: String = ""
-    @State var surnameTextField: String = ""
-    @State var patronymicTextField: String = ""
-    @State var contextTextField: String = ""
-    @State var aimTextField: String = ""
-    @State var noteTextField: String = ""
-    @State var phoneTextField: String = ""
-    @State var appearanceTextField: String = ""
-    @State var cityTextField: String = ""
-    @State var streetTextField: String = ""
-    @State var houseTextField: String = ""
-    @State var flatTextField: String = ""
-    @State var websiteTextField: String = ""
-    @State var networkTextField: String = ""
-    @State var professionTextField: String = ""
-    @State var emailTextField: String = ""
-    @State var dateOfBirth = Date()
+    @Binding var nameTextField: String
+    @Binding var surnameTextField: String
+    @Binding var patronymicTextField: String
+    @Binding var contextTextField: String
+    @Binding var aimTextField: String
+    @Binding var noteTextField: String
+    @Binding var phoneTextField: String
+    @Binding var appearanceTextField: String
+    @Binding var cityTextField: String
+    @Binding var streetTextField: String
+    @Binding var houseTextField: String
+    @Binding var flatTextField: String
+    @Binding var websiteTextField: String
+    @Binding var networkTextField: String
+    @Binding var professionTextField: String
+    @Binding var emailTextField: String
+    @Binding var dateOfBirth: Date
+    @Binding var avatarUrl: String
+    @Binding var selectedTags: [String]
     
+    @Binding var isShowingContextsOfMeeting: Bool
+    @Binding var isShowingTags: Bool
+    @Binding var isShowingMore: Bool
     
-    @State var avatarUrl: String = ""
-    
-    @State var selectedTags: [String] = []
-    @State var isShowingContextsOfMeeting = false
-    @State var isShowingTags = false
-    @State var isShowingMore = false
-
     var body: some View {
-        NavigationStack {
-            Form {
-                avatarSection
+        Group {
+            avatarSection
+            
+            nameSection
+            
+            phoneSection
+            
+            meetingContextSection
+            
+            aimSection
+            
+            appearanceSection
+            
+            noteSection
+            
+            tagSection
+            
+            if isShowingMore {
+                dateSection
                 
-                nameSection
+                adressSection
                 
-                phoneSection
+                websiteSection
                 
-                meetingContextSection
+                networkSection
                 
-                aimSection
+                professionSection
                 
-                appearanceSection
-                
-                noteSection
-                
-                tagSection
-                
-                if isShowingMore {
-                    dateSection
-                    
-                    adressSection
-                    
-                    websiteSection
-                    
-                    networkSection
-                    
-                    professionSection
-                    
-                    emailSection
-                }
-                
-                Button {
-                    withAnimation(.easeInOut(duration: 1.0)) {
-                        isShowingMore.toggle()
-                    }
-                } label: {
-                    Text(isShowingMore ? "Show Less" : "Show More...")
-                }
-               
+                emailSection
             }
-            .navigationTitle("Добавить контакт")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button("Сохранить") {
-                        saveContact()
-                    }
+            
+            Button {
+                withAnimation(.easeInOut(duration: 1.0)) {
+                    isShowingMore.toggle()
                 }
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Закрыть") {
-                        isPresented = false
-                    }
-                }
-            }
-            .sheet(isPresented: $isShowingContextsOfMeeting) {
-                ContactMeetingPlaceView(isShowingContextsOfMeeting: $isShowingContextsOfMeeting, contextTextField: $contextTextField)
-            }
-            .sheet(isPresented: $isShowingTags) {
-                ContactTagView(isShowingTags: $isShowingTags, selectedTags: $selectedTags)
+            } label: {
+                Text(isShowingMore ? "Show Less" : "Show More...")
             }
             
         }
     }
+    
     
     private var tagSection: some View {
         Section {
             Button {
                 isShowingTags = true
             } label: {
-                
                 HStack(alignment: .top){
                     Text("Теги: ")
                         .padding(.vertical, 5)
                     LazyVStack(alignment: .leading) {
+                        
                         ForEach(selectedTags, id: \.self) {
                             Text($0)
                                 .padding(5)
@@ -127,6 +100,7 @@ struct ContactAddView: View {
             }
         }
     }
+    
     
     private var avatarSection: some View {
         Section {
@@ -152,6 +126,7 @@ struct ContactAddView: View {
         }
     }
     
+    
     private var nameSection: some View {
         Section {
             TextField("Имя", text: $nameTextField)
@@ -160,6 +135,7 @@ struct ContactAddView: View {
         }
     }
     
+    
     private var phoneSection: some View {
         Section {
             TextField("Номер телефона", text: $phoneTextField)
@@ -167,6 +143,7 @@ struct ContactAddView: View {
             Text("Номер телефона")
         }
     }
+    
     
     private var meetingContextSection: some View {
         Section {
@@ -190,6 +167,7 @@ struct ContactAddView: View {
         }
     }
     
+    
     private var aimSection: some View {
         Section {
             TextField("Цель общения", text: $aimTextField)
@@ -197,6 +175,14 @@ struct ContactAddView: View {
             Text("Цель общения")
         }
     }
+    
+    
+    private var noteSection: some View {
+        Section {
+            TextField("Заметка...", text: $noteTextField)
+        }
+    }
+    
     
     private var appearanceSection: some View {
         Section {
@@ -206,11 +192,6 @@ struct ContactAddView: View {
         }
     }
     
-    private var noteSection: some View {
-        Section {
-            TextField("Заметка...", text: $noteTextField)
-        }
-    }
     
     private var dateSection: some View {
         Section {
@@ -220,6 +201,7 @@ struct ContactAddView: View {
         }
         .transition(.move(edge: .top))
     }
+    
     
     private var adressSection: some View {
         Section {
@@ -233,6 +215,7 @@ struct ContactAddView: View {
         .transition(.move(edge: .top))
     }
     
+    
     private var websiteSection: some View {
         Section {
             TextField("Сайт", text: $websiteTextField)
@@ -241,6 +224,7 @@ struct ContactAddView: View {
         }
         .transition(.move(edge: .top))
     }
+    
     
     private var networkSection: some View {
         Section {
@@ -251,6 +235,7 @@ struct ContactAddView: View {
         .transition(.move(edge: .top))
     }
     
+    
     private var professionSection: some View {
         Section {
             TextField("Профессия", text: $professionTextField)
@@ -259,6 +244,7 @@ struct ContactAddView: View {
         }
         .transition(.move(edge: .top))
     }
+    
     
     private var emailSection: some View {
         Section(header: Text("Email")) {
@@ -269,42 +255,5 @@ struct ContactAddView: View {
         }
         .transition(.move(edge: .top))
     }
-    
-    
-    /// Сохранение контакта в базу данных Realm
-    private func saveContact() {
-        let realm = try! Realm()
-        
-        let tags = selectedTags.map { tagString -> Tag in
-            let tag = Tag()
-            tag.name = tagString
-            return tag
-        }
-        
-        let tagsList = RealmSwift.List<Tag>()
-        tagsList.append(objectsIn: tags)
-        
-        let meetingPlace = MeetingPlace()
-        meetingPlace.name = contextTextField
-        
-        try! realm.write {
-            newContact.firstName = nameTextField
-            newContact.lastName = surnameTextField
-            newContact.middleName = patronymicTextField
-            newContact.meetingContext = contextTextField
-            newContact.notes = noteTextField
-            newContact.appearance = aimTextField
-            newContact.avatar = avatarUrl
-            newContact.tags = tagsList
-            newContact.meetingPlace = meetingPlace
-            
-            realm.add(newContact)
-        }
-        isPresented = false
-    }
 }
 
-#Preview {
-    @Previewable @State var isPresented: Bool = true
-    ContactAddView(newContact: Contact(), isPresented: $isPresented)
-}

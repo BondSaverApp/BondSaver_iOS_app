@@ -1,0 +1,164 @@
+//
+//  ContactEditView.swift
+//  KeepLink
+//
+//  Created by Maria Mayorova on 20.12.2024.
+//
+
+import SwiftUI
+import RealmSwift
+
+struct ContactEditView: View {
+    @ObservedRealmObject var contact: Contact // Привязка объекта Realm
+    @Binding var isPresented: Bool
+    @StateObject var viewModel = ContactEditViewModel()
+    
+    var body: some View {
+        NavigationStack {
+            Form {
+                ContactFormView(nameTextField: $viewModel.nameTextField,
+                                surnameTextField: $viewModel.surnameTextField,
+                                patronymicTextField: $viewModel.patronymicTextField,
+                                contextTextField: $viewModel.contextTextField,
+                                aimTextField: $viewModel.aimTextField,
+                                noteTextField: $viewModel.noteTextField,
+                                phoneTextField: $viewModel.phoneTextField,
+                                appearanceTextField: $viewModel.appearanceTextField,
+                                cityTextField: $viewModel.cityTextField,
+                                streetTextField: $viewModel.streetTextField,
+                                houseTextField: $viewModel.houseTextField,
+                                flatTextField: $viewModel.flatTextField,
+                                websiteTextField: $viewModel.websiteTextField,
+                                networkTextField: $viewModel.networkTextField,
+                                professionTextField: $viewModel.professionTextField,
+                                emailTextField: $viewModel.emailTextField,
+                                dateOfBirth: $viewModel.dateOfBirth,
+                                avatarUrl: $viewModel.avatarUrl,
+                                selectedTags: $viewModel.selectedTags,
+                                isShowingContextsOfMeeting: $viewModel.isShowingContextsOfMeeting,
+                                isShowingTags: $viewModel.isShowingTags,
+                                isShowingMore: $viewModel.isShowingMore)
+                
+                deleteSection
+            }
+            .navigationTitle("Редактировать контакт")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Сохранить") {
+                        saveContact()
+                    }
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Отменить") {
+                        isPresented = false
+                    }
+                }
+            }
+            .onAppear {
+                viewModel.nameTextField = contact.firstName
+                viewModel.surnameTextField = contact.lastName
+                viewModel.patronymicTextField = contact.middleName
+                viewModel.appearanceTextField = contact.appearance
+                viewModel.noteTextField = contact.notes
+                viewModel.avatarUrl = contact.avatar
+                viewModel.selectedTags = contact.tags.map { tag in
+                    tag.name
+                }
+                viewModel.contextTextField = contact.meetingPlace?.name ?? ""
+            }
+            .sheet(isPresented: $viewModel.isShowingContextsOfMeeting) {
+                ContactMeetingPlaceView(isShowingContextsOfMeeting: $viewModel.isShowingContextsOfMeeting,
+                                        contextTextField: $viewModel.contextTextField)
+            }
+            .sheet(isPresented: $viewModel.isShowingTags) {
+                ContactTagView(isShowingTags: $viewModel.isShowingTags,
+                               selectedTags: $viewModel.selectedTags)
+            }
+        }
+    }
+
+    private var deleteSection: some View {
+        Section {
+            Button {
+                viewModel.isAlertPresented = true
+            } label: {
+                Text("Удалить контакт")
+                    .foregroundColor(.red)
+            }
+            .alert(isPresented: $viewModel.isAlertPresented) {
+                Alert(
+                    title: Text("Удалить контакт?"),
+                    message: Text("Вы уверены, что хотите удалить этот контакт?"),
+                    primaryButton: .destructive(Text("Удалить")) {
+                        deleteContact()
+                        isPresented = false
+                    },
+                    secondaryButton: .cancel(Text("Отменить"))
+                )
+            }
+        }
+    }
+
+    /// Сохранение изменений в базе данных
+    private func saveContact() {
+        guard let thawedContact = contact.thaw() else {
+            print("Ошибка: Не удалось разморозить объект.")
+            return
+        }
+        
+        do {
+            let realm = try Realm()
+            
+            let tags = viewModel.selectedTags.map { tagString -> Tag in
+                let tag = Tag()
+                tag.name = tagString
+                return tag
+            }
+            
+            let tagsList = RealmSwift.List<Tag>()
+            tagsList.append(objectsIn: tags)
+            
+            let meetingPlace = MeetingPlace()
+            meetingPlace.name = viewModel.contextTextField
+            
+            try realm.write {
+                thawedContact.firstName = viewModel.nameTextField
+                thawedContact.lastName = viewModel.surnameTextField
+                thawedContact.middleName = viewModel.patronymicTextField
+                thawedContact.meetingContext = viewModel.contextTextField
+                thawedContact.appearance = viewModel.appearanceTextField
+                thawedContact.notes = viewModel.noteTextField
+                thawedContact.tags = tagsList
+                thawedContact.meetingPlace = meetingPlace
+            }
+            isPresented = false
+        } catch {
+            print("Ошибка сохранения в Realm: \(error.localizedDescription)")
+        }
+    }
+    
+    private func deleteContact() {
+        do {
+            let realm = try Realm()
+            
+            // Поиск контакта по id в текущем Realm
+            guard let contactToDelete = realm.object(ofType: Contact.self, forPrimaryKey: contact.id) else {
+                print("Ошибка: Контакт с id \(contact.id) не найден в текущем Realm.")
+                return
+            }
+            
+            try realm.write {
+                realm.delete(contactToDelete)
+            }
+            
+            isPresented = false
+        } catch {
+            print("Ошибка удаления контакта из Realm: \(error.localizedDescription)")
+        }
+    }
+}
+
+#Preview {
+    ContentView()
+}
