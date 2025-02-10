@@ -8,6 +8,5 @@
 import SwiftUI
 
 final class CustomTabBarViewModel: ObservableObject {
-    
     @Published var isSheetPresented: Bool = false
 }

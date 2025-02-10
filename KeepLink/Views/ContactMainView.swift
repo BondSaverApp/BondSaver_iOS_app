@@ -11,7 +11,7 @@ import RealmSwift
 struct ContactMainView: View {
     
     @ObservedRealmObject var contact: Contact // Привязка объекта Realm
-    @EnvironmentObject var tabBarState: TabBarState
+    @Environment(\.tabBarIsVisible) var tabBarState
     @StateObject var viewModel = ContactMainViewModel()
     
     var body: some View {
@@ -84,12 +84,6 @@ struct ContactMainView: View {
                         Text("Редактировать")
                     }
                 }
-            }
-            .onAppear {
-                tabBarState.isVisible = false
-            }
-            .onDisappear {
-                tabBarState.isVisible = true
             }
             .fullScreenCover(isPresented: $viewModel.isEditViewPresented) {
                 ContactEditView(contact: contact, isPresented: $viewModel.isEditViewPresented)

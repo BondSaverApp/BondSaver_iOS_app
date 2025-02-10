@@ -9,11 +9,11 @@ import SwiftUI
 
 struct CustomTabBarView: View {
     @Binding var activeTab: TabModel
-    @EnvironmentObject var tabBarState: TabBarState
+    @Environment(\.tabBarIsVisible) var tabBarIsVisible
     @StateObject var viewModel = CustomTabBarViewModel()
     
     var body: some View {
-        if tabBarState.isVisible {
+        if tabBarIsVisible {
             ZStack{
                 Rectangle()
                     .fill(.ultraThinMaterial)

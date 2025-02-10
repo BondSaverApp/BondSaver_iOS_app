@@ -8,7 +8,6 @@
 import SwiftUI
 
 final class ContactAddViewModel: ObservableObject {
-    
     @Published var nameTextField: String = ""
     @Published var surnameTextField: String = ""
     @Published var patronymicTextField: String = ""
