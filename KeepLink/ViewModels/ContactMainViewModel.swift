@@ -8,7 +8,6 @@
 import SwiftUI
 
 final class ContactMainViewModel: ObservableObject {
-    
     @Published var isEditViewPresented: Bool = false
     
     @Published var dateOfBirthPicker: Date = Date.now

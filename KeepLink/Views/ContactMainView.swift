@@ -9,9 +9,9 @@ import SwiftUI
 import RealmSwift
 
 struct ContactMainView: View {
-    
     @ObservedRealmObject var contact: Contact // Привязка объекта Realm
-    @Environment(\.tabBarIsVisible) var tabBarState
+    @Environment(\.tabBarHidden) private var tabBarHidden
+    @Environment(\.dismiss) private var dismiss
     @StateObject var viewModel = ContactMainViewModel()
     
     var body: some View {
@@ -27,7 +27,7 @@ struct ContactMainView: View {
                     }
                     .padding()
                     
-                    HStack(spacing: 40) {
+                    HStack() {
                         VStack {
                             Button {
                                 // phone call
@@ -72,10 +72,10 @@ struct ContactMainView: View {
                 contactInfoSection
                 
                 extraInfoSection
-                
             }
             .navigationTitle(Text("О контакте"))
             .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden()
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -84,10 +84,18 @@ struct ContactMainView: View {
                         Text("Редактировать")
                     }
                 }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("\(Image(systemName: "chevron.left"))Назад") {
+                        tabBarHidden.wrappedValue = false
+                        dismiss()
+                    }
+                }
             }
+            .onAppear { tabBarHidden.wrappedValue = true }
             .fullScreenCover(isPresented: $viewModel.isEditViewPresented) {
                 ContactEditView(contact: contact, isPresented: $viewModel.isEditViewPresented)
             }
+            .toolbar(.hidden, for: .tabBar)
         }
     }
     
@@ -115,61 +123,67 @@ struct ContactMainView: View {
         }
     }
     
+    @ViewBuilder
     private var avatar: some View {
-        Button {
-            // Действие для выбора фотографии
-        } label: {
-            if !viewModel.avatarUrl.isEmpty, let url = URL(string: viewModel.avatarUrl), let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .clipShape(Circle())
-                    .frame(height: 100)
-                    .foregroundColor(Color(.systemGray3))
-                    
-                    
-            } else {
-                Image(systemName: "person.crop.circle")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .clipShape(Circle())
-                    .frame(height: 100)
-                    .foregroundColor(Color(.systemGray3))
-                    
-            }
+        if let avatarData = contact.avatarData,
+           let uiImage = UIImage(data: avatarData) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .clipShape(Circle())
+                .frame(width: 100, height: 100)
+        } else {
+            Image(systemName: "person.circle.fill")
+                .resizable()
+                .clipShape(Circle())
+                .frame(width: 100, height: 100)
+                .foregroundColor(.gray)
         }
     }
     
     private var aboutContactSection: some View {
         Section(header: Text("О контакте")) {
             TextField("Внешние особенности", text: $contact.appearance)
+                .disabled(true)
 //            TextField("Цель общения", text: )
             TextField("Контекст знакомства", text: $contact.meetingContext)
+                .disabled(true)
             DatePicker("Дата рождения", selection: $viewModel.dateOfBirth, displayedComponents: .date)
+                .disabled(true)
         }
     }
     
     private var contactInfoSection: some View {
         Section(header: Text("Контактная информация")) {
             TextField("Номер телефона", text: $viewModel.phoneTextField)
+                .disabled(true)
             TextField("Социальная сеть", text: $viewModel.networkTextField)
+                .disabled(true)
             TextField("Email", text: $viewModel.emailTextField)
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
+                .disabled(true)
             TextField("Город", text: $contact.city)
+                .disabled(true)
             TextField("Улица", text: $contact.street)
+                .disabled(true)
             TextField("Дом", text: $contact.house)
+                .disabled(true)
             TextField("Квартира", text: $contact.apartment)
+                .disabled(true)
             TextField("Сайт", text: $contact.website)
+                .disabled(true)
         }
     }
     
     private var extraInfoSection: some View {
         Section(header: Text("Дополнительная информация")) {
             TextField("Профессия", text: $viewModel.professionTextField)
+                .disabled(true)
             TextField("Здесь должны быть теги", text: $viewModel.noteTextField)
+                .disabled(true)
             TextField("Заметка...", text: $viewModel.noteTextField)
+                .disabled(true)
         }
     }
     
@@ -198,6 +212,7 @@ struct ContactMainView: View {
     private var aimSection: some View {
         Section {
             TextField("Цель общения", text: $viewModel.aimTextField)
+                .disabled(true)
         } header: {
             Text("Цель общения")
         }
@@ -220,6 +235,7 @@ struct mainViewButtonStyle: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 20, height: 20)
             }
+            .frame(maxWidth: .infinity)
     }
 }
 
@@ -240,3 +256,28 @@ struct nameContactStyle: View {
 //#Preview {
 //    ContactMainView(isContactMainPresented: .co, nameTextField: <#T##Binding<String>#>, surnameTextField: <#T##Binding<String>#>, patronymicTextField: <#T##Binding<String>#>, phoneTextField: <#T##Binding<String>#>, contextTextField: <#T##Binding<String>#>, aimTextField: <#T##Binding<String>#>, noteTextField: <#T##Binding<String>#>, appearanceTextField: <#T##Binding<String>#>, cityTextField: <#T##Binding<String>#>, streetTextField: <#T##Binding<String>#>, houseTextField: <#T##Binding<String>#>, flatTextField: <#T##Binding<String>#>, websiteTextField: <#T##Binding<String>#>, networkTextField: <#T##Binding<String>#>, professionTextField: <#T##Binding<String>#>, emailTextField: <#T##Binding<String>#>, avatarUrl: <#T##Binding<String>#>, selectedTags: <#T##Binding<[String]>#>, dateOfBirth: <#T##Binding<Date>#>)
 //}
+struct CustomView: UIViewControllerRepresentable {
+    class Coordinator: NSObject {
+        var onWillDisappear: (() -> Void)?
+    }
+
+    let onWillDisappear: () -> Void
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        let viewController = UIViewController()
+        viewController.view = UIView()
+        return viewController
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        context.coordinator.onWillDisappear = onWillDisappear
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    static func dismantleUIViewController(_ uiViewController: UIViewController, coordinator: Coordinator) {
+        coordinator.onWillDisappear?()
+    }
+}

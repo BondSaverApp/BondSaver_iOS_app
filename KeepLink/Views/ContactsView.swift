@@ -108,8 +108,9 @@ struct ContactsView: View {
     // Вспомогательное представление для аватара
     @ViewBuilder
     func avatarView(for contact: Contact) -> some View {
-        if !contact.avatar.isEmpty, let url = URL(string: contact.avatar), let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
-            Image(uiImage: image)
+        if let avatarData = contact.avatarData,
+           let uiImage = UIImage(data: avatarData) {
+            Image(uiImage: uiImage)
                 .resizable()
                 .clipShape(Circle())
                 .frame(width: 40, height: 40)

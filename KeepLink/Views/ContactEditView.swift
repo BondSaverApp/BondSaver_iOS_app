@@ -20,7 +20,6 @@ struct ContactEditView: View {
                                 surnameTextField: $viewModel.surnameTextField,
                                 patronymicTextField: $viewModel.patronymicTextField,
                                 contextTextField: $viewModel.contextTextField,
-                                aimTextField: $viewModel.aimTextField,
                                 noteTextField: $viewModel.noteTextField,
                                 phoneTextField: $viewModel.phoneTextField,
                                 appearanceTextField: $viewModel.appearanceTextField,
@@ -33,7 +32,7 @@ struct ContactEditView: View {
                                 professionTextField: $viewModel.professionTextField,
                                 emailTextField: $viewModel.emailTextField,
                                 dateOfBirth: $viewModel.dateOfBirth,
-                                avatarUrl: $viewModel.avatarUrl,
+                                selectedImageData: $viewModel.selectedImageData,
                                 selectedTags: $viewModel.selectedTags,
                                 isShowingContextsOfMeeting: $viewModel.isShowingContextsOfMeeting,
                                 isShowingTags: $viewModel.isShowingTags,
@@ -46,7 +45,8 @@ struct ContactEditView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Сохранить") {
-                        saveContact()
+                        viewModel.saveContact(contact)
+                        isPresented = false
                     }
                 }
                 ToolbarItem(placement: .topBarLeading) {
@@ -56,16 +56,7 @@ struct ContactEditView: View {
                 }
             }
             .onAppear {
-                viewModel.nameTextField = contact.firstName
-                viewModel.surnameTextField = contact.lastName
-                viewModel.patronymicTextField = contact.middleName
-                viewModel.appearanceTextField = contact.appearance
-                viewModel.noteTextField = contact.notes
-                viewModel.avatarUrl = contact.avatar
-                viewModel.selectedTags = contact.tags.map { tag in
-                    tag.name
-                }
-                viewModel.contextTextField = contact.meetingPlace?.name ?? ""
+                viewModel.loadData(from: contact)
             }
             .sheet(isPresented: $viewModel.isShowingContextsOfMeeting) {
                 ContactMeetingPlaceView(isShowingContextsOfMeeting: $viewModel.isShowingContextsOfMeeting,
@@ -101,42 +92,42 @@ struct ContactEditView: View {
     }
 
     /// Сохранение изменений в базе данных
-    private func saveContact() {
-        guard let thawedContact = contact.thaw() else {
-            print("Ошибка: Не удалось разморозить объект.")
-            return
-        }
-        
-        do {
-            let realm = try Realm()
-            
-            let tags = viewModel.selectedTags.map { tagString -> Tag in
-                let tag = Tag()
-                tag.name = tagString
-                return tag
-            }
-            
-            let tagsList = RealmSwift.List<Tag>()
-            tagsList.append(objectsIn: tags)
-            
-            let meetingPlace = MeetingPlace()
-            meetingPlace.name = viewModel.contextTextField
-            
-            try realm.write {
-                thawedContact.firstName = viewModel.nameTextField
-                thawedContact.lastName = viewModel.surnameTextField
-                thawedContact.middleName = viewModel.patronymicTextField
-                thawedContact.meetingContext = viewModel.contextTextField
-                thawedContact.appearance = viewModel.appearanceTextField
-                thawedContact.notes = viewModel.noteTextField
-                thawedContact.tags = tagsList
-                thawedContact.meetingPlace = meetingPlace
-            }
-            isPresented = false
-        } catch {
-            print("Ошибка сохранения в Realm: \(error.localizedDescription)")
-        }
-    }
+//    private func saveContact() {
+//        guard let thawedContact = contact.thaw() else {
+//            print("Ошибка: Не удалось разморозить объект.")
+//            return
+//        }
+//        
+//        do {
+//            let realm = try Realm()
+//            
+//            let tags = viewModel.selectedTags.map { tagString -> Tag in
+//                let tag = Tag()
+//                tag.name = tagString
+//                return tag
+//            }
+//            
+//            let tagsList = RealmSwift.List<Tag>()
+//            tagsList.append(objectsIn: tags)
+//            
+//            let meetingPlace = MeetingPlace()
+//            meetingPlace.name = viewModel.contextTextField
+//            
+//            try realm.write {
+//                thawedContact.firstName = viewModel.nameTextField
+//                thawedContact.lastName = viewModel.surnameTextField
+//                thawedContact.middleName = viewModel.patronymicTextField
+//                thawedContact.meetingContext = viewModel.contextTextField
+//                thawedContact.appearance = viewModel.appearanceTextField
+//                thawedContact.notes = viewModel.noteTextField
+//                thawedContact.tags = tagsList
+//                thawedContact.meetingPlace = meetingPlace
+//            }
+//            isPresented = false
+//        } catch {
+//            print("Ошибка сохранения в Realm: \(error.localizedDescription)")
+//        }
+//    }
     
     private func deleteContact() {
         do {

@@ -10,7 +10,7 @@ import RealmSwift
 
 struct ContentView: View {
     @State private var activeTab: TabModel = .contacts
-    @EnvironmentObject var tabBarState: TabBarState
+    @State private var isTabBarHidden = false
     
     var body: some View {
         Group {
@@ -47,8 +47,12 @@ struct ContentView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            CustomTabBarView(activeTab: $activeTab)
+            if !isTabBarHidden {
+                CustomTabBarView(activeTab: $activeTab)
+            }
         }
+        .animation(.none, value: isTabBarHidden)
+        .environment(\.tabBarHidden, $isTabBarHidden)
     }
 }
 

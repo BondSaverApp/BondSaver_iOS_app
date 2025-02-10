@@ -9,55 +9,52 @@ import SwiftUI
 
 struct CustomTabBarView: View {
     @Binding var activeTab: TabModel
-    @Environment(\.tabBarIsVisible) var tabBarIsVisible
     @StateObject var viewModel = CustomTabBarViewModel()
     
     var body: some View {
-        if tabBarIsVisible {
-            ZStack{
-                Rectangle()
-                    .fill(.ultraThinMaterial)
-                    .mask {
-                        VStack(spacing: 0) {
-                            LinearGradient(
-                                colors: [
-                                    Color.black.opacity(1),
-                                    Color.black.opacity(0)
-                                ],
-                                startPoint: .bottom,
-                                endPoint: .center
-                            )
-                            Rectangle()
-                        }
+        ZStack{
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .mask {
+                    VStack(spacing: 0) {
+                        LinearGradient(
+                            colors: [
+                                Color.black.opacity(1),
+                                Color.black.opacity(0)
+                            ],
+                            startPoint: .bottom,
+                            endPoint: .center
+                        )
+                        Rectangle()
                     }
-                    .ignoresSafeArea()
-                    .frame(height: 150)
-                Color(UIColor.systemBackground)
-                    .opacity(0.7)
-                    .mask {
-                        VStack(spacing: 0) {
-                            LinearGradient(
-                                colors: [
-                                    Color.black.opacity(1),
-                                    Color.black.opacity(0)
-                                ],
-                                startPoint: .bottom,
-                                endPoint: .center
-                            )
-                            Rectangle()
-                        }
-                    }
-                    .ignoresSafeArea()
-                    .frame(height: 150)
-                HStack {
-                    tabBarItem(.contacts)
-                    tabBarItem(.profile)
-                    plusButton
-                    tabBarItem(.notifications)
-                    tabBarItem(.settings)
                 }
-                .offset(y: 50)
+                .ignoresSafeArea()
+                .frame(height: 150)
+            Color(UIColor.systemBackground)
+                .opacity(0.7)
+                .mask {
+                    VStack(spacing: 0) {
+                        LinearGradient(
+                            colors: [
+                                Color.black.opacity(1),
+                                Color.black.opacity(0)
+                            ],
+                            startPoint: .bottom,
+                            endPoint: .center
+                        )
+                        Rectangle()
+                    }
+                }
+                .ignoresSafeArea()
+                .frame(height: 150)
+            HStack {
+                tabBarItem(.contacts)
+                tabBarItem(.profile)
+                plusButton
+                tabBarItem(.notifications)
+                tabBarItem(.settings)
             }
+            .offset(y: 50)
         }
     }
     

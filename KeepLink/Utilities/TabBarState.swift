@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-private struct TabBarStateKey: EnvironmentKey {
-    static let defaultValue: Bool = true
+private struct TabBarHiddenKey: EnvironmentKey {
+    static let defaultValue: Binding<Bool> = .constant(false)
 }
 
 extension EnvironmentValues {
-    var tabBarIsVisible: Bool {
-        get { self[TabBarStateKey.self] }
-        set { self[TabBarStateKey.self] = newValue }
+    var tabBarHidden: Binding<Bool> {
+        get { self[TabBarHiddenKey.self] }
+        set { self[TabBarHiddenKey.self] = newValue }
     }
 }

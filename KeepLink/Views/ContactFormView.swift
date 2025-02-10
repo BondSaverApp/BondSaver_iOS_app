@@ -6,14 +6,14 @@
 //
 
 import SwiftUI
+import PhotosUI
+import SwiftyCrop
 
 struct ContactFormView: View {
-    
     @Binding var nameTextField: String
     @Binding var surnameTextField: String
     @Binding var patronymicTextField: String
     @Binding var contextTextField: String
-    @Binding var aimTextField: String
     @Binding var noteTextField: String
     @Binding var phoneTextField: String
     @Binding var appearanceTextField: String
@@ -26,12 +26,17 @@ struct ContactFormView: View {
     @Binding var professionTextField: String
     @Binding var emailTextField: String
     @Binding var dateOfBirth: Date
-    @Binding var avatarUrl: String
+    @Binding var selectedImageData: Data?
     @Binding var selectedTags: [String]
     
     @Binding var isShowingContextsOfMeeting: Bool
     @Binding var isShowingTags: Bool
     @Binding var isShowingMore: Bool
+    
+    @State private var selectedItem: PhotosPickerItem? = nil
+    @State var showPhotosPicker = false
+    @State var showImageCropper = false
+    @State var showActionSheet = false
     
     var body: some View {
         Group {
@@ -43,7 +48,6 @@ struct ContactFormView: View {
             
             meetingContextSection
             
-            aimSection
             
             appearanceSection
             
@@ -51,28 +55,17 @@ struct ContactFormView: View {
             
             tagSection
             
-            if isShowingMore {
-                dateSection
-                
-                adressSection
-                
-                websiteSection
-                
-                networkSection
-                
-                professionSection
-                
-                emailSection
-            }
+            dateSection
             
-            Button {
-                withAnimation(.easeInOut(duration: 1.0)) {
-                    isShowingMore.toggle()
-                }
-            } label: {
-                Text(isShowingMore ? "Show Less" : "Show More...")
-            }
+            adressSection
             
+            websiteSection
+            
+            networkSection
+            
+            professionSection
+            
+            emailSection
         }
     }
     
@@ -101,30 +94,73 @@ struct ContactFormView: View {
         }
     }
     
-    
     private var avatarSection: some View {
         Section {
-            Button {
-                // Действие для выбора фотографии
-            } label: {
-                HStack {
-                    if !avatarUrl.isEmpty, let url = URL(string: avatarUrl), let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
-                        Image(uiImage: image)
-                            .resizable()
-                            .clipShape(Circle())
-                            .frame(width: 50, height: 50)
+            HStack {
+                if let selectedImageData,
+                   let uiImage = UIImage(data: selectedImageData) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .clipShape(Circle())
+                        .frame(width: 50, height: 50)
+                } else {
+                    Image(systemName: "person.crop.circle")
+                        .resizable()
+                        .clipShape(Circle())
+                        .frame(width: 50, height: 50)
+                        .foregroundColor(.gray)
+                }
+                
+                Button("Выбрать фото") {
+                    if let selectedImageData,
+                       let _ = UIImage(data: selectedImageData) {
+                        showActionSheet = true
                     } else {
-                        Image(systemName: "person.crop.circle")
-                            .resizable()
-                            .clipShape(Circle())
-                            .frame(width: 50, height: 50)
-                            .foregroundColor(.gray)
+                        showPhotosPicker = true
                     }
-                    Text("Выбрать фото")
+                }
+                .confirmationDialog("Выберите действие", isPresented: $showActionSheet, titleVisibility: .visible) {
+                    Button("Обрезать текущее фото") {
+                        showImageCropper = true
+                    }
+                    Button("Выбрать новое фото") {
+                        showPhotosPicker = true
+                    }
+                    Button("Отмена", role: .cancel) {}
+                }
+                .fullScreenCover(isPresented: $showImageCropper) {
+                    if let selectedImageData,
+                       let uiImage = UIImage(data: selectedImageData) {
+                        SwiftyCropView(
+                            imageToCrop: uiImage,
+                            maskShape: .circle,
+                            configuration: SwiftyCropConfiguration(
+                                maxMagnificationScale: 4.0,
+                                maskRadius: 130.0,
+                                cropImageCircular: false,
+                                rotateImage: false,
+                                zoomSensitivity: 10.0,
+                                rectAspectRatio: 1
+                            )
+                        ) { croppedImage in
+                            // Do something with the returned, cropped image
+                            self.selectedImageData = compressImage(croppedImage)
+                        }
+                    }
+                }
+                .photosPicker(isPresented: $showPhotosPicker, selection: $selectedItem, matching: .images)
+                .onChange(of: selectedItem) { _, newItem in
+                    Task {
+                        if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                            selectedImageData = data
+                            showImageCropper = true
+                        }
+                    }
                 }
             }
         }
     }
+
     
     
     private var nameSection: some View {
@@ -166,16 +202,6 @@ struct ContactFormView: View {
             Text("Контекст знакомства")
         }
     }
-    
-    
-    private var aimSection: some View {
-        Section {
-            TextField("Цель общения", text: $aimTextField)
-        } header: {
-            Text("Цель общения")
-        }
-    }
-    
     
     private var noteSection: some View {
         Section {
@@ -257,3 +283,19 @@ struct ContactFormView: View {
     }
 }
 
+func compressImage(_ image: UIImage?, maxSizeMB: Double = 1.0) -> Data? {
+    let maxSizeBytes = Int(maxSizeMB * 1024 * 1024) // 1MB в байтах
+    var compression: CGFloat = 1.0 // Начинаем с максимального качества
+    if let image {
+        var imageData = image.jpegData(compressionQuality: compression)
+        
+        while let data = imageData, data.count > maxSizeBytes, compression > 0.1 {
+            compression -= 0.1 // Понижаем качество на 10%
+            imageData = image.jpegData(compressionQuality: compression)
+        }
+        
+        return imageData
+    }
+    
+    return .none
+}

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		382240992D50031C00DA5DCC /* SwiftyCrop in Frameworks */ = {isa = PBXBuildFile; productRef = 382240982D50031C00DA5DCC /* SwiftyCrop */; };
 		3858877B2D3D0BCE00C79EA6 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3858877A2D3D0BCE00C79EA6 /* RealmSwift */; };
 		3858877C2D3D0BE100C79EA6 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 3858877A2D3D0BCE00C79EA6 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -42,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				382240992D50031C00DA5DCC /* SwiftyCrop in Frameworks */,
 				3858877B2D3D0BCE00C79EA6 /* RealmSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -87,6 +89,7 @@
 			name = KeepLink;
 			packageProductDependencies = (
 				3858877A2D3D0BCE00C79EA6 /* RealmSwift */,
+				382240982D50031C00DA5DCC /* SwiftyCrop */,
 			);
 			productName = KeepLink;
 			productReference = 38DB0F592D036C1A00285C9B /* KeepLink.app */;
@@ -118,6 +121,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				385887772D3D0BCE00C79EA6 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				382240972D50031C00DA5DCC /* XCRemoteSwiftPackageReference "SwiftyCrop" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 38DB0F5A2D036C1A00285C9B /* Products */;
@@ -353,6 +357,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		382240972D50031C00DA5DCC /* XCRemoteSwiftPackageReference "SwiftyCrop" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/benedom/SwiftyCrop.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		385887772D3D0BCE00C79EA6 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift.git";
@@ -364,6 +376,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		382240982D50031C00DA5DCC /* SwiftyCrop */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 382240972D50031C00DA5DCC /* XCRemoteSwiftPackageReference "SwiftyCrop" */;
+			productName = SwiftyCrop;
+		};
 		3858877A2D3D0BCE00C79EA6 /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 385887772D3D0BCE00C79EA6 /* XCRemoteSwiftPackageReference "realm-swift" */;
