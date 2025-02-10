@@ -10,7 +10,7 @@ import RealmSwift
 
 final class Contact: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) var id: ObjectId
-    @Persisted var avatar: String
+    @Persisted var avatarData: Data?
     @Persisted var firstName: String
     @Persisted var lastName: String
     @Persisted var middleName: String

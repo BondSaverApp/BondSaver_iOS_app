@@ -12,10 +12,13 @@ import RealmSwift
 
 struct ContactsView: View {
     @ObservedResults(Contact.self) var contacts
+    @EnvironmentObject var tabBarViewModel: CustomTabBarViewModel
+    
     @State private var searchText = ""
     @State private var selectedTag: String = "Выбрать тег"
     @State private var selectedContact: Contact?
-    @State var isEditViewPresented: Bool = false
+    @State private var isContactMainPresented: Bool = false
+   
     
     @State private var tags: [String] = UserDefaults.standard.stringArray(forKey: "Tags") ?? [
         "Web",
@@ -64,15 +67,13 @@ struct ContactsView: View {
                 // Удаляем наблюдателя
                 NotificationCenter.default.removeObserver(self, name: .tagsUpdated, object: nil)
             }
-        }
-        .fullScreenCover(isPresented: $isEditViewPresented, onDismiss: { selectedContact = nil }) {
-            if let selectedContact = selectedContact {
-                ContactEditView(contact: selectedContact, isPresented: $isEditViewPresented)
-            }
-        }
-        .onChange(of: selectedContact) { _, newValue in
-            if newValue != nil {
-                isEditViewPresented = true
+            .navigationDestination(isPresented: Binding(
+                get: { selectedContact != nil },
+                set: { if !$0 { selectedContact = nil } }
+            )) {
+                if let selectedContact {
+                    ContactMainView(contact: selectedContact)
+                }
             }
         }
     }
@@ -107,8 +108,9 @@ struct ContactsView: View {
     // Вспомогательное представление для аватара
     @ViewBuilder
     func avatarView(for contact: Contact) -> some View {
-        if !contact.avatar.isEmpty, let url = URL(string: contact.avatar), let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
-            Image(uiImage: image)
+        if let avatarData = contact.avatarData,
+           let uiImage = UIImage(data: avatarData) {
+            Image(uiImage: uiImage)
                 .resizable()
                 .clipShape(Circle())
                 .frame(width: 40, height: 40)

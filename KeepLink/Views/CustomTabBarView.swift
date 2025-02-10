@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CustomTabBarView: View {
     @Binding var activeTab: TabModel
-    @State var isSheetPresented: Bool = false
+    @StateObject var viewModel = CustomTabBarViewModel()
     
     var body: some View {
         ZStack{
@@ -60,7 +60,7 @@ struct CustomTabBarView: View {
     
     var plusButton: some View {
         Button {
-            isSheetPresented = true
+            viewModel.isSheetPresented = true
         } label: {
             Image(systemName: "plus.circle.fill")
                 .resizable()
@@ -69,8 +69,8 @@ struct CustomTabBarView: View {
         }
         .frame(maxWidth: .infinity)
         .offset(y: -20)
-        .fullScreenCover(isPresented: $isSheetPresented) {
-            ContactAddView(isPresented: $isSheetPresented)
+        .fullScreenCover(isPresented: $viewModel.isSheetPresented) {
+            ContactAddView(isPresented: $viewModel.isSheetPresented)
         }
     }
     
