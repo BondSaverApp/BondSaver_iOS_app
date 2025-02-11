@@ -35,9 +35,7 @@ struct ContactEditView: View {
                                 selectedImageData: $viewModel.selectedImageData,
                                 selectedTags: $viewModel.selectedTags,
                                 isShowingContextsOfMeeting: $viewModel.isShowingContextsOfMeeting,
-                                isShowingTags: $viewModel.isShowingTags,
-                                isShowingMore: $viewModel.isShowingMore)
-                
+                                isShowingTags: $viewModel.isShowingTags)
                 deleteSection
             }
             .navigationTitle("Редактировать контакт")
@@ -90,44 +88,6 @@ struct ContactEditView: View {
             }
         }
     }
-
-    /// Сохранение изменений в базе данных
-//    private func saveContact() {
-//        guard let thawedContact = contact.thaw() else {
-//            print("Ошибка: Не удалось разморозить объект.")
-//            return
-//        }
-//        
-//        do {
-//            let realm = try Realm()
-//            
-//            let tags = viewModel.selectedTags.map { tagString -> Tag in
-//                let tag = Tag()
-//                tag.name = tagString
-//                return tag
-//            }
-//            
-//            let tagsList = RealmSwift.List<Tag>()
-//            tagsList.append(objectsIn: tags)
-//            
-//            let meetingPlace = MeetingPlace()
-//            meetingPlace.name = viewModel.contextTextField
-//            
-//            try realm.write {
-//                thawedContact.firstName = viewModel.nameTextField
-//                thawedContact.lastName = viewModel.surnameTextField
-//                thawedContact.middleName = viewModel.patronymicTextField
-//                thawedContact.meetingContext = viewModel.contextTextField
-//                thawedContact.appearance = viewModel.appearanceTextField
-//                thawedContact.notes = viewModel.noteTextField
-//                thawedContact.tags = tagsList
-//                thawedContact.meetingPlace = meetingPlace
-//            }
-//            isPresented = false
-//        } catch {
-//            print("Ошибка сохранения в Realm: \(error.localizedDescription)")
-//        }
-//    }
     
     private func deleteContact() {
         do {

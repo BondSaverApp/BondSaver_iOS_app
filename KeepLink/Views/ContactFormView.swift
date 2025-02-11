@@ -31,7 +31,6 @@ struct ContactFormView: View {
     
     @Binding var isShowingContextsOfMeeting: Bool
     @Binding var isShowingTags: Bool
-    @Binding var isShowingMore: Bool
     
     @State private var selectedItem: PhotosPickerItem? = nil
     @State var showPhotosPicker = false

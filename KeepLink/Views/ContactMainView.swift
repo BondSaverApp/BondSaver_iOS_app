@@ -23,7 +23,7 @@ struct ContactMainView: View {
                         .multilineTextAlignment(.center)
                         .padding(.top, 10)
                     HStack {
-                        nameContactStyle(name: contact.lastName, lastName: contact.firstName, middleName: contact.middleName)
+                        contactName
                     }
                     .padding()
                     
@@ -32,8 +32,12 @@ struct ContactMainView: View {
                             Button {
                                 // phone call
                             } label: {
-                                    mainViewButtonStyle(imageName: "phone.fill")
+                                Image(systemName: "phone.fill")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 20, height: 20)
                             }
+                            .buttonStyle(mainViewButtonStyle())
                             Text("Вызов")
                         }
                         
@@ -41,8 +45,12 @@ struct ContactMainView: View {
                             Button {
                                 // send a message
                             } label: {
-                                mainViewButtonStyle(imageName: "message.fill")
+                                Image(systemName: "message.fill")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 20, height: 20)
                             }
+                            .buttonStyle(mainViewButtonStyle())
                             Text("SMS")
                         }
                         
@@ -50,8 +58,12 @@ struct ContactMainView: View {
                             Button {
                                 // video call
                             } label: {
-                                mainViewButtonStyle(imageName: "video.fill")
+                                Image(systemName: "video.fill")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 20, height: 20)
                             }
+                            .buttonStyle(mainViewButtonStyle())
                             Text("Видео")
                         }
                         
@@ -60,8 +72,12 @@ struct ContactMainView: View {
                             Button {
                                 // send email
                             } label: {
-                                mainViewButtonStyle(imageName: "envelope.fill")
+                                Image(systemName: "envelope.fill")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 20, height: 20)
                             }
+                            .buttonStyle(mainViewButtonStyle())
                             Text("Письмо")
                         }
                     }
@@ -91,32 +107,30 @@ struct ContactMainView: View {
                     }
                 }
             }
-            .onAppear { tabBarHidden.wrappedValue = true }
+            .onAppear {
+                tabBarHidden.wrappedValue = true
+                viewModel.loadData(from: contact)
+            }
             .fullScreenCover(isPresented: $viewModel.isEditViewPresented) {
                 ContactEditView(contact: contact, isPresented: $viewModel.isEditViewPresented)
             }
-            .toolbar(.hidden, for: .tabBar)
         }
     }
     
     private var tagSection: some View {
         Section {
-            Button {
-//                isShowingTags = true
-            } label: {
-                HStack(alignment: .top){
-                    Text("Теги: ")
-                        .padding(.vertical, 5)
-                    LazyVStack(alignment: .leading) {
-                        
-                        ForEach(viewModel.selectedTags, id: \.self) {
-                            Text($0)
-                                .padding(5)
-                                .background{
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(Color(UIColor.systemGray6))
-                                }
-                        }
+            HStack(alignment: .top){
+                Text("Теги: ")
+                    .padding(.vertical, 5)
+                LazyVStack(alignment: .leading) {
+                    
+                    ForEach(viewModel.selectedTags, id: \.self) {
+                        Text($0)
+                            .padding(5)
+                            .background{
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(UIColor.systemGray6))
+                            }
                     }
                 }
             }
@@ -125,7 +139,7 @@ struct ContactMainView: View {
     
     @ViewBuilder
     private var avatar: some View {
-        if let avatarData = contact.avatarData,
+        if let avatarData = viewModel.selectedImageData,
            let uiImage = UIImage(data: avatarData) {
             Image(uiImage: uiImage)
                 .resizable()
@@ -142,13 +156,17 @@ struct ContactMainView: View {
     
     private var aboutContactSection: some View {
         Section(header: Text("О контакте")) {
-            TextField("Внешние особенности", text: $contact.appearance)
+            TextField("Внешние особенности", text: $viewModel.appearanceTextField)
                 .disabled(true)
-//            TextField("Цель общения", text: )
-            TextField("Контекст знакомства", text: $contact.meetingContext)
+            TextField("Контекст знакомства", text: $viewModel.contextTextField)
                 .disabled(true)
-            DatePicker("Дата рождения", selection: $viewModel.dateOfBirth, displayedComponents: .date)
+            if let date = viewModel.dateOfBirth {
+                DatePicker("Дата рождения", selection: Binding(
+                    get: { date },
+                    set: { _ in } // Запрещаем изменение
+                ), displayedComponents: .date)
                 .disabled(true)
+            }
         }
     }
     
@@ -159,19 +177,16 @@ struct ContactMainView: View {
             TextField("Социальная сеть", text: $viewModel.networkTextField)
                 .disabled(true)
             TextField("Email", text: $viewModel.emailTextField)
-                .keyboardType(.emailAddress)
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
                 .disabled(true)
-            TextField("Город", text: $contact.city)
+            TextField("Город", text: $viewModel.cityTextField)
                 .disabled(true)
-            TextField("Улица", text: $contact.street)
+            TextField("Улица", text: $viewModel.streetTextField)
                 .disabled(true)
-            TextField("Дом", text: $contact.house)
+            TextField("Дом", text: $viewModel.houseTextField)
                 .disabled(true)
-            TextField("Квартира", text: $contact.apartment)
+            TextField("Квартира", text: $viewModel.flatTextField)
                 .disabled(true)
-            TextField("Сайт", text: $contact.website)
+            TextField("Сайт", text: $viewModel.websiteTextField)
                 .disabled(true)
         }
     }
@@ -180,8 +195,7 @@ struct ContactMainView: View {
         Section(header: Text("Дополнительная информация")) {
             TextField("Профессия", text: $viewModel.professionTextField)
                 .disabled(true)
-            TextField("Здесь должны быть теги", text: $viewModel.noteTextField)
-                .disabled(true)
+            tagSection
             TextField("Заметка...", text: $viewModel.noteTextField)
                 .disabled(true)
         }
@@ -189,19 +203,15 @@ struct ContactMainView: View {
     
     private var meetingContextSection: some View {
         Section {
-            Button {
-//                isShowingContextsOfMeeting = true
-            } label: {
-                if !viewModel.contextTextField.isEmpty {
-                    HStack(spacing: 20){
-                        Image(systemName: "plus.circle.fill")
-                        Text(viewModel.contextTextField)
-                    }
-                } else {
-                    HStack(spacing: 20){
-                        Image(systemName: "plus.circle.fill")
-                        Text("Добавить место")
-                    }
+            if !viewModel.contextTextField.isEmpty {
+                HStack(spacing: 20){
+                    Image(systemName: "plus.circle.fill")
+                    Text(viewModel.contextTextField)
+                }
+            } else {
+                HStack(spacing: 20){
+                    Image(systemName: "plus.circle.fill")
+                    Text("Добавить место")
                 }
             }
         } header: {
@@ -218,66 +228,22 @@ struct ContactMainView: View {
         }
     }
     
-    
-}
-
-struct mainViewButtonStyle: View {
-    
-    var imageName: String
-    
-    var body: some View {
-        Circle()
-            .fill(Color(.systemGray6))
-            .frame(width: 50, height: 50)
-            .overlay {
-                Image(systemName: imageName)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 20, height: 20)
-            }
-            .frame(maxWidth: .infinity)
-    }
-}
-
-struct nameContactStyle: View {
-    
-    var name: String
-    var lastName: String
-    var middleName: String
-    
-    var body: some View {
-        Text("\(lastName) \(name) \(middleName)")
+    private var contactName: some View {
+        Text("\(viewModel.nameTextField) \(viewModel.surnameTextField)")
             .font(.title3)
             .fontWeight(.semibold)
             .multilineTextAlignment(.center)
     }
 }
 
-//#Preview {
-//    ContactMainView(isContactMainPresented: .co, nameTextField: <#T##Binding<String>#>, surnameTextField: <#T##Binding<String>#>, patronymicTextField: <#T##Binding<String>#>, phoneTextField: <#T##Binding<String>#>, contextTextField: <#T##Binding<String>#>, aimTextField: <#T##Binding<String>#>, noteTextField: <#T##Binding<String>#>, appearanceTextField: <#T##Binding<String>#>, cityTextField: <#T##Binding<String>#>, streetTextField: <#T##Binding<String>#>, houseTextField: <#T##Binding<String>#>, flatTextField: <#T##Binding<String>#>, websiteTextField: <#T##Binding<String>#>, networkTextField: <#T##Binding<String>#>, professionTextField: <#T##Binding<String>#>, emailTextField: <#T##Binding<String>#>, avatarUrl: <#T##Binding<String>#>, selectedTags: <#T##Binding<[String]>#>, dateOfBirth: <#T##Binding<Date>#>)
-//}
-struct CustomView: UIViewControllerRepresentable {
-    class Coordinator: NSObject {
-        var onWillDisappear: (() -> Void)?
-    }
-
-    let onWillDisappear: () -> Void
-
-    func makeUIViewController(context: Context) -> UIViewController {
-        let viewController = UIViewController()
-        viewController.view = UIView()
-        return viewController
-    }
-
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        context.coordinator.onWillDisappear = onWillDisappear
-    }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
-
-    static func dismantleUIViewController(_ uiViewController: UIViewController, coordinator: Coordinator) {
-        coordinator.onWillDisappear?()
+struct mainViewButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        Circle()
+            .fill(Color("ButtonSecondaryColor"))
+            .frame(width: 50, height: 50)
+            .overlay {
+                configuration.label
+            }
+            .frame(maxWidth: .infinity)
     }
 }

@@ -31,7 +31,6 @@ final class ContactAddViewModel: ObservableObject {
     @Published var selectedTags: [String] = []
     @Published var isShowingContextsOfMeeting = false
     @Published var isShowingTags = false
-    @Published var isShowingMore = false
     
     @Published var isAlertPresented = false // алерт для удаления
     @Published var showPhotosPicker = false

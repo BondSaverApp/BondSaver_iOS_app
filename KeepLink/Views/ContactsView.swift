@@ -16,10 +16,10 @@ struct ContactsView: View {
     
     @State private var searchText = ""
     @State private var selectedTag: String = "Выбрать тег"
-    @State private var selectedContact: Contact?
+    @State private var selectedContactForDetail: Contact?
+    @State private var selectedContactForEdit: Contact?
     @State private var isContactMainPresented: Bool = false
    
-    
     @State private var tags: [String] = UserDefaults.standard.stringArray(forKey: "Tags") ?? [
         "Web",
         "iOS",
@@ -67,13 +67,15 @@ struct ContactsView: View {
                 // Удаляем наблюдателя
                 NotificationCenter.default.removeObserver(self, name: .tagsUpdated, object: nil)
             }
-            .navigationDestination(isPresented: Binding(
-                get: { selectedContact != nil },
-                set: { if !$0 { selectedContact = nil } }
-            )) {
-                if let selectedContact {
-                    ContactMainView(contact: selectedContact)
-                }
+            .navigationDestination(item: $selectedContactForDetail) { contact in
+                ContactMainView(contact: contact)
+            }
+            .navigationDestination(item: $selectedContactForEdit) { contact in
+                ContactEditView(contact: contact, isPresented: Binding(
+                    get: { selectedContactForEdit != nil },
+                    set: { if !$0 { selectedContactForEdit = nil } }
+                ))
+                .navigationBarBackButtonHidden()
             }
         }
     }
@@ -83,19 +85,26 @@ struct ContactsView: View {
         List {
             ForEach(filteredContacts) { contact in
                 HStack(spacing: 20) {
-                    avatarView(for: contact)
-                    
-                    VStack(alignment: .leading) {
-                        Text("\(contact.firstName) \(contact.lastName)")
-                            .font(.system(size: 16))
-                            .fontWeight(.regular)
+                    HStack(spacing: 20) {
+                        avatarView(for: contact)
                         
-                        if !contact.notes.isEmpty {
-                            Text(contact.notes)
-                                .font(.system(size: 12))
-                                .foregroundColor(.gray)
+                        VStack(alignment: .leading) {
+                            Text("\(contact.firstName) \(contact.lastName)")
+                                .font(.system(size: 16))
+                                .fontWeight(.regular)
+                            
+                            if !contact.notes.isEmpty {
+                                Text(contact.notes)
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.gray)
+                            }
                         }
                     }
+                    .contentShape(Rectangle()) // Фиксируем область для onTapGesture
+                    .onTapGesture {
+                        selectedContactForDetail = contact
+                    }
+
                     Spacer()
                     phoneButton(for: contact)
                     editButton(for: contact)
@@ -126,25 +135,27 @@ struct ContactsView: View {
     // Кнопка вызова
     func phoneButton(for contact: Contact) -> some View {
         Button {
-            if let phoneNumber = contact.phoneNumbers.first?.number {
-                if let url = URL(string: "tel://\(phoneNumber)") {
-                    UIApplication.shared.open(url)
-                }
-            }
+//            if let phoneNumber = contact.phoneNumbers.first?.number {
+//                if let url = URL(string: "tel://\(phoneNumber)") {
+//                    UIApplication.shared.open(url)
+//                }
+//            }
         } label: {
-            Image(systemName: "phone.fill")
-                .scaledToFit()
-                .background(Circle()
+            ZStack {
+                Circle()
                     .fill(Color(.systemGray6))
                     .frame(width: 30, height: 30)
-                )
+                Image(systemName: "phone.fill")
+                    .scaledToFit()
+            }
         }
+        .frame(width: 30, height: 30)
     }
     
     // Кнопка редактирования
     func editButton(for contact: Contact) -> some View {
         Button {
-            selectedContact = contact
+            selectedContactForEdit = contact
         } label: {
             Image(systemName: "square.and.pencil")
                 .scaledToFit()

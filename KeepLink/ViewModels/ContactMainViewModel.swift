@@ -24,11 +24,38 @@ final class ContactMainViewModel: ObservableObject {
     @Published var networkTextField: String = ""
     @Published var professionTextField: String = ""
     @Published var emailTextField: String = ""
-    @Published var dateOfBirth = Date()
-    @Published var avatarUrl: String = "" // URL для аватара (опционально)
+    @Published var dateOfBirth: Date?
     
     @Published var selectedTags: [String] = []
     @Published var isShowingContextsOfMeeting = false
-    @Published var isShowingTags = false
     @Published var isShowingMore = false
+    
+    @Published var nameTextField: String = ""
+    @Published var surnameTextField: String = ""
+    @Published var patronymicTextField: String = ""
+    
+    @Published var selectedImageData: Data? = nil
+    
+    func loadData(from contact: Contact) {
+        nameTextField = contact.firstName
+        surnameTextField = contact.lastName
+        patronymicTextField = contact.middleName
+        appearanceTextField = contact.appearance
+        noteTextField = contact.notes
+        selectedImageData = contact.avatarData
+        selectedTags = contact.tags.map { tag in
+            tag.name
+        }
+        contextTextField = contact.meetingPlace?.name ?? ""
+        phoneTextField = contact.phoneNumbers.first?.number ?? ""
+        cityTextField = contact.city
+        streetTextField = contact.street
+        houseTextField = contact.house
+        flatTextField = contact.apartment
+        websiteTextField = contact.website
+        networkTextField = contact.socialNetworks.first?.link ?? ""
+        professionTextField = contact.professions.first?.title ?? ""
+        emailTextField = contact.emails.first?.email ?? ""
+        dateOfBirth = contact.dates.first?.date ?? nil
+    }
 }

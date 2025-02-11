@@ -35,8 +35,7 @@ struct ContactAddView: View {
                                 selectedImageData: $viewModel.selectedImageData,
                                 selectedTags: $viewModel.selectedTags,
                                 isShowingContextsOfMeeting: $viewModel.isShowingContextsOfMeeting,
-                                isShowingTags: $viewModel.isShowingTags,
-                                isShowingMore: $viewModel.isShowingMore)
+                                isShowingTags: $viewModel.isShowingTags)
                
             }
             .navigationTitle("Добавить контакт")
