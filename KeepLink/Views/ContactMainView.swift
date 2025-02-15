@@ -14,80 +14,37 @@ struct ContactMainView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject var viewModel = ContactMainViewModel()
     
+    @State private var activeTab: ContactMainTab = .info
+    
     var body: some View {
         NavigationStack {
-            Form {
-                VStack {
-                    avatar
-                        .frame(maxWidth: .infinity)
-                        .multilineTextAlignment(.center)
-                        .padding(.top, 10)
-                    HStack {
-                        contactName
+            
+            contactInfo()
+            
+            VStack(spacing: 0) {
+                TabHeader(activeTab: $activeTab)
+                
+                TabView(selection: $activeTab) {
+                    List {
+                        aboutContactSection
+                        contactInfoSection
+                        extraInfoSection
                     }
-                    .padding()
+                    .listStyle(.insetGrouped)
+                    .tag(ContactMainTab.info)
                     
-                    HStack() {
-                        VStack {
-                            Button {
-                                // phone call
-                            } label: {
-                                Image(systemName: "phone.fill")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 20, height: 20)
-                            }
-                            .buttonStyle(mainViewButtonStyle())
-                            Text("Вызов")
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            MeetingView(date: "27 февраля 2025 12:00", state: .planned)
+                            MeetingView(date: "11 февраля 2025 12:00", state: .inProgress)
+                            MeetingView(date: "5 февраля 2025 17:00", state: .finished)
                         }
-                        
-                        VStack {
-                            Button {
-                                // send a message
-                            } label: {
-                                Image(systemName: "message.fill")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 20, height: 20)
-                            }
-                            .buttonStyle(mainViewButtonStyle())
-                            Text("SMS")
-                        }
-                        
-                        VStack {
-                            Button {
-                                // video call
-                            } label: {
-                                Image(systemName: "video.fill")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 20, height: 20)
-                            }
-                            .buttonStyle(mainViewButtonStyle())
-                            Text("Видео")
-                        }
-                        
-                        
-                        VStack {
-                            Button {
-                                // send email
-                            } label: {
-                                Image(systemName: "envelope.fill")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 20, height: 20)
-                            }
-                            .buttonStyle(mainViewButtonStyle())
-                            Text("Письмо")
-                        }
+                        .padding(.top, 20)
                     }
+                    .tag(ContactMainTab.meetings)
+                    .scrollIndicators(.hidden)
                 }
-                
-                aboutContactSection
-                
-                contactInfoSection
-                
-                extraInfoSection
+                .tabViewStyle(.page(indexDisplayMode: .never))
             }
             .navigationTitle(Text("О контакте"))
             .navigationBarTitleDisplayMode(.inline)
@@ -114,6 +71,76 @@ struct ContactMainView: View {
             .fullScreenCover(isPresented: $viewModel.isEditViewPresented) {
                 ContactEditView(contact: contact, isPresented: $viewModel.isEditViewPresented)
             }
+        }
+    }
+    
+    @ViewBuilder
+    func contactInfo() -> some View {
+        VStack {
+            avatar
+                .frame(maxWidth: .infinity)
+                .multilineTextAlignment(.center)
+                .padding(.top, 20)
+            HStack {
+                contactName
+            }
+            .padding(10)
+            
+            HStack() {
+                VStack {
+                    Button {
+                        // phone call
+                    } label: {
+                        Image(systemName: "phone.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
+                    }
+                    .buttonStyle(mainViewButtonStyle())
+                    Text("Вызов")
+                }
+                
+                VStack {
+                    Button {
+                        // send a message
+                    } label: {
+                        Image(systemName: "message.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
+                    }
+                    .buttonStyle(mainViewButtonStyle())
+                    Text("SMS")
+                }
+                
+                VStack {
+                    Button {
+                        // video call
+                    } label: {
+                        Image(systemName: "video.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
+                    }
+                    .buttonStyle(mainViewButtonStyle())
+                    Text("Видео")
+                }
+                
+                
+                VStack {
+                    Button {
+                        // send email
+                    } label: {
+                        Image(systemName: "envelope.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
+                    }
+                    .buttonStyle(mainViewButtonStyle())
+                    Text("Письмо")
+                }
+            }
+            .padding(.horizontal, 25)
         }
     }
     
@@ -200,7 +227,7 @@ struct ContactMainView: View {
                 .disabled(true)
         }
     }
-    
+
     private var meetingContextSection: some View {
         Section {
             if !viewModel.contextTextField.isEmpty {
@@ -247,3 +274,7 @@ struct mainViewButtonStyle: ButtonStyle {
             .frame(maxWidth: .infinity)
     }
 }
+
+
+
+
