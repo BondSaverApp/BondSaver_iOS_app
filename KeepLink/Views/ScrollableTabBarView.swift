@@ -55,5 +55,4 @@ struct TabHeader_Previews: PreviewProvider {
     static var previews: some View {
         TabHeader(activeTab: $tab)
     }
-    
 }

@@ -45,6 +45,7 @@ struct ContactMainView: View {
                     .scrollIndicators(.hidden)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
+                .ignoresSafeArea(.container)
             }
             .navigationTitle(Text("О контакте"))
             .navigationBarTitleDisplayMode(.inline)
@@ -274,7 +275,3 @@ struct mainViewButtonStyle: ButtonStyle {
             .frame(maxWidth: .infinity)
     }
 }
-
-
-
-

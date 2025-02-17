@@ -56,7 +56,7 @@ struct MeetingView: View {
                 .stroke(Color.gray, lineWidth: 2)
 //                .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 2)
         )
-  
+        .padding(1)
     }
     
     private var stateColor: Color {
