@@ -1,0 +1,21 @@
+{
+  "images" : [
+    {
+      "filename" : "5ffb38d8-e9b3-4009-a4cf-791f40533c23_removalai_preview.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
