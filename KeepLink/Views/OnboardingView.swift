@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct OnboardingView: View {
+    @Binding var isLoggedIn: Bool
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -24,7 +26,7 @@ struct OnboardingView: View {
     
     var button: some View {
         NavigationLink {
-            AuthView()
+            AuthView(isLoggedIn: $isLoggedIn)
         } label: {
             Text("Продолжить с номером телефона")
                 .font(.system(size: 19, weight: .medium, design: .rounded))
@@ -81,5 +83,5 @@ struct OnboardingView: View {
 }
 
 #Preview {
-    OnboardingView()
+    OnboardingView(isLoggedIn: .constant(false))
 }

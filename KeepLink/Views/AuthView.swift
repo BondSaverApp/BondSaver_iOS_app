@@ -9,6 +9,9 @@ import SwiftUI
 
 struct AuthView: View {
     @State var phoneNumber = ""
+    @State private var isAccountExists: Bool? = nil // Состояние для управления переходом
+    @State private var isLoading = false // Состояние для отображения индикатора загрузки
+    @Binding var isLoggedIn: Bool
     
     var body: some View {
         NavigationStack {
@@ -23,6 +26,26 @@ struct AuthView: View {
                     button
                 }
                 .frame(maxHeight: .infinity, alignment: .top)
+            }
+            .navigationDestination(isPresented: Binding<Bool>(
+                get: { isAccountExists == true },
+                set: { _ in }
+            )) {
+                LoginView(isLoggedIn: $isLoggedIn, phoneNumber: phoneNumber) // Переход на LoginView, если isAccountExists == true
+            }
+            .navigationDestination(isPresented: Binding<Bool>(
+                get: { isAccountExists == false },
+                set: { _ in }
+            )) {
+                SignUpView(isLoggedIn: $isLoggedIn, phoneNumber: $phoneNumber) // Переход на SignUpView, если isAccountExists == false
+            }
+            .overlay {
+                if isLoading {
+                    ProgressView() // Индикатор загрузки
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(2)
+                        .opacity(0.5)
+                }
             }
         }
     }
@@ -55,7 +78,16 @@ struct AuthView: View {
     
     var button: some View {
         Button {
-            
+            Task {
+                isLoading = true // Показываем индикатор загрузки
+                do {
+                    let response = try await NetworkingClient.shared.checkAccount(phoneNumber: phoneNumber)
+                    isAccountExists = response.exists // Обновляем состояние для перехода
+                } catch {
+                    print("Ошибка в AuthView: " + error.localizedDescription)
+                }
+                isLoading = false // Скрываем индикатор загрузки
+            }
         } label: {
             Text("Продолжить")
                 .font(.system(size: 19, weight: .medium, design: .rounded))
@@ -66,6 +98,7 @@ struct AuthView: View {
                 .cornerRadius(23)
                 .padding()
         }
+        .disabled(isLoading) // Блокируем кнопку во время загрузки
     }
     
     var logo: some View {
@@ -82,5 +115,5 @@ struct AuthView: View {
 }
 
 #Preview {
-    AuthView()
+    AuthView(isLoggedIn: .constant(false))
 }
