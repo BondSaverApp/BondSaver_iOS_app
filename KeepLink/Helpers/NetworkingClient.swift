@@ -7,6 +7,7 @@
 
 import Foundation
 import OpenAPIURLSession
+import KeychainSwift
 
 // MARK: - NetworkingClient
 
@@ -70,6 +71,10 @@ public struct NetworkingClient {
         }
 
         let responseBody = try JSONDecoder().decode(AuthResponseWrapper.self, from: data)
+        
+        let keychain = KeychainSwift()
+        keychain.set(responseBody.accessToken, forKey: "accessToken")
+        
         return responseBody
     }
 
@@ -90,16 +95,26 @@ public struct NetworkingClient {
         }
 
         let responseBody = try JSONDecoder().decode(AuthResponseWrapper.self, from: data)
+        
+        let keychain = KeychainSwift()
+        keychain.set(responseBody.accessToken, forKey: "accessToken")
+        
         return responseBody
     }
 
     // MARK: - Refresh Token
 
-    public func refreshToken(refreshToken: String) async throws -> AuthResponseWrapper {
+    public func refreshToken(refreshToken: String = "") async throws -> AuthResponseWrapper {
         let url = baseURL.appendingPathComponent("/auth/refresh")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        if refreshToken == "" {
+            let keychain = KeychainSwift()
+            var refreshToken = keychain.get("accessToken") ?? ""
+        }
+        
         request.addCookies(["refreshToken": refreshToken])
 
         let (data, response) = try await URLSession.shared.data(for: request)

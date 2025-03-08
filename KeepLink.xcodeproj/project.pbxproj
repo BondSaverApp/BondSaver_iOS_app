@@ -10,6 +10,7 @@
 		382240992D50031C00DA5DCC /* SwiftyCrop in Frameworks */ = {isa = PBXBuildFile; productRef = 382240982D50031C00DA5DCC /* SwiftyCrop */; };
 		383905792D6AEFA400C902E4 /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 383905782D6AEFA400C902E4 /* OpenAPIRuntime */; };
 		3839057C2D6AEFF800C902E4 /* OpenAPIURLSession in Frameworks */ = {isa = PBXBuildFile; productRef = 3839057B2D6AEFF800C902E4 /* OpenAPIURLSession */; };
+		383905BA2D6B32A900C902E4 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 383905B92D6B32A900C902E4 /* KeychainSwift */; };
 		3858877B2D3D0BCE00C79EA6 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3858877A2D3D0BCE00C79EA6 /* RealmSwift */; };
 		3858877C2D3D0BE100C79EA6 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 3858877A2D3D0BCE00C79EA6 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -47,6 +48,7 @@
 			files = (
 				382240992D50031C00DA5DCC /* SwiftyCrop in Frameworks */,
 				383905792D6AEFA400C902E4 /* OpenAPIRuntime in Frameworks */,
+				383905BA2D6B32A900C902E4 /* KeychainSwift in Frameworks */,
 				3839057C2D6AEFF800C902E4 /* OpenAPIURLSession in Frameworks */,
 				3858877B2D3D0BCE00C79EA6 /* RealmSwift in Frameworks */,
 			);
@@ -97,6 +99,7 @@
 				382240982D50031C00DA5DCC /* SwiftyCrop */,
 				383905782D6AEFA400C902E4 /* OpenAPIRuntime */,
 				3839057B2D6AEFF800C902E4 /* OpenAPIURLSession */,
+				383905B92D6B32A900C902E4 /* KeychainSwift */,
 			);
 			productName = KeepLink;
 			productReference = 38DB0F592D036C1A00285C9B /* KeepLink.app */;
@@ -132,6 +135,7 @@
 				383905772D6AEFA400C902E4 /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */,
 				3839057A2D6AEFF800C902E4 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */,
 				3839058D2D6AF52E00C902E4 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */,
+				383905B82D6B32A900C902E4 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 38DB0F5A2D036C1A00285C9B /* Products */;
@@ -408,6 +412,14 @@
 				minimumVersion = 1.7.0;
 			};
 		};
+		383905B82D6B32A900C902E4 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 24.0.0;
+			};
+		};
 		385887772D3D0BCE00C79EA6 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift.git";
@@ -438,6 +450,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3839058D2D6AF52E00C902E4 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */;
 			productName = "plugin:OpenAPIGenerator";
+		};
+		383905B92D6B32A900C902E4 /* KeychainSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 383905B82D6B32A900C902E4 /* XCRemoteSwiftPackageReference "keychain-swift" */;
+			productName = KeychainSwift;
 		};
 		3858877A2D3D0BCE00C79EA6 /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
