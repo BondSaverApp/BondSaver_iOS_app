@@ -100,7 +100,7 @@ struct ContactEditView: View {
             }
             
             try realm.write {
-                realm.delete(contactToDelete)
+                contactToDelete.updateDeleteDate() // Обновляем дату удаления найденного контакта
             }
             
             isPresented = false

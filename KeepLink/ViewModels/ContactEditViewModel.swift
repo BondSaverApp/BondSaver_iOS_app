@@ -130,9 +130,13 @@ final class ContactEditViewModel: ObservableObject {
                 thawedContact.professions = professions
                 thawedContact.emails = emails
                 thawedContact.dates = dates
+                
+                thawedContact.updateClientModifiedDate() // Обновляем время изменения
             }
         } catch {
             print("Ошибка сохранения в Realm: \(error.localizedDescription)")
         }
     }
+    
+    
 }

@@ -37,11 +37,7 @@ final class ContactAddViewModel: ObservableObject {
     @Published var showImageCropper = false
     
     func saveContact(_ contact: Contact = Contact()) {
-        guard let thawedContact = contact.thaw() else {
-            print("Ошибка: Не удалось разморозить объект.")
-            return
-        }
-        
+
         do {
             let realm = try Realm()
             
@@ -88,26 +84,30 @@ final class ContactAddViewModel: ObservableObject {
             dates.append(date)
             
             try realm.write {
-                thawedContact.firstName = nameTextField
-                thawedContact.lastName = surnameTextField
-                thawedContact.middleName = patronymicTextField
-                thawedContact.meetingContext = contextTextField
-                thawedContact.appearance = appearanceTextField
-                thawedContact.avatarData = selectedImageData
-                thawedContact.notes = noteTextField
-                thawedContact.tags = tagsList
-                thawedContact.meetingPlace = meetingPlace
-                thawedContact.phoneNumbers = phoneNumbers
-                thawedContact.appearance = appearanceTextField
-                thawedContact.city = cityTextField
-                thawedContact.street = streetTextField
-                thawedContact.house = houseTextField
-                thawedContact.apartment = flatTextField
-                thawedContact.website = websiteTextField
-                thawedContact.socialNetworks = socialNetworks
-                thawedContact.professions = professions
-                thawedContact.emails = emails
-                thawedContact.dates = dates
+                contact.firstName = nameTextField
+                contact.lastName = surnameTextField
+                contact.middleName = patronymicTextField
+                contact.meetingContext = contextTextField
+                contact.appearance = appearanceTextField
+                contact.avatarData = selectedImageData
+                contact.notes = noteTextField
+                contact.tags = tagsList
+                contact.meetingPlace = meetingPlace
+                contact.phoneNumbers = phoneNumbers
+                contact.appearance = appearanceTextField
+                contact.city = cityTextField
+                contact.street = streetTextField
+                contact.house = houseTextField
+                contact.apartment = flatTextField
+                contact.website = websiteTextField
+                contact.socialNetworks = socialNetworks
+                contact.professions = professions
+                contact.emails = emails
+                contact.dates = dates
+                
+                contact.updateClientModifiedDate() // Обновляем время изменения
+                
+                realm.add(contact)
             }
         } catch {
             print("Ошибка сохранения в Realm: \(error.localizedDescription)")
