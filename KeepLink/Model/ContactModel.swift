@@ -30,6 +30,20 @@ final class Contact: Object, ObjectKeyIdentifiable {
     @Persisted var socialNetworks = List<SocialNetwork>()
     @Persisted var professions = List<Profession>()
     @Persisted var emails = List<Email>()
+    @Persisted var clientModifiedDate: Int64 = 0
+    @Persisted var serverModifiedDate: Int64?
+    @Persisted var deleteDate: Int64?
+    
+}
+
+extension Contact {
+    func updateClientModifiedDate() {
+        self.clientModifiedDate = Int64(Date().timeIntervalSince1970 * 1000)
+    }
+    
+    func updateDeleteDate() {
+        self.deleteDate = Int64(Date().timeIntervalSince1970 * 1000)
+    }
 }
 
 class Meeting: Object, ObjectKeyIdentifiable {

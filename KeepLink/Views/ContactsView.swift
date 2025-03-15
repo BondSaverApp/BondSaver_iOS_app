@@ -27,7 +27,7 @@ struct ContactsView: View {
     ]
     
     var filteredContacts: Results<Contact> {
-        var result = contacts
+        var result = contacts.filter("deleteDate == nil")
         
         // Фильтрация по тексту поиска
         if !searchText.isEmpty {

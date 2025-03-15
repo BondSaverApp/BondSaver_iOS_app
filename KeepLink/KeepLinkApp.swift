@@ -9,6 +9,7 @@ import SwiftUI
 import RealmSwift
 
 let config = Realm.Configuration(
+
     schemaVersion: 5,
     migrationBlock: { migration, oldSchemaVersion in
         if oldSchemaVersion < 2 {
@@ -21,6 +22,11 @@ let config = Realm.Configuration(
                 newObject!["phoneNumber"] = ""
             }
         }
+        if oldSchemaVersion < 4 {
+            migration.enumerateObjects(ofType: Contact.className()) { oldObject, newObject in
+                newObject?["clientModifiedDate"] = 0
+                newObject?["serverModifiedDate"] = nil
+                newObject?["deleteDate"] = nil
         if oldSchemaVersion < 5 {
             migration.enumerateObjects(ofType: Meeting.className()) { _, newObject in
                 newObject!["topics"] = RealmSwift.List<Topic>()
