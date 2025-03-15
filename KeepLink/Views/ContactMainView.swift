@@ -35,9 +35,9 @@ struct ContactMainView: View {
                     
                     ScrollView {
                         VStack(spacing: 20) {
-                            MeetingView(date: "27 февраля 2025 12:00", state: .planned)
-                            MeetingView(date: "11 февраля 2025 12:00", state: .inProgress)
-                            MeetingView(date: "5 февраля 2025 17:00", state: .finished)
+                            MeetingView(meeting: Meeting())
+                            MeetingView(meeting: Meeting())
+                            MeetingView(meeting: Meeting())
                         }
                         .padding(.top, 20)
                     }

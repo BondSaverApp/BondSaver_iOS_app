@@ -6,10 +6,37 @@
 //
 
 import SwiftUI
+import RealmSwift
 
 struct MeetingsView: View {
+    @StateObject private var viewModel = MeetingsViewModel()
+    @ObservedResults(Meeting.self) var meetings
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            List {
+                ForEach (meetings) { meeting in
+                    MeetingView(meeting: meeting, isOnMeetingsView: true)
+                        .onTapGesture {
+                            viewModel.selectMeeting(meeting)
+                        }
+                }
+            }
+            .listStyle(.plain)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Создать") {
+                        viewModel.showAddView()
+                    }
+                }
+            }
+            .fullScreenCover(item: $viewModel.selectedMeetingForEdit) { meeting in
+                MeetingEditView(meeting: meeting)
+            }
+            .fullScreenCover(isPresented: $viewModel.showsAddView) {
+                MeetingAddView()
+            }
+        }
     }
 }
 

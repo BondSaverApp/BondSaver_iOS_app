@@ -8,20 +8,31 @@
 import SwiftUI
 
 struct MeetingView: View {
-    
-    var date: String
-    var state: State
-    var toDiscuss: [String] = [
-        "Как успехи на стажировки DevOps'ом?",
-        "Обсудить технологический стек нашего пет проекта",
-        "Предложить новый пет проект"
-    ]
+    var meeting: Meeting
+
+    var isOnMeetingsView: Bool
+    private var state: State
     
     enum State: String {
         case planned = "Запланировано"
         case inProgress = "Сейчас"
         case finished = "Встреча закончилась"
     }
+    
+    init(meeting: Meeting, isOnMeetingsView: Bool = false) {
+        self.meeting = meeting
+        self.isOnMeetingsView = isOnMeetingsView
+        
+        switch Date().compare(meeting.date) {
+        case .orderedAscending:
+            state = .planned
+        case .orderedDescending:
+            state = .finished
+        case .orderedSame:
+            state = .inProgress
+        }
+    }
+    
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -33,23 +44,28 @@ struct MeetingView: View {
                 Text(state.rawValue)
             }
             .foregroundColor(stateColor)
-            Text(date)
+            Text(meeting.date.formatted(date: .long, time: .shortened))
                 .font(.headline)
                 .foregroundStyle(.primary)
                 .padding(.bottom, 6)
             Group {
-                ForEach(toDiscuss, id: \.self) { topic in
+                ForEach(meeting.topics, id: \.self) { topic in
                     HStack {
                         Image(systemName: "circle")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 5)
-                        Text(topic)
+                        Text(topic.title)
                             .font(.caption2)
                     }
                 }
             }
+            
+            if isOnMeetingsView {
+                contactAvatars
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(15)
         .background(
             RoundedRectangle(cornerRadius: 15)
@@ -57,6 +73,15 @@ struct MeetingView: View {
 //                .shadow(color: .black.opacity(0.2), radius: 5, x: 0, y: 2)
         )
         .padding(1)
+    }
+    
+    private var contactAvatars: some View {
+        return HStack {
+            ForEach(meeting.contactIds, id: \.self) { id in
+                let contact = DataBase.shared.contacts.first { $0.id == id } ?? Contact()
+                avatarView(for: contact)
+            }
+        }
     }
     
     private var stateColor: Color {
@@ -69,8 +94,21 @@ struct MeetingView: View {
             return Color.black.opacity(0.5)
         }
     }
-}
-
-#Preview {
-    MeetingView(date: "27 февраля 2025 12.00", state: .inProgress)
+    
+    @ViewBuilder
+    func avatarView(for contact: Contact) -> some View {
+        if let avatarData = contact.avatarData,
+           let uiImage = UIImage(data: avatarData) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .clipShape(Circle())
+                .frame(width: 40, height: 40)
+        } else {
+            Image(systemName: "person.circle.fill")
+                .resizable()
+                .clipShape(Circle())
+                .frame(width: 40, height: 40)
+                .foregroundColor(.gray)
+        }
+    }
 }

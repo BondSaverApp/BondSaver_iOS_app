@@ -11,11 +11,11 @@ struct ContentView: View {
     @State private var isLoggedIn: Bool = false
     
     var body: some View {
-        if !isLoggedIn {
-            OnboardingView(isLoggedIn: $isLoggedIn)
-        } else {
+//        if !isLoggedIn {
+//            OnboardingView(isLoggedIn: $isLoggedIn)
+//        } else {
             MainView()
-        }
+//        }
     }
 }
 

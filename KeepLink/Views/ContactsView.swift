@@ -9,7 +9,6 @@ import SwiftUI
 import RealmSwift
 
 
-
 struct ContactsView: View {
     @ObservedResults(Contact.self) var contacts
     @EnvironmentObject var tabBarViewModel: CustomTabBarViewModel

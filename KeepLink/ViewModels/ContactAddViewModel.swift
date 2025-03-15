@@ -37,10 +37,6 @@ final class ContactAddViewModel: ObservableObject {
     @Published var showImageCropper = false
     
     func saveContact(_ contact: Contact = Contact()) {
-//        guard let thawedContact = contact.thaw() else {
-//            print("Ошибка: Не удалось разморозить объект.")
-//            return
-//        }
         
         do {
             let realm = try Realm()
