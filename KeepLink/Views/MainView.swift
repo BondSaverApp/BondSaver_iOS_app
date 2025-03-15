@@ -30,7 +30,7 @@ struct MainView: View {
                             .toolbarVisibility(.hidden, for: .tabBar)
                     }
                     Tab(value: .profile) {
-                        Text("Profile")
+                        MeetingsView()
                             .toolbarVisibility(.hidden, for: .tabBar)
                     }
                 }
@@ -42,7 +42,7 @@ struct MainView: View {
                         .tag(TabModel.settings)
                     Text("Notifications")
                         .tag(TabModel.notifications)
-                    Text("Profile")
+                    MeetingsView()
                         .tag(TabModel.profile)
                 }
             }

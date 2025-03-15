@@ -1,0 +1,138 @@
+openapi: 3.0.0
+info:
+  title: Auth API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+    description: localhost deployment.
+paths:
+  /api/auth/check-account:
+    post:
+      summary: Check account existence
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckAccountRequest'
+      responses:
+        '200':
+          description: Returned account existence
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckAccountRequest'
+  /api/auth/signup:
+    post:
+      summary: User Signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '200':
+          description: Successfully signed up
+          headers:
+            Set-Cookie:
+              description: Sets the refresh token as an HTTP-only secure cookie
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /api/auth/login:
+    post:
+      summary: User Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successfully logged in
+          headers:
+            Set-Cookie:
+              description: Sets the refresh token as an HTTP-only secure cookie
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /api/auth/refresh:
+    post:
+      summary: Refresh Access Token
+      parameters:
+        - name: refreshToken
+          in: cookie
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully refreshed token
+          headers:
+            Set-Cookie:
+              description: Updates the refresh token as an HTTP-only secure cookie
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /api/auth/logout:
+    post:
+      summary: User Logout
+      responses:
+        '204':
+          description: Successfully logged out
+          headers:
+            Set-Cookie:
+              description: Clears the refresh token cookie
+              schema:
+                type: string
+components:
+  schemas:
+    CheckAccountRequest:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+    CheckAccountResponse:
+      type: object
+      properties:
+        exists:
+          type: boolean
+    SignupRequest:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+          nullable: true
+        username:
+          type: string
+    LoginRequest:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+        password:
+          type: string
+    AuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        accessTokenDuration:
+          type: number
+        tokenType:
+          type: string

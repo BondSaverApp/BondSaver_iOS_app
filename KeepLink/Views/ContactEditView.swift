@@ -10,7 +10,7 @@ import RealmSwift
 
 struct ContactEditView: View {
     @ObservedRealmObject var contact: Contact // Привязка объекта Realm
-    @Binding var isPresented: Bool
+    @Binding var isPresented: Bool 
     @StateObject var viewModel = ContactEditViewModel()
     
     var body: some View {

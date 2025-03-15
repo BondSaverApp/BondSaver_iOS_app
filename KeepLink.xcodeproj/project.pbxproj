@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		382240992D50031C00DA5DCC /* SwiftyCrop in Frameworks */ = {isa = PBXBuildFile; productRef = 382240982D50031C00DA5DCC /* SwiftyCrop */; };
+		383905792D6AEFA400C902E4 /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 383905782D6AEFA400C902E4 /* OpenAPIRuntime */; };
+		3839057C2D6AEFF800C902E4 /* OpenAPIURLSession in Frameworks */ = {isa = PBXBuildFile; productRef = 3839057B2D6AEFF800C902E4 /* OpenAPIURLSession */; };
+		383905BA2D6B32A900C902E4 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 383905B92D6B32A900C902E4 /* KeychainSwift */; };
 		3858877B2D3D0BCE00C79EA6 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3858877A2D3D0BCE00C79EA6 /* RealmSwift */; };
 		3858877C2D3D0BE100C79EA6 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 3858877A2D3D0BCE00C79EA6 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -44,6 +47,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				382240992D50031C00DA5DCC /* SwiftyCrop in Frameworks */,
+				383905792D6AEFA400C902E4 /* OpenAPIRuntime in Frameworks */,
+				383905BA2D6B32A900C902E4 /* KeychainSwift in Frameworks */,
+				3839057C2D6AEFF800C902E4 /* OpenAPIURLSession in Frameworks */,
 				3858877B2D3D0BCE00C79EA6 /* RealmSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -82,6 +88,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				383905912D6AF53900C902E4 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				38DB0F5B2D036C1A00285C9B /* KeepLink */,
@@ -90,6 +97,9 @@
 			packageProductDependencies = (
 				3858877A2D3D0BCE00C79EA6 /* RealmSwift */,
 				382240982D50031C00DA5DCC /* SwiftyCrop */,
+				383905782D6AEFA400C902E4 /* OpenAPIRuntime */,
+				3839057B2D6AEFF800C902E4 /* OpenAPIURLSession */,
+				383905B92D6B32A900C902E4 /* KeychainSwift */,
 			);
 			productName = KeepLink;
 			productReference = 38DB0F592D036C1A00285C9B /* KeepLink.app */;
@@ -122,6 +132,10 @@
 			packageReferences = (
 				385887772D3D0BCE00C79EA6 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				382240972D50031C00DA5DCC /* XCRemoteSwiftPackageReference "SwiftyCrop" */,
+				383905772D6AEFA400C902E4 /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */,
+				3839057A2D6AEFF800C902E4 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */,
+				3839058D2D6AF52E00C902E4 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */,
+				383905B82D6B32A900C902E4 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 38DB0F5A2D036C1A00285C9B /* Products */;
@@ -152,6 +166,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		383905912D6AF53900C902E4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 383905902D6AF53900C902E4 /* OpenAPIGenerator */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		38DB0F652D036C1B00285C9B /* Debug */ = {
@@ -367,6 +388,38 @@
 				kind = branch;
 			};
 		};
+		383905772D6AEFA400C902E4 /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-openapi-runtime.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.8.0;
+			};
+		};
+		3839057A2D6AEFF800C902E4 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-openapi-urlsession.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.2;
+			};
+		};
+		3839058D2D6AF52E00C902E4 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-openapi-generator.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.7.0;
+			};
+		};
+		383905B82D6B32A900C902E4 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 24.0.0;
+			};
+		};
 		385887772D3D0BCE00C79EA6 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift.git";
@@ -382,6 +435,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 382240972D50031C00DA5DCC /* XCRemoteSwiftPackageReference "SwiftyCrop" */;
 			productName = SwiftyCrop;
+		};
+		383905782D6AEFA400C902E4 /* OpenAPIRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 383905772D6AEFA400C902E4 /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */;
+			productName = OpenAPIRuntime;
+		};
+		3839057B2D6AEFF800C902E4 /* OpenAPIURLSession */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3839057A2D6AEFF800C902E4 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */;
+			productName = OpenAPIURLSession;
+		};
+		383905902D6AF53900C902E4 /* OpenAPIGenerator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3839058D2D6AF52E00C902E4 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */;
+			productName = "plugin:OpenAPIGenerator";
+		};
+		383905B92D6B32A900C902E4 /* KeychainSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 383905B82D6B32A900C902E4 /* XCRemoteSwiftPackageReference "keychain-swift" */;
+			productName = KeychainSwift;
 		};
 		3858877A2D3D0BCE00C79EA6 /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;

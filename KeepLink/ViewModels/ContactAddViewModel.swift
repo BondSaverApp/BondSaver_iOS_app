@@ -37,7 +37,6 @@ final class ContactAddViewModel: ObservableObject {
     @Published var showImageCropper = false
     
     func saveContact(_ contact: Contact = Contact()) {
-
         do {
             let realm = try Realm()
             
@@ -104,9 +103,9 @@ final class ContactAddViewModel: ObservableObject {
                 contact.professions = professions
                 contact.emails = emails
                 contact.dates = dates
-                
+              
                 contact.updateClientModifiedDate() // Обновляем время изменения
-                
+              
                 realm.add(contact)
             }
         } catch {

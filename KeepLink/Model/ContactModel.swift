@@ -46,17 +46,17 @@ extension Contact {
     }
 }
 
-class Meeting: Object {
+class Meeting: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) var id: ObjectId
     @Persisted var date: Date
     @Persisted var describe: String
     @Persisted var contactIds = List<ObjectId>() // ID контактов, связанных с встречей
+    @Persisted var topics = List<Topic>()
 }
 
-class Topic: Object {
+class Topic: Object, ObjectKeyIdentifiable {
     @Persisted var title: String
     @Persisted var describe: String
-    @Persisted var meetings = List<Meeting>() // Встречи, связанные с темой
 }
 
 class MeetingPlace: Object {

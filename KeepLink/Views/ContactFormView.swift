@@ -78,7 +78,6 @@ struct ContactFormView: View {
                     Text("Теги: ")
                         .padding(.vertical, 5)
                     LazyVStack(alignment: .leading) {
-                        
                         ForEach(selectedTags, id: \.self) {
                             Text($0)
                                 .padding(5)
