@@ -27,12 +27,14 @@ let config = Realm.Configuration(
                 newObject?["clientModifiedDate"] = 0
                 newObject?["serverModifiedDate"] = nil
                 newObject?["deleteDate"] = nil
-        if oldSchemaVersion < 5 {
-            migration.enumerateObjects(ofType: Meeting.className()) { _, newObject in
-                newObject!["topics"] = RealmSwift.List<Topic>()
-            }
-            migration.enumerateObjects(ofType: Topic.className()) { _, newObject in
-                newObject!["meetings"] = nil
+                if oldSchemaVersion < 5 {
+                    migration.enumerateObjects(ofType: Meeting.className()) { _, newObject in
+                        newObject!["topics"] = RealmSwift.List<Topic>()
+                    }
+                    migration.enumerateObjects(ofType: Topic.className()) { _, newObject in
+                        newObject!["meetings"] = nil
+                    }
+                }
             }
         }
     }

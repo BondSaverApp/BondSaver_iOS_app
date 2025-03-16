@@ -136,3 +136,5 @@ components:
           type: number
         tokenType:
           type: string
+        userId:
+          type: string

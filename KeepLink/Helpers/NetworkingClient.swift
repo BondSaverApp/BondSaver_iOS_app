@@ -74,6 +74,7 @@ public struct NetworkingClient {
         
         let keychain = KeychainSwift()
         keychain.set(responseBody.accessToken, forKey: "accessToken")
+        keychain.set(responseBody.userId, forKey: "userId")
         
         return responseBody
     }
@@ -98,6 +99,7 @@ public struct NetworkingClient {
         
         let keychain = KeychainSwift()
         keychain.set(responseBody.accessToken, forKey: "accessToken")
+        keychain.set(responseBody.userId, forKey: "userId")
         
         return responseBody
     }
@@ -160,11 +162,13 @@ public struct AuthResponseWrapper: Codable {
     public let accessToken: String
     public let accessTokenDuration: Double
     public let tokenType: String
+    public let userId: String
 
-    public init(accessToken: String, accessTokenDuration: Double, tokenType: String) {
+    public init(accessToken: String, accessTokenDuration: Double, tokenType: String, userId: String) {
         self.accessToken = accessToken
         self.accessTokenDuration = accessTokenDuration
         self.tokenType = tokenType
+        self.userId = userId
     }
 }
 
