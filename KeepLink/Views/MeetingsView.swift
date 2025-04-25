@@ -10,7 +10,7 @@ import RealmSwift
 
 struct MeetingsView: View {
     @StateObject private var viewModel = MeetingsViewModel()
-    @ObservedResults(Meeting.self) var meetings
+    @ObservedResults(Meeting.self, where: { $0.deleteDate == nil }) var meetings
     
     var body: some View {
         NavigationStack {

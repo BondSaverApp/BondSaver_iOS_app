@@ -18,3 +18,14 @@ final class User: Object, ObjectKeyIdentifiable {
     @Persisted var role: String
     @Persisted var contacts = List<Contact>() // Связь один-ко-многим
 }
+
+struct CheckAccountResponse: Codable {
+    let exists: Bool
+}
+
+struct AuthResponse: Codable {
+    let accessToken: String
+    let accessTokenDuration: String
+    let tokenType: String
+    let userId: String
+}

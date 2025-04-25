@@ -129,7 +129,7 @@ struct MeetingEditView: View {
             }
             
             try realm.write {
-                realm.delete(meetingToDelete)
+                meetingToDelete.updateDeleteDate() // soft delete
             }
             
             dismiss()

@@ -73,6 +73,8 @@ class MeetingAddViewModel: ObservableObject {
                 meeting.contactIds = contactIdsList
                 meeting.topics = topicsList
                 
+                meeting.updateClientModifiedDate()
+                
                 realm.add(meeting)
             }
         } catch {

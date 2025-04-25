@@ -98,6 +98,8 @@ final class MeetingEditViewModel: ObservableObject {
                 thawedMeeting.describe = describtion
                 thawedMeeting.contactIds = contactIdsList
                 thawedMeeting.topics = RealmSwift.List<Topic>()//topicsList
+                
+                thawedMeeting.updateClientModifiedDate()
             }
         } catch {
             print("Ошибка сохранения в Realm: \(error.localizedDescription)")
