@@ -10,7 +10,7 @@ import SwiftUI
 struct MeetingAddView: View {
     @StateObject private var viewModel = MeetingAddViewModel()
     @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         NavigationView {
             VStack {
@@ -29,16 +29,16 @@ struct MeetingAddView: View {
                             }
                         }
                     }
-                    
+
                     Section {
                         TextField("Описание встречи", text: $viewModel.describtion)
                     }
-                    
+
                     Section {
                         DatePicker("Дата встречи", selection: $viewModel.date, displayedComponents: .date)
                         DatePicker("Время встречи", selection: $viewModel.date, displayedComponents: .hourAndMinute)
                     }
-                    
+
                     ForEach($viewModel.topics) { $topic in
                         Section {
                             VStack(alignment: .leading) {
@@ -46,8 +46,8 @@ struct MeetingAddView: View {
                                 Divider()
                                 TextField("Описание темы...", text: $topic.describe)
                             }
-                            
-                            if topic.id == viewModel.topics.last?.id && viewModel.topics.count > 1{
+
+                            if topic.id == viewModel.topics.last?.id && viewModel.topics.count > 1 {
                                 Button(action: viewModel.deleteTopic) {
                                     HStack {
                                         Image(systemName: "minus.circle.fill")
@@ -58,7 +58,7 @@ struct MeetingAddView: View {
                             }
                         }
                     }
-                    
+
                     Button(action: viewModel.addTopic) {
                         HStack {
                             Image(systemName: "plus.circle.fill")
@@ -88,7 +88,7 @@ struct MeetingAddView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     var contactListView: some View {
         List {
@@ -96,12 +96,12 @@ struct MeetingAddView: View {
                 HStack(spacing: 20) {
                     HStack(spacing: 20) {
                         avatarView(for: contact)
-                        
+
                         VStack(alignment: .leading) {
                             Text("\(contact.firstName) \(contact.lastName)")
                                 .font(.system(size: 16))
                                 .fontWeight(.regular)
-                            
+
                             if !contact.notes.isEmpty {
                                 Text(contact.notes)
                                     .font(.system(size: 12))
@@ -115,7 +115,7 @@ struct MeetingAddView: View {
                     }
 
                     Spacer()
-                    
+
                     if viewModel.selectedContacts.contains(contact) {
                         Image(systemName: "checkmark")
                             .foregroundColor(.blue)
@@ -125,11 +125,12 @@ struct MeetingAddView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     func avatarView(for contact: Contact) -> some View {
         if let avatarData = contact.avatarData,
-           let uiImage = UIImage(data: avatarData) {
+           let uiImage = UIImage(data: avatarData)
+        {
             Image(uiImage: uiImage)
                 .resizable()
                 .clipShape(Circle())
@@ -143,7 +144,6 @@ struct MeetingAddView: View {
         }
     }
 }
-
 
 #Preview {
     MeetingAddView()

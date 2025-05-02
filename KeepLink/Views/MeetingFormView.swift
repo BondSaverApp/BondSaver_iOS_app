@@ -5,25 +5,25 @@
 //  Created by Андрей Степанов on 11.03.2025.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 struct MeetingFormView: View {
     @ObservedResults(Contact.self) var contacts
     @State var selectedContacts: Set<Contact> = []
-    
+
     @State var isContactsExpanded: Bool = false
-    
+
     var body: some View {
         Group {
 //            contactsSection
-//            
+//
 //            timeSelectionSection
-//            
+//
 //            themesSection
         }
     }
-//    
+//
 //    @ViewBuilder
 //    var contactsSection: some View {
 //        if !isContactsExpanded {
@@ -43,19 +43,19 @@ struct MeetingFormView: View {
 //                contactsList = "Нет участников"
 //            }
 //            return Section {
-//                
+//
 //            }
 //        } else {
-//            
+//
 //        }
 //    }
-//    
+//
 //    var timeSelectionSection: some View {
-//        
+//
 //    }
-//    
+//
 //    var themesSection: some View {
-//        
+//
 //    }
 }
 

@@ -5,8 +5,8 @@
 //  Created by Maria Mayorova on 16.03.2025.
 //
 
-import SwiftUI
 import Network
+import SwiftUI
 
 extension EnvironmentValues {
     @Entry var isNetworkConnected: Bool?
@@ -16,20 +16,20 @@ extension EnvironmentValues {
 class NetworkMonitor: ObservableObject {
     @Published var isConnected: Bool?
     @Published var connectionType: NWInterface.InterfaceType?
-    
+
     // Monitor Properties
     private var queue = DispatchQueue(label: "Monitor")
     private var monitor = NWPathMonitor()
-    
+
     init() {
         startMonitoring()
     }
-    
+
     private func startMonitoring() {
         monitor.pathUpdateHandler = { path in
             Task { @MainActor in
                 self.isConnected = path.status == .satisfied
-                
+
                 let types: [NWInterface.InterfaceType] = [.wifi, .cellular, .loopback, .wiredEthernet]
                 if let type = types.first(where: { path.usesInterfaceType($0) }) {
                     self.connectionType = type
@@ -40,11 +40,11 @@ class NetworkMonitor: ObservableObject {
         }
         monitor.start(queue: queue)
     }
-    
+
     func stopMonitoring() {
         monitor.cancel()
     }
-    
+
     func checkInternetConnection() async -> Bool {
         return isConnected ?? false
     }

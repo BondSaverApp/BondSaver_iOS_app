@@ -10,11 +10,11 @@ import SwiftUI
 final class MeetingsViewModel: ObservableObject {
     @Published var showsAddView = false
     @Published var selectedMeetingForEdit: Meeting? = nil
-    
+
     func selectMeeting(_ meeting: Meeting) {
         selectedMeetingForEdit = meeting
     }
-    
+
     func showAddView() {
         showsAddView = true
     }

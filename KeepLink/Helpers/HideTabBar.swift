@@ -7,26 +7,24 @@
 
 import SwiftUI
 
-struct HideTabBar: UIViewRepresentable{
-    var result: () -> ()
-    
-    func makeUIView(context: Context) -> UIView {
+struct HideTabBar: UIViewRepresentable {
+    var result: () -> Void
+
+    func makeUIView(context _: Context) -> UIView {
         let view = UIView(frame: .zero)
         view.backgroundColor = .clear
-        
+
         DispatchQueue.main.async {
             if let tabController = view.tabController {
                 tabController.tabBar.isHidden = true
                 result()
             }
         }
-        
+
         return view
     }
-    
-    func updateUIView(_ uiView: UIView, context: Context) {
-        
-    }
+
+    func updateUIView(_: UIView, context _: Context) {}
 }
 
 extension UIView {
@@ -36,7 +34,7 @@ extension UIView {
         }).first(where: { $0 is UITabBarController }) as? UITabBarController {
             return controller
         }
-        
+
         return nil
     }
 }

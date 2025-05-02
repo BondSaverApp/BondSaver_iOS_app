@@ -1,5 +1,5 @@
 //
-//  ContactEditContextOfMeetingView.swift
+//  ContactMeetingPlaceView.swift
 //  KeepLink
 //
 //  Created by Maria Mayorova on 17.01.2025.
@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct ContactMeetingPlaceView: View {
-    
     @Binding var isShowingContextsOfMeeting: Bool
     @Binding var contextTextField: String
-   
+
     @State private var places: [String] = UserDefaults.standard.stringArray(forKey: "MeetingPlaces") ?? [
         "Школа",
         "Университет",
@@ -19,11 +18,11 @@ struct ContactMeetingPlaceView: View {
         "Коворкинг",
         "Meetup",
     ]
-    
+
     @State private var searchContext = ""
     @State private var isAddingNewContext = false
     @State private var newPlaceText = ""
-    
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -32,9 +31,9 @@ struct ContactMeetingPlaceView: View {
                         if isAddingNewContext {
                             HStack {
                                 TextField("Новое место", text: $newPlaceText)
-                                
+
                                 Spacer()
-                                
+
                                 Button {
                                     addNewContext(newPlaceText)
                                     isAddingNewContext = false
@@ -55,24 +54,23 @@ struct ContactMeetingPlaceView: View {
                             }
                         }
                     }
-                        List {
-                            ForEach(filteredContexts, id: \.self) { context in
-                                HStack {
-                                    Button {
-                                        contextTextField = context
-                                    } label: {
-                                        Text(context)
-                                            .foregroundColor(.primary)
-                                        
-                                    }
-                                    Spacer()
-                                    if contextTextField == context {
-                                        Image(systemName: "checkmark")
-                                            .foregroundColor(.blue)
-                                    }
+                    List {
+                        ForEach(filteredContexts, id: \.self) { context in
+                            HStack {
+                                Button {
+                                    contextTextField = context
+                                } label: {
+                                    Text(context)
+                                        .foregroundColor(.primary)
+                                }
+                                Spacer()
+                                if contextTextField == context {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(.blue)
                                 }
                             }
                         }
+                    }
                 }
             }
             .accentColor(.blue)
@@ -100,15 +98,14 @@ struct ContactMeetingPlaceView: View {
                     }
                 }
             }
-            
         }
     }
-    
+
     var filteredContexts: [String] {
         return searchContext == "" ? places.sorted { $0 < $1 } : places.filter { $0.localizedCaseInsensitiveContains(searchContext)
         }
     }
-    
+
     func addNewContext(_ newContext: String) {
         if !newContext.isEmpty && !places.contains(newContext) {
             places.append(newContext)

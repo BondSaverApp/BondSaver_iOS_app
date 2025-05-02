@@ -5,7 +5,6 @@ struct LoginView: View {
     @Binding var isLoggedIn: Bool
     let phoneNumber: String
     @ObservedObject var viewModel: LoginViewModel
-    
 
     var body: some View {
         NavigationStack {
@@ -29,7 +28,7 @@ struct LoginView: View {
                     }
                 }
                 .alert("Ошибка", isPresented: $viewModel.showError) {
-                    Button("OK", role: .cancel) { }
+                    Button("OK", role: .cancel) {}
                 } message: {
                     Text(viewModel.errorMessage)
                 }
@@ -52,20 +51,20 @@ struct LoginView: View {
                 .multilineTextAlignment(.center)
                 .foregroundColor(.white.opacity(0.69))
             SecureField("············", text: text)
-            .font(.system(size: 32, weight: .light))
-            .foregroundStyle(.white)
-            .padding()
-            .background {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(lineWidth: 1)
-                    .fill(Color(.systemGray4))
-                    .background {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(.white.opacity(0.1))
-                    }
-            }
-            .frame(width: 320)
-            .padding()
+                .font(.system(size: 32, weight: .light))
+                .foregroundStyle(.white)
+                .padding()
+                .background {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(lineWidth: 1)
+                        .fill(Color(.systemGray4))
+                        .background {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(.white.opacity(0.1))
+                        }
+                }
+                .frame(width: 320)
+                .padding()
         }
         .foregroundStyle(.white)
     }
@@ -102,6 +101,6 @@ struct LoginView: View {
     }
 }
 
-//#Preview {
+// #Preview {
 //    LoginView(isLoggedIn: .constant(false),phoneNumber: "+9(999)999-99-99")
-//}
+// }

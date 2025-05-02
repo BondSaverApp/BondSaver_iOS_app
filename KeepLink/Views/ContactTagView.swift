@@ -8,21 +8,20 @@
 import SwiftUI
 
 struct ContactTagView: View {
-    
     @Binding var isShowingTags: Bool
     @Binding var selectedTags: [String]
-    
+
     @State private var tags: [String] = UserDefaults.standard.stringArray(forKey: "Tags") ?? [
         "Web",
         "iOS",
         "Дизайн",
-        "Бизнес"
+        "Бизнес",
     ]
-    
+
     @State var searchTag = ""
     @State private var isAddingNewTag = false
     @State private var newTagText = ""
-    
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -31,9 +30,9 @@ struct ContactTagView: View {
                         if isAddingNewTag {
                             HStack {
                                 TextField("Новый тег", text: $newTagText)
-                                
+
                                 Spacer()
-                                
+
                                 Button {
                                     addNewTag(newTagText)
                                     isAddingNewTag = false
@@ -54,27 +53,26 @@ struct ContactTagView: View {
                             }
                         }
                     }
-                        List {
-                            ForEach(filteredTags, id: \.self) { tag in
-                                HStack {
-                                    Button {
-                                        if selectedTags.contains(tag) {
-                                            selectedTags.removeAll { $0 == tag }
-                                        } else {
-                                            selectedTags.append(tag)
-                                        }
-                                    } label: {
-                                        Text(tag)
-                                            .foregroundColor(.primary)
-                                        
-                                    }
-                                    Spacer()
+                    List {
+                        ForEach(filteredTags, id: \.self) { tag in
+                            HStack {
+                                Button {
                                     if selectedTags.contains(tag) {
-                                        Image(systemName: "checkmark")
-                                            .foregroundColor(.blue)
+                                        selectedTags.removeAll { $0 == tag }
+                                    } else {
+                                        selectedTags.append(tag)
                                     }
+                                } label: {
+                                    Text(tag)
+                                        .foregroundColor(.primary)
+                                }
+                                Spacer()
+                                if selectedTags.contains(tag) {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(.blue)
                                 }
                             }
+                        }
                     }
                 }
                 .accentColor(.blue)
@@ -87,14 +85,14 @@ struct ContactTagView: View {
                     }
                 }
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading){
+                    ToolbarItem(placement: .navigationBarLeading) {
                         Button {
                             isShowingTags = false
                         } label: {
                             Text("Отменить")
                         }
                     }
-                    ToolbarItem(placement: .navigationBarTrailing){
+                    ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
                             isShowingTags = false
                         } label: {
@@ -105,12 +103,12 @@ struct ContactTagView: View {
             }
         }
     }
-    
+
     var filteredTags: [String] {
-        guard !searchTag.isEmpty else {  return tags.sorted { $0 < $1 } }
+        guard !searchTag.isEmpty else { return tags.sorted { $0 < $1 } }
         return tags.filter { $0.localizedCaseInsensitiveContains(searchTag) }
     }
-    
+
     func addNewTag(_ newTag: String) {
         if !newTag.isEmpty && !tags.contains(newTag) {
             tags.append(newTag)

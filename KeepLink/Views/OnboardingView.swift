@@ -10,12 +10,12 @@ import SwiftUI
 struct OnboardingView: View {
     var appViewModel: AppViewModel
     @Binding var isLoggedIn: Bool
-    
+
     init(appViewModel: AppViewModel, isLoggedIn: Binding<Bool>) {
         self.appViewModel = appViewModel
-        self._isLoggedIn = isLoggedIn
+        _isLoggedIn = isLoggedIn
     }
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -29,7 +29,7 @@ struct OnboardingView: View {
             }
         }
     }
-    
+
     var button: some View {
         NavigationLink {
             AuthView(appViewModel: appViewModel,
@@ -46,22 +46,18 @@ struct OnboardingView: View {
                 .padding()
         }
     }
-    
+
     var unnecesaryButtons: some View {
         HStack {
-            Button("Политика конфиденциальности") {
-                
-            }
+            Button("Политика конфиденциальности") {}
             Spacer()
-            Button("Пользовательское соглашение") {
-                
-            }
+            Button("Пользовательское соглашение") {}
         }
         .padding(.horizontal)
         .font(.system(size: 10))
         .foregroundStyle(.white.opacity(0.35))
     }
-    
+
     var background: some View {
         ZStack {
             Color.black
@@ -72,7 +68,7 @@ struct OnboardingView: View {
                 .frame(maxHeight: .infinity, alignment: .top)
         }
     }
-    
+
     var logo: some View {
         VStack(spacing: 0) {
             Image("flowlink")
@@ -85,11 +81,10 @@ struct OnboardingView: View {
             Text("Сделаем нетворкинг проще")
                 .font(.system(size: 19, weight: .ultraLight, design: .rounded))
                 .foregroundStyle(.white)
-
         }
     }
 }
 
-//#Preview {
+// #Preview {
 //    OnboardingView(isLoggedIn: .constant(false))
-//}
+// }

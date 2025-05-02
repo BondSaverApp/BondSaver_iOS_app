@@ -1,18 +1,18 @@
 //
-//  ContactsView.swift
+//  ContactAddView.swift
 //  KeepLink
 //
 //  Created by Андрей Степанов on 06.12.2024.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 struct ContactAddView: View {
     @ObservedRealmObject var newContact = Contact()
     @Binding var isPresented: Bool
     @StateObject var viewModel = ContactAddViewModel()
-    
+
     var body: some View {
         NavigationStack {
             Form {
@@ -36,7 +36,6 @@ struct ContactAddView: View {
                                 selectedTags: $viewModel.selectedTags,
                                 isShowingContextsOfMeeting: $viewModel.isShowingContextsOfMeeting,
                                 isShowingTags: $viewModel.isShowingTags)
-               
             }
             .navigationTitle("Добавить контакт")
             .navigationBarTitleDisplayMode(.inline)
@@ -64,6 +63,6 @@ struct ContactAddView: View {
 }
 
 #Preview {
-    @Previewable @State var isPresented: Bool = true
+    @Previewable @State var isPresented = true
     ContactAddView(newContact: Contact(), isPresented: $isPresented)
 }

@@ -33,20 +33,19 @@ final class Contact: Object, ObjectKeyIdentifiable {
     @Persisted var clientModifiedDate: Int64 = 0
     @Persisted var serverModifiedDate: Int64?
     @Persisted var deleteDate: Int64?
-    
 }
 
 extension Contact {
     func updateClientModifiedDate() {
-        self.clientModifiedDate = Int64(Date().timeIntervalSince1970 * 1000)
+        clientModifiedDate = Int64(Date().timeIntervalSince1970 * 1000)
     }
-    
+
     func updateDeleteDate() {
-        self.deleteDate = Int64(Date().timeIntervalSince1970 * 1000)
+        deleteDate = Int64(Date().timeIntervalSince1970 * 1000)
     }
-    
-    //MARK: - Convert contact to DTO
-    
+
+    // MARK: - Convert contact to DTO
+
     func toDTO() -> ContactDTO {
         return ContactDTO(
             id: id.stringValue,
@@ -67,15 +66,16 @@ extension Contact {
             site: website,
             ownerId: ownerId.stringValue,
             meetPlaces: meetingPlace?.name != nil ? [meetingPlace!.name] : [],
-            tags: Array(tags.map {$0.name}),
-            telephones: Array(phoneNumbers.map { PhoneNumberDTO(type: $0.type, number: $0.number)}),
-            dates: Array(dates.map {DateEntryDTO(type: $0.type, date: $0.date)}),
-            socialNetworks: Array(socialNetworks.map {SocialNetworkDTO(type: $0.type, link: $0.link)}),
-            occupations: Array(professions.map {ProfessionDTO(profession: $0.position, company: $0.workplace, jobTitle: $0.title)}),
-            emails: Array(emails.map {$0.email})
+            tags: Array(tags.map { $0.name }),
+            telephones: Array(phoneNumbers.map { PhoneNumberDTO(type: $0.type, number: $0.number) }),
+            dates: Array(dates.map { DateEntryDTO(type: $0.type, date: $0.date) }),
+            socialNetworks: Array(socialNetworks.map { SocialNetworkDTO(type: $0.type, link: $0.link) }),
+            occupations: Array(professions.map { ProfessionDTO(profession: $0.position, company: $0.workplace, jobTitle: $0.title) }),
+            emails: Array(emails.map { $0.email })
         )
     }
-    
+}
+
 //    func update(from dto: ContactDTO) {
 //            firstName = dto.firstName
 //            lastName = dto.lastName
@@ -97,40 +97,40 @@ extension Contact {
 //            if let ownerId = try? ObjectId(string: dto.ownerId) {
 //                self.ownerId = ownerId
 //            }
-//        
+//
 //            if let meetingPlaceName = dto.meetingPlace {
 //                let place = MeetingPlace()
 //                place.name = meetingPlaceName
 //                meetingPlace = place
 //            }
-//        
+//
 //            tags.append(objectsIn: dto.tags.map { tagName in
 //                let tag = Tag()
 //                tag.name = tagName
 //                return tag
 //            })
-//        
+//
 //            phoneNumbers.append(objectsIn: dto.phoneNumbers.map { phoneNumberDTO in
 //                let phoneNumber = PhoneNumber()
 //                phoneNumber.number = phoneNumberDTO.number
 //                phoneNumber.type = phoneNumberDTO.type
 //                return phoneNumber
 //            })
-//        
+//
 //            dates.append(objectsIn: dto.dates.map { dateDTO in
 //                let dateEntry = DateEntry()
 //                dateEntry.date = dateDTO.date
 //                dateEntry.type = dateDTO.type
 //                return dateEntry
 //            })
-//        
+//
 //            socialNetworks.append(objectsIn: dto.socialNetworks.map { socialDTO in
 //                let socialNetwork = SocialNetwork()
 //                socialNetwork.type = socialDTO.type
 //                socialNetwork.link = socialDTO.link
 //                return socialNetwork
 //            })
-//        
+//
 //            professions.append(objectsIn: dto.professions.map { professionDTO in
 //                let profession = Profession()
 //                profession.title = professionDTO.title
@@ -138,14 +138,14 @@ extension Contact {
 //                profession.position = professionDTO.position
 //                return profession
 //            })
-//        
+//
 //            emails.append(objectsIn: dto.emails.map { emailName in
 //                let email = Email()
 //                email.email = emailName
 //                return email
 //            })
 //        }
-}
+//    }
 
 class Meeting: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) var id: ObjectId
@@ -160,11 +160,11 @@ class Meeting: Object, ObjectKeyIdentifiable {
 
 extension Meeting {
     func updateClientModifiedDate() {
-        self.clientModifiedDate = Int64(Date().timeIntervalSince1970 * 1000)
+        clientModifiedDate = Int64(Date().timeIntervalSince1970 * 1000)
     }
-    
+
     func updateDeleteDate() {
-        self.deleteDate = Int64(Date().timeIntervalSince1970 * 1000)
+        deleteDate = Int64(Date().timeIntervalSince1970 * 1000)
     }
 }
 
@@ -289,4 +289,3 @@ struct SyncRequest: Codable {
     let meetingUpdatesFromClient: [MeetingUpdateFromClient]
     let meetingUpdatesFromServer: [MeetingUpdateFromServer]
 }
-

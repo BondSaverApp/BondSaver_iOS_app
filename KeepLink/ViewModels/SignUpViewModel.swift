@@ -11,17 +11,17 @@ final class SignUpViewModel: ObservableObject {
     @Published var password = ""
     @Published var passwordAgain = ""
     @Published var name = ""
-    
+
     @Published var isLoading = false // Состояние для отображения индикатора загрузки
     @Published var showError = false // Состояние для отображения ошибки
     @Published var errorMessage = "" // Сообщение об ошибке
-    
+
     let networkManager: NetworkManager
-    
+
     init(networkManager: NetworkManager) {
         self.networkManager = networkManager
     }
-    
+
     func createAccount(with phoneNumber: String) async {
         // Проверка паролей
         guard password == passwordAgain else {
@@ -29,18 +29,18 @@ final class SignUpViewModel: ObservableObject {
             showError = true
             return
         }
-        
+
         isLoading = true // Показываем индикатор загрузки
-        
+
         networkManager.signup(phoneNumber: phoneNumber,
                               password: password,
                               email: nil,
-                              username: name) { token in
+                              username: name)
+        { token in
             // Обработка успешного создания аккаунта
             print("Аккаунт успешно создан: \(token)")
             // Здесь можно перейти на следующий экран, например, на главный экран приложения
         }
         isLoading = false // Скрываем индикатор загрузки
     }
-    
 }

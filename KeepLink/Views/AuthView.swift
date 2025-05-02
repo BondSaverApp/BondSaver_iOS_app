@@ -11,7 +11,7 @@ struct AuthView: View {
     var appViewModel: AppViewModel
     @Binding var isLoggedIn: Bool
     @ObservedObject var viewModel: AuthViewModel
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -54,33 +54,33 @@ struct AuthView: View {
             }
         }
     }
-    
+
     func textField(_ text: Binding<String>) -> some View {
         VStack {
             Text("Введите ваш номер телефона")
                 .fontWeight(.medium)
                 .foregroundColor(.white.opacity(0.69))
             TextField("Введите ваш номер телефона", text: text,
-                      prompt: Text("+_"+"(___)___-__-__")
-                .foregroundColor(.white.opacity(0.15)))
-            .font(.system(size: 32, weight: .light))
-            .foregroundStyle(.white)
-            .padding()
-            .background {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(lineWidth: 1)
-                    .fill(Color(.systemGray4))
-                    .background {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(.white.opacity(0.1))
-                    }
-            }
-            .frame(width: 320)
-            .padding()
+                      prompt: Text("+_" + "(___)___-__-__")
+                          .foregroundColor(.white.opacity(0.15)))
+                .font(.system(size: 32, weight: .light))
+                .foregroundStyle(.white)
+                .padding()
+                .background {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(lineWidth: 1)
+                        .fill(Color(.systemGray4))
+                        .background {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(.white.opacity(0.1))
+                        }
+                }
+                .frame(width: 320)
+                .padding()
         }
         .foregroundStyle(.white)
     }
-    
+
     var button: some View {
         Button {
             Task {
@@ -100,7 +100,7 @@ struct AuthView: View {
         }
         .disabled(viewModel.isLoading) // Блокируем кнопку во время загрузки
     }
-    
+
     var logo: some View {
         VStack(spacing: 0) {
             Image("flowlink")
@@ -114,6 +114,6 @@ struct AuthView: View {
     }
 }
 
-//#Preview {
+// #Preview {
 //    AuthView(isLoggedIn: .constant(false))
-//}
+// }

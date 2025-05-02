@@ -12,7 +12,7 @@ struct SignUpView: View {
     @Binding var isLoggedIn: Bool
     @Binding var phoneNumber: String
     @ObservedObject var viewModel: SignUpViewModel
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -25,7 +25,7 @@ struct SignUpView: View {
                     Text("Давайте знакомиться!")
                         .fontWeight(.medium)
                         .foregroundColor(.white.opacity(0.69))
-                    textField(prompt: "+_"+"(___)___-__-__", $phoneNumber)
+                    textField(prompt: "+_" + "(___)___-__-__", $phoneNumber)
                     textField(prompt: "Пароль", $viewModel.password)
                     textField(prompt: "Пароль ещё раз", $viewModel.passwordAgain)
                     textField(prompt: "Как вас зовут?", $viewModel.name)
@@ -42,37 +42,37 @@ struct SignUpView: View {
                     }
                 }
                 .alert("Ошибка", isPresented: $viewModel.showError) {
-                    Button("OK", role: .cancel) { }
+                    Button("OK", role: .cancel) {}
                 } message: {
                     Text(viewModel.errorMessage)
                 }
             }
         }
     }
-    
+
     func textField(prompt: String, _ text: Binding<String>) -> some View {
         VStack {
             TextField(prompt, text: text,
                       prompt: Text(prompt)
-                .foregroundColor(.white.opacity(0.15)))
-            .font(.system(size: 32, weight: .light))
-            .foregroundStyle(.white)
-            .padding()
-            .background {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(lineWidth: 1)
-                    .fill(Color(.systemGray4))
-                    .background {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(.white.opacity(0.1))
-                    }
-            }
-            .frame(width: 320)
-            .padding(.top)
+                          .foregroundColor(.white.opacity(0.15)))
+                .font(.system(size: 32, weight: .light))
+                .foregroundStyle(.white)
+                .padding()
+                .background {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(lineWidth: 1)
+                        .fill(Color(.systemGray4))
+                        .background {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(.white.opacity(0.1))
+                        }
+                }
+                .frame(width: 320)
+                .padding(.top)
         }
         .foregroundStyle(.white)
     }
-    
+
     var button: some View {
         Button {
             Task {
@@ -90,7 +90,7 @@ struct SignUpView: View {
                 .padding()
         }
     }
-    
+
     var logo: some View {
         VStack(spacing: 0) {
             Image("flowlink")
@@ -104,6 +104,6 @@ struct SignUpView: View {
     }
 }
 
-//#Preview {
+// #Preview {
 //    SignUpView(isLoggedIn: .constant(false), phoneNumber: .constant("+9(999)999-99-99"))
-//}
+// }

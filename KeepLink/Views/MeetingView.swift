@@ -12,17 +12,17 @@ struct MeetingView: View {
 
     var isOnMeetingsView: Bool
     private var state: State
-    
+
     enum State: String {
         case planned = "Запланировано"
         case inProgress = "Сейчас"
         case finished = "Встреча закончилась"
     }
-    
+
     init(meeting: Meeting, isOnMeetingsView: Bool = false) {
         self.meeting = meeting
         self.isOnMeetingsView = isOnMeetingsView
-        
+
         switch Date().compare(meeting.date) {
         case .orderedAscending:
             state = .planned
@@ -32,8 +32,7 @@ struct MeetingView: View {
             state = .inProgress
         }
     }
-    
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -60,7 +59,7 @@ struct MeetingView: View {
                     }
                 }
             }
-            
+
             if isOnMeetingsView {
                 contactAvatars
             }
@@ -74,7 +73,7 @@ struct MeetingView: View {
         )
         .padding(1)
     }
-    
+
     private var contactAvatars: some View {
         return HStack {
             ForEach(meeting.contactIds, id: \.self) { id in
@@ -83,7 +82,7 @@ struct MeetingView: View {
             }
         }
     }
-    
+
     private var stateColor: Color {
         switch state {
         case .planned:
@@ -94,11 +93,12 @@ struct MeetingView: View {
             return Color.black.opacity(0.5)
         }
     }
-    
+
     @ViewBuilder
     func avatarView(for contact: Contact) -> some View {
         if let avatarData = contact.avatarData,
-           let uiImage = UIImage(data: avatarData) {
+           let uiImage = UIImage(data: avatarData)
+        {
             Image(uiImage: uiImage)
                 .resizable()
                 .clipShape(Circle())
