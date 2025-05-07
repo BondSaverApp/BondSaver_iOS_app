@@ -39,6 +39,7 @@ class APIService: Service {
             }
             
             if let resp = resp as? HTTPURLResponse, 500..<600 ~= resp.statusCode {
+                print(resp.statusCode)
                 completion(nil, .serverError())
                 return
             }
@@ -46,6 +47,13 @@ class APIService: Service {
             guard let data = data else {
                 completion(nil,  .invalidResponse())
                 return
+            }
+            print("📥 Server response raw JSON:")
+            
+            if let responseString = String(data: data, encoding: .utf8) {
+                print(responseString)
+            } else {
+                print("Не удалось декодировть")
             }
             
             do {
@@ -57,11 +65,14 @@ class APIService: Service {
                 }
                 
                 if T.self == Data.self {
+                    print(data)
+                    print("printed")
                     completion(data as? T, nil)
                     return
                 }
                 
                 let result = try JSONDecoder().decode(T.self, from: data)
+                print("Result: ", result)
                 completion(result, nil)
             } catch {
                 completion(nil, .decodingError())

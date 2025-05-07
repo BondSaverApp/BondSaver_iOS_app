@@ -44,8 +44,4 @@ class NetworkMonitor: ObservableObject {
     func stopMonitoring() {
         monitor.cancel()
     }
-    
-    func checkInternetConnection() async -> Bool {
-        return isConnected ?? false
-    }
 }

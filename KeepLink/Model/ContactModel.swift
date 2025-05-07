@@ -53,7 +53,7 @@ extension Contact {
             updatedAtClient: clientModifiedDate,
             updatedAtServer: serverModifiedDate,
             deletedAt: deleteDate,
-            profilePic: avatarData,
+            photoPath: avatarData,
             firstName: firstName,
             lastName: lastName,
             middleName: middleName,
@@ -66,85 +66,79 @@ extension Contact {
             notes: notes,
             site: website,
             ownerId: ownerId.stringValue,
-            meetPlaces: meetingPlace?.name != nil ? [meetingPlace!.name] : [],
             tags: Array(tags.map {$0.name}),
+            emails: Array(emails.map {$0.email}),
             telephones: Array(phoneNumbers.map { PhoneNumberDTO(type: $0.type, number: $0.number)}),
             dates: Array(dates.map {DateEntryDTO(type: $0.type, date: $0.date)}),
-            socialNetworks: Array(socialNetworks.map {SocialNetworkDTO(type: $0.type, link: $0.link)}),
-            occupations: Array(professions.map {ProfessionDTO(profession: $0.position, company: $0.workplace, jobTitle: $0.title)}),
-            emails: Array(emails.map {$0.email})
+            social: Array(socialNetworks.compactMap {
+                guard let type = NetworkType(rawValue: $0.type) else { return nil }
+                return SocialNetworkDTO(type: type, link: $0.link)}),
+            occupations: Array(professions.map {ProfessionDTO(profession: $0.position, company: $0.workplace, jobTitle: $0.title)})
         )
     }
     
-//    func update(from dto: ContactDTO) {
-//            firstName = dto.firstName
-//            lastName = dto.lastName
-//            avatarData = dto.avatarData
-//            firstName = dto.firstName
-//            lastName = dto.lastName
-//            middleName = dto.middleName
-//            appearance = dto.appearance
-//            meetingContext = dto.meetingContext
-//            city = dto.city
-//            street = dto.street
-//            house = dto.house
-//            apartment = dto.apartment
-//            notes = dto.notes
-//            website = dto.website
-//            clientModifiedDate = dto.clientModifiedDate
-//            serverModifiedDate = dto.serverModifiedDate
-//            deleteDate = dto.deleteDate
-//            if let ownerId = try? ObjectId(string: dto.ownerId) {
-//                self.ownerId = ownerId
-//            }
-//        
-//            if let meetingPlaceName = dto.meetingPlace {
-//                let place = MeetingPlace()
-//                place.name = meetingPlaceName
-//                meetingPlace = place
-//            }
-//        
-//            tags.append(objectsIn: dto.tags.map { tagName in
-//                let tag = Tag()
-//                tag.name = tagName
-//                return tag
-//            })
-//        
-//            phoneNumbers.append(objectsIn: dto.phoneNumbers.map { phoneNumberDTO in
-//                let phoneNumber = PhoneNumber()
-//                phoneNumber.number = phoneNumberDTO.number
-//                phoneNumber.type = phoneNumberDTO.type
-//                return phoneNumber
-//            })
-//        
-//            dates.append(objectsIn: dto.dates.map { dateDTO in
-//                let dateEntry = DateEntry()
-//                dateEntry.date = dateDTO.date
-//                dateEntry.type = dateDTO.type
-//                return dateEntry
-//            })
-//        
-//            socialNetworks.append(objectsIn: dto.socialNetworks.map { socialDTO in
-//                let socialNetwork = SocialNetwork()
-//                socialNetwork.type = socialDTO.type
-//                socialNetwork.link = socialDTO.link
-//                return socialNetwork
-//            })
-//        
-//            professions.append(objectsIn: dto.professions.map { professionDTO in
-//                let profession = Profession()
-//                profession.title = professionDTO.title
-//                profession.workplace = professionDTO.workplace
-//                profession.position = professionDTO.position
-//                return profession
-//            })
-//        
-//            emails.append(objectsIn: dto.emails.map { emailName in
-//                let email = Email()
-//                email.email = emailName
-//                return email
-//            })
-//        }
+    func update(from dto: ContactDTO) {
+        clientModifiedDate = dto.updatedAtClient
+        serverModifiedDate = dto.updatedAtServer
+        deleteDate = dto.deletedAt
+        avatarData = dto.photoPath
+        firstName = dto.firstName
+        lastName = dto.lastName
+        middleName = dto.middleName
+        appearance = dto.appearance
+        meetingContext = dto.meetContext
+        city = dto.city
+        street = dto.street
+        house = dto.house
+        apartment = dto.flat
+        notes = dto.notes
+        website = dto.site
+        
+        if let ownerId = try? ObjectId(string: dto.ownerId) {
+            self.ownerId = ownerId
+        }
+        
+        tags.append(objectsIn: dto.tags.map { tagName in
+            let tag = Tag()
+            tag.name = tagName
+            return tag
+        })
+        
+        phoneNumbers.append(objectsIn: dto.telephones.map { phoneNumberDTO in
+            let phoneNumber = PhoneNumber()
+            phoneNumber.number = phoneNumberDTO.number
+            phoneNumber.type = phoneNumberDTO.type
+            return phoneNumber
+        })
+        
+        dates.append(objectsIn: dto.dates.map { dateDTO in
+            let dateEntry = DateEntry()
+            dateEntry.date = dateDTO.date
+            dateEntry.type = dateDTO.type
+            return dateEntry
+        })
+        
+        socialNetworks.append(objectsIn: dto.social.map { socialDTO in
+            let socialNetwork = SocialNetwork()
+            socialNetwork.type = socialDTO.type.rawValue
+            socialNetwork.link = socialDTO.link
+            return socialNetwork
+        })
+        
+        professions.append(objectsIn: dto.occupations.map { professionDTO in
+            let profession = Profession()
+            profession.title = professionDTO.jobTitle
+            profession.workplace = professionDTO.company
+            profession.position = professionDTO.profession
+            return profession
+        })
+        
+        emails.append(objectsIn: dto.emails.map { emailName in
+            let email = Email()
+            email.email = emailName
+            return email
+        })
+    }
 }
 
 class Meeting: Object, ObjectKeyIdentifiable {
@@ -211,7 +205,7 @@ struct ContactDTO: Codable {
     var updatedAtClient: Int64 = 0
     var updatedAtServer: Int64?
     var deletedAt: Int64?
-    var profilePic: Data?
+    var photoPath: Data?
     var firstName: String
     var lastName: String
     var middleName: String
@@ -224,13 +218,12 @@ struct ContactDTO: Codable {
     var notes: String
     var site: String
     var ownerId: String
-    var meetPlaces: [String]
     var tags: [String]
+    var emails: [String]
     var telephones: [PhoneNumberDTO]
     var dates: [DateEntryDTO]
-    var socialNetworks: [SocialNetworkDTO]
+    var social: [SocialNetworkDTO]
     var occupations: [ProfessionDTO]
-    var emails: [String]
 }
 
 struct PhoneNumberDTO: Codable {
@@ -244,8 +237,13 @@ struct DateEntryDTO: Codable {
 }
 
 struct SocialNetworkDTO: Codable {
-    var type: String
+    var type: NetworkType
     var link: String
+}
+
+enum NetworkType: String, Codable {
+    case telegram = "Telegram"
+    case vk = "VK"
 }
 
 struct ProfessionDTO: Codable {
@@ -281,6 +279,8 @@ struct MeetingUpdateFromServer: Codable {
 struct TopicDTO: Codable {
     var name: String
     var description: String
+    var answer: String
+    var contactId: String
 }
 
 struct SyncRequest: Codable {
@@ -290,3 +290,9 @@ struct SyncRequest: Codable {
     let meetingUpdatesFromServer: [MeetingUpdateFromServer]
 }
 
+struct SyncResponse: Codable {
+    let contactsToUpdate: [ContactDTO]
+    let contactsUpdated: [ContactUpdateFromServer]
+    let meetingsToUpdate: [MeetingUpdateFromClient]
+    let meetingsUpdated: [MeetingUpdateFromServer]
+}

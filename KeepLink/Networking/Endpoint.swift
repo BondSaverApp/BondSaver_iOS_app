@@ -94,8 +94,13 @@ enum Endpoint {
 extension URLRequest {
     mutating func addValues(for endpoint: Endpoint) {
         switch endpoint {
+        case .refreshToken(let refreshToken):
+            self.setValue("Bearer \(refreshToken)", forHTTPHeaderField: "Authorization")
+            self.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            self.setValue("application/json", forHTTPHeaderField: "Accept")
         default:
             self.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            self.setValue("application/json", forHTTPHeaderField: "Accept")
         }
     }
     
