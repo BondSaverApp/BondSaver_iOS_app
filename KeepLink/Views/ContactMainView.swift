@@ -5,25 +5,24 @@
 //  Created by Maria Mayorova on 07.02.2025.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 struct ContactMainView: View {
     @ObservedRealmObject var contact: Contact // Привязка объекта Realm
     @Environment(\.tabBarHidden) private var tabBarHidden
     @Environment(\.dismiss) private var dismiss
     @StateObject var viewModel = ContactMainViewModel()
-    
+
     @State private var activeTab: ContactMainTab = .info
-    
+
     var body: some View {
         NavigationStack {
-            
             contactInfo()
-            
+
             VStack(spacing: 0) {
                 TabHeader(activeTab: $activeTab)
-                
+
                 TabView(selection: $activeTab) {
                     List {
                         aboutContactSection
@@ -32,7 +31,7 @@ struct ContactMainView: View {
                     }
                     .listStyle(.insetGrouped)
                     .tag(ContactMainTab.info)
-                    
+
                     ScrollView {
                         VStack(spacing: 20) {
                             MeetingView(meeting: Meeting())
@@ -74,7 +73,7 @@ struct ContactMainView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     func contactInfo() -> some View {
         VStack {
@@ -86,8 +85,8 @@ struct ContactMainView: View {
                 contactName
             }
             .padding(10)
-            
-            HStack() {
+
+            HStack {
                 VStack {
                     Button {
                         // phone call
@@ -100,7 +99,7 @@ struct ContactMainView: View {
                     .buttonStyle(mainViewButtonStyle())
                     Text("Вызов")
                 }
-                
+
                 VStack {
                     Button {
                         // send a message
@@ -113,7 +112,7 @@ struct ContactMainView: View {
                     .buttonStyle(mainViewButtonStyle())
                     Text("SMS")
                 }
-                
+
                 VStack {
                     Button {
                         // video call
@@ -126,8 +125,7 @@ struct ContactMainView: View {
                     .buttonStyle(mainViewButtonStyle())
                     Text("Видео")
                 }
-                
-                
+
                 VStack {
                     Button {
                         // send email
@@ -144,18 +142,17 @@ struct ContactMainView: View {
             .padding(.horizontal, 25)
         }
     }
-    
+
     private var tagSection: some View {
         Section {
-            HStack(alignment: .top){
+            HStack(alignment: .top) {
                 Text("Теги: ")
                     .padding(.vertical, 5)
                 LazyVStack(alignment: .leading) {
-                    
                     ForEach(viewModel.selectedTags, id: \.self) {
                         Text($0)
                             .padding(5)
-                            .background{
+                            .background {
                                 RoundedRectangle(cornerRadius: 10)
                                     .fill(Color(UIColor.systemGray6))
                             }
@@ -164,11 +161,12 @@ struct ContactMainView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private var avatar: some View {
         if let avatarData = viewModel.selectedImageData,
-           let uiImage = UIImage(data: avatarData) {
+           let uiImage = UIImage(data: avatarData)
+        {
             Image(uiImage: uiImage)
                 .resizable()
                 .clipShape(Circle())
@@ -181,7 +179,7 @@ struct ContactMainView: View {
                 .foregroundColor(.gray)
         }
     }
-    
+
     private var aboutContactSection: some View {
         Section(header: Text("О контакте")) {
             TextField("Внешние особенности", text: $viewModel.appearanceTextField)
@@ -193,11 +191,11 @@ struct ContactMainView: View {
                     get: { date },
                     set: { _ in } // Запрещаем изменение
                 ), displayedComponents: .date)
-                .disabled(true)
+                    .disabled(true)
             }
         }
     }
-    
+
     private var contactInfoSection: some View {
         Section(header: Text("Контактная информация")) {
             TextField("Номер телефона", text: $viewModel.phoneTextField)
@@ -218,7 +216,7 @@ struct ContactMainView: View {
                 .disabled(true)
         }
     }
-    
+
     private var extraInfoSection: some View {
         Section(header: Text("Дополнительная информация")) {
             TextField("Профессия", text: $viewModel.professionTextField)
@@ -232,12 +230,12 @@ struct ContactMainView: View {
     private var meetingContextSection: some View {
         Section {
             if !viewModel.contextTextField.isEmpty {
-                HStack(spacing: 20){
+                HStack(spacing: 20) {
                     Image(systemName: "plus.circle.fill")
                     Text(viewModel.contextTextField)
                 }
             } else {
-                HStack(spacing: 20){
+                HStack(spacing: 20) {
                     Image(systemName: "plus.circle.fill")
                     Text("Добавить место")
                 }
@@ -246,7 +244,7 @@ struct ContactMainView: View {
             Text("Контекст знакомства")
         }
     }
-    
+
     private var aimSection: some View {
         Section {
             TextField("Цель общения", text: $viewModel.aimTextField)
@@ -255,7 +253,7 @@ struct ContactMainView: View {
             Text("Цель общения")
         }
     }
-    
+
     private var contactName: some View {
         Text("\(viewModel.nameTextField) \(viewModel.surnameTextField)")
             .font(.title3)

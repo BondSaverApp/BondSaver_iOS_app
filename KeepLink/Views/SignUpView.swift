@@ -8,16 +8,11 @@
 import SwiftUI
 
 struct SignUpView: View {
+    var appViewModel: AppViewModel
     @Binding var isLoggedIn: Bool
     @Binding var phoneNumber: String
-    @State var password = ""
-    @State var passwordAgain = ""
-    @State var name = ""
-    
-    @State private var isLoading = false // Состояние для отображения индикатора загрузки
-    @State private var showError = false // Состояние для отображения ошибки
-    @State private var errorMessage = "" // Сообщение об ошибке
-    
+    @ObservedObject var viewModel: SignUpViewModel
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -30,58 +25,59 @@ struct SignUpView: View {
                     Text("Давайте знакомиться!")
                         .fontWeight(.medium)
                         .foregroundColor(.white.opacity(0.69))
-                    textField(prompt: "+_"+"(___)___-__-__", $phoneNumber)
-                    textField(prompt: "Пароль", $password)
-                    textField(prompt: "Пароль ещё раз", $passwordAgain)
-                    textField(prompt: "Как вас зовут?", $name)
+                    textField(prompt: "+_" + "(___)___-__-__", $phoneNumber)
+                    textField(prompt: "Пароль", $viewModel.password)
+                    textField(prompt: "Пароль ещё раз", $viewModel.passwordAgain)
+                    textField(prompt: "Как вас зовут?", $viewModel.name)
                     button
                 }
                 .scaledToFill()
                 .frame(maxHeight: .infinity, alignment: .top)
                 .offset(y: -20)
                 .overlay {
-                    if isLoading {
+                    if viewModel.isLoading {
                         ProgressView() // Индикатор загрузки
                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
                             .scaleEffect(2)
                     }
                 }
-                .alert("Ошибка", isPresented: $showError) {
-                    Button("OK", role: .cancel) { }
+                .alert("Ошибка", isPresented: $viewModel.showError) {
+                    Button("OK", role: .cancel) {}
                 } message: {
-                    Text(errorMessage)
+                    Text(viewModel.errorMessage)
                 }
             }
         }
     }
-    
+
     func textField(prompt: String, _ text: Binding<String>) -> some View {
         VStack {
             TextField(prompt, text: text,
                       prompt: Text(prompt)
-                .foregroundColor(.white.opacity(0.15)))
-            .font(.system(size: 32, weight: .light))
-            .foregroundStyle(.white)
-            .padding()
-            .background {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(lineWidth: 1)
-                    .fill(Color(.systemGray4))
-                    .background {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(.white.opacity(0.1))
-                    }
-            }
-            .frame(width: 320)
-            .padding(.top)
+                          .foregroundColor(.white.opacity(0.15)))
+                .font(.system(size: 32, weight: .light))
+                .foregroundStyle(.white)
+                .padding()
+                .background {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(lineWidth: 1)
+                        .fill(Color(.systemGray4))
+                        .background {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(.white.opacity(0.1))
+                        }
+                }
+                .frame(width: 320)
+                .padding(.top)
         }
         .foregroundStyle(.white)
     }
-    
+
     var button: some View {
         Button {
             Task {
-                await createAccount()
+                await viewModel.createAccount(with: phoneNumber)
+                isLoggedIn = true
             }
         } label: {
             Text("Создать аккаунт")
@@ -94,52 +90,20 @@ struct SignUpView: View {
                 .padding()
         }
     }
-    
+
     var logo: some View {
         VStack(spacing: 0) {
-            Image("FlowLink")
+            Image("flowlink")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100, height: 100)
-            Text("FlowLink")
+            Text("flowlink")
                 .font(.system(size: 40, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
         }
     }
-    
-    private func createAccount() async {
-        // Проверка паролей
-        guard password == passwordAgain else {
-            errorMessage = "Пароли не совпадают"
-            showError = true
-            return
-        }
-        
-        isLoading = true // Показываем индикатор загрузки
-        
-        do {
-            // Вызов метода signup из NetworkingClient
-            let response = try await NetworkingClient.shared.signup(
-                phoneNumber: phoneNumber,
-                password: password,
-                email: nil, // Если email не требуется, передайте nil
-                username: name
-            )
-            
-            // Обработка успешного создания аккаунта
-            print("Аккаунт успешно создан: \(response.accessToken)")
-            // Здесь можно перейти на следующий экран, например, на главный экран приложения
-            isLoggedIn = true
-        } catch {
-            // Обработка ошибок
-            errorMessage = error.localizedDescription
-            showError = true
-        }
-        
-        isLoading = false // Скрываем индикатор загрузки
-    }
 }
 
-#Preview {
-    SignUpView(isLoggedIn: .constant(false), phoneNumber: .constant("+9(999)999-99-99"))
-}
+// #Preview {
+//    SignUpView(isLoggedIn: .constant(false), phoneNumber: .constant("+9(999)999-99-99"))
+// }

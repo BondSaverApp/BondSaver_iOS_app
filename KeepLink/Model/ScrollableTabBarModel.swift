@@ -10,8 +10,6 @@ import SwiftUI
 enum ContactMainTab: String, CaseIterable, Identifiable {
     case info = "О контакте"
     case meetings = "Встречи"
-    
-    var id: String { self.rawValue }
-    
-}
 
+    var id: String { rawValue }
+}

@@ -6,12 +6,12 @@
 //
 
 import Foundation
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 final class DataBase {
     static let shared = DataBase()
-    
+
     @ObservedResults(Contact.self) var contacts
     @ObservedResults(Meeting.self) var meetings
 }

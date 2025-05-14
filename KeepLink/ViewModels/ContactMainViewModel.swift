@@ -9,8 +9,8 @@ import SwiftUI
 
 final class ContactMainViewModel: ObservableObject {
     @Published var isEditViewPresented: Bool = false
-    
-    @Published var dateOfBirthPicker: Date = Date.now
+
+    @Published var dateOfBirthPicker: Date = .now
     @Published var contextTextField: String = ""
     @Published var aimTextField: String = ""
     @Published var noteTextField: String = ""
@@ -25,17 +25,17 @@ final class ContactMainViewModel: ObservableObject {
     @Published var professionTextField: String = ""
     @Published var emailTextField: String = ""
     @Published var dateOfBirth: Date?
-    
+
     @Published var selectedTags: [String] = []
     @Published var isShowingContextsOfMeeting = false
     @Published var isShowingMore = false
-    
+
     @Published var nameTextField: String = ""
     @Published var surnameTextField: String = ""
     @Published var patronymicTextField: String = ""
-    
+
     @Published var selectedImageData: Data? = nil
-    
+
     func loadData(from contact: Contact) {
         nameTextField = contact.firstName
         surnameTextField = contact.lastName

@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-enum TabModel: String, CaseIterable{
+enum TabModel: String, CaseIterable {
     case contacts = "person.2.crop.square.stack.fill"
     case settings = "gear"
     case notifications = "bell.fill"

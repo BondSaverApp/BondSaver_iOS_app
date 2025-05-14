@@ -1,12 +1,10 @@
 import SwiftUI
 
 struct LoginView: View {
+    var appViewModel: AppViewModel
     @Binding var isLoggedIn: Bool
     let phoneNumber: String
-    @State private var password = ""
-    @State private var isLoading = false // Состояние для отображения индикатора загрузки
-    @State private var showError = false // Состояние для отображения ошибки
-    @State private var errorMessage = "" // Сообщение об ошибке
+    @ObservedObject var viewModel: LoginViewModel
 
     var body: some View {
         NavigationStack {
@@ -18,21 +16,21 @@ struct LoginView: View {
                         .frame(height: 170)
                     logo
                     phoneNumberText
-                    textField($password)
+                    textField($viewModel.password)
                     button
                 }
                 .frame(maxHeight: .infinity, alignment: .top)
                 .overlay {
-                    if isLoading {
+                    if viewModel.isLoading {
                         ProgressView() // Индикатор загрузки
                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
                             .scaleEffect(2)
                     }
                 }
-                .alert("Ошибка", isPresented: $showError) {
-                    Button("OK", role: .cancel) { }
+                .alert("Ошибка", isPresented: $viewModel.showError) {
+                    Button("OK", role: .cancel) {}
                 } message: {
-                    Text(errorMessage)
+                    Text(viewModel.errorMessage)
                 }
             }
         }
@@ -53,20 +51,20 @@ struct LoginView: View {
                 .multilineTextAlignment(.center)
                 .foregroundColor(.white.opacity(0.69))
             SecureField("············", text: text)
-            .font(.system(size: 32, weight: .light))
-            .foregroundStyle(.white)
-            .padding()
-            .background {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(lineWidth: 1)
-                    .fill(Color(.systemGray4))
-                    .background {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(.white.opacity(0.1))
-                    }
-            }
-            .frame(width: 320)
-            .padding()
+                .font(.system(size: 32, weight: .light))
+                .foregroundStyle(.white)
+                .padding()
+                .background {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(lineWidth: 1)
+                        .fill(Color(.systemGray4))
+                        .background {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(.white.opacity(0.1))
+                        }
+                }
+                .frame(width: 320)
+                .padding()
         }
         .foregroundStyle(.white)
     }
@@ -74,7 +72,8 @@ struct LoginView: View {
     var button: some View {
         Button {
             Task {
-                await login()
+                await viewModel.login(with: phoneNumber)
+                isLoggedIn = true
             }
         } label: {
             Text("Войти")
@@ -86,46 +85,22 @@ struct LoginView: View {
                 .cornerRadius(23)
                 .padding()
         }
-        .disabled(isLoading) // Блокируем кнопку во время загрузки
+        .disabled(viewModel.isLoading) // Блокируем кнопку во время загрузки
     }
 
     var logo: some View {
         VStack(spacing: 0) {
-            Image("FlowLink")
+            Image("flowlink")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100, height: 100)
-            Text("FlowLink")
+            Text("flowlink")
                 .font(.system(size: 40, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
         }
     }
-
-    // Функция для входа
-    private func login() async {
-        isLoading = true // Показываем индикатор загрузки
-
-        do {
-            // Вызов метода login из NetworkingClient
-            let response = try await NetworkingClient.shared.login(
-                phoneNumber: phoneNumber,
-                password: password
-            )
-
-            // Обработка успешного входа
-            print("Успешный вход: \(response.accessToken)")
-            isLoggedIn = true // Переход на главный экран
-
-        } catch {
-            // Обработка ошибок
-            errorMessage = error.localizedDescription
-            showError = true
-        }
-
-        isLoading = false // Скрываем индикатор загрузки
-    }
 }
 
-#Preview {
-    LoginView(isLoggedIn: .constant(false),phoneNumber: "+9(999)999-99-99")
-}
+// #Preview {
+//    LoginView(isLoggedIn: .constant(false),phoneNumber: "+9(999)999-99-99")
+// }

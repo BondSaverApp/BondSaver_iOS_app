@@ -5,43 +5,42 @@
 //  Created by Андрей Степанов on 06.12.2024.
 //
 
-import SwiftUI
 import RealmSwift
-
+import SwiftUI
 
 struct ContactsView: View {
     @ObservedResults(Contact.self) var contacts
     @EnvironmentObject var tabBarViewModel: CustomTabBarViewModel
-    
+
     @State private var searchText = ""
     @State private var selectedTag: String = "Выбрать тег"
     @State private var selectedContactForDetail: Contact?
     @State private var selectedContactForEdit: Contact?
     @State private var isContactMainPresented: Bool = false
-   
+
     @State private var tags: [String] = UserDefaults.standard.stringArray(forKey: "Tags") ?? [
         "Web",
         "iOS",
         "Дизайн",
-        "Бизнес"
+        "Бизнес",
     ]
-    
+
     var filteredContacts: Results<Contact> {
         var result = contacts.filter("deleteDate == nil")
-        
+
         // Фильтрация по тексту поиска
         if !searchText.isEmpty {
             result = result.filter("firstName CONTAINS[c] %@ OR lastName CONTAINS[c] %@", searchText, searchText)
         }
-        
+
         // Фильтрация по выбранному тегу
         if selectedTag != "Выбрать тег" {
             result = result.filter("ANY tags.name == %@", selectedTag)
         }
-        
+
         return result
     }
-    
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -78,7 +77,7 @@ struct ContactsView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     var contactListView: some View {
         List {
@@ -86,12 +85,12 @@ struct ContactsView: View {
                 HStack(spacing: 20) {
                     HStack(spacing: 20) {
                         avatarView(for: contact)
-                        
+
                         VStack(alignment: .leading) {
                             Text("\(contact.firstName) \(contact.lastName)")
                                 .font(.system(size: 16))
                                 .fontWeight(.regular)
-                            
+
                             if !contact.notes.isEmpty {
                                 Text(contact.notes)
                                     .font(.system(size: 12))
@@ -112,12 +111,13 @@ struct ContactsView: View {
             }
         }
     }
-    
+
     // Вспомогательное представление для аватара
     @ViewBuilder
     func avatarView(for contact: Contact) -> some View {
         if let avatarData = contact.avatarData,
-           let uiImage = UIImage(data: avatarData) {
+           let uiImage = UIImage(data: avatarData)
+        {
             Image(uiImage: uiImage)
                 .resizable()
                 .clipShape(Circle())
@@ -130,9 +130,9 @@ struct ContactsView: View {
                 .foregroundColor(.gray)
         }
     }
-    
+
     // Кнопка вызова
-    func phoneButton(for contact: Contact) -> some View {
+    func phoneButton(for _: Contact) -> some View {
         Button {
 //            if let phoneNumber = contact.phoneNumbers.first?.number {
 //                if let url = URL(string: "tel://\(phoneNumber)") {
@@ -150,7 +150,7 @@ struct ContactsView: View {
         }
         .frame(width: 30, height: 30)
     }
-    
+
     // Кнопка редактирования
     func editButton(for contact: Contact) -> some View {
         Button {
@@ -165,14 +165,14 @@ struct ContactsView: View {
                 )
         }
     }
-    
+
     // Кнопка выбора тега
     var menuButton: some View {
         Menu {
             Button("Выбрать тег") {
                 selectedTag = "Выбрать тег"
             }
-        
+
             ForEach(tags, id: \.self) { tag in
                 Button(tag) {
                     selectedTag = tag
@@ -189,12 +189,11 @@ struct ContactsView: View {
             .cornerRadius(8)
         }
     }
-    
+
     private func updateTags() {
         tags = UserDefaults.standard.stringArray(forKey: "Tags") ?? []
     }
 }
-
 
 #Preview {
     ContactsView()

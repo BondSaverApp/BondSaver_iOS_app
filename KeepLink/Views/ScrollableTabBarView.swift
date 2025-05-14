@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TabHeader: View {
     @Binding var activeTab: ContactMainTab
-    
+
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
@@ -29,12 +29,12 @@ struct TabHeader: View {
                         .buttonStyle(.plain)
                     }
                 }
-                
+
                 ZStack(alignment: .leading) {
                     Rectangle()
                         .fill(Color.gray.opacity(0.3))
                         .frame(height: 2)
-                    
+
                     Rectangle()
                         .fill(Color.blue)
                         .frame(width: geometry.size.width / CGFloat(ContactMainTab.allCases.count), height: 2)
@@ -48,10 +48,9 @@ struct TabHeader: View {
     }
 }
 
-
 struct TabHeader_Previews: PreviewProvider {
     @State static var tab: ContactMainTab = .info
-    
+
     static var previews: some View {
         TabHeader(activeTab: $tab)
     }

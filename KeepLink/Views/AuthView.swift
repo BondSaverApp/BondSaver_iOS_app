@@ -8,11 +8,10 @@
 import SwiftUI
 
 struct AuthView: View {
-    @State var phoneNumber = ""
-    @State private var isAccountExists: Bool? = nil // Состояние для управления переходом
-    @State private var isLoading = false // Состояние для отображения индикатора загрузки
+    var appViewModel: AppViewModel
     @Binding var isLoggedIn: Bool
-    
+    @ObservedObject var viewModel: AuthViewModel
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -22,25 +21,31 @@ struct AuthView: View {
                     Rectangle()
                         .frame(height: 170)
                     logo
-                    textField($phoneNumber)
+                    textField($viewModel.phoneNumber)
                     button
                 }
                 .frame(maxHeight: .infinity, alignment: .top)
             }
             .navigationDestination(isPresented: Binding<Bool>(
-                get: { isAccountExists == true },
+                get: { viewModel.isAccountExists == true },
                 set: { _ in }
             )) {
-                LoginView(isLoggedIn: $isLoggedIn, phoneNumber: phoneNumber) // Переход на LoginView, если isAccountExists == true
+                LoginView(appViewModel: appViewModel,
+                          isLoggedIn: $isLoggedIn,
+                          phoneNumber: viewModel.phoneNumber,
+                          viewModel: appViewModel.loginViewModel) // Переход на LoginView, если isAccountExists == true
             }
             .navigationDestination(isPresented: Binding<Bool>(
-                get: { isAccountExists == false },
+                get: { viewModel.isAccountExists == false },
                 set: { _ in }
             )) {
-                SignUpView(isLoggedIn: $isLoggedIn, phoneNumber: $phoneNumber) // Переход на SignUpView, если isAccountExists == false
+                SignUpView(appViewModel: appViewModel,
+                           isLoggedIn: $isLoggedIn,
+                           phoneNumber: $viewModel.phoneNumber,
+                           viewModel: appViewModel.signUpViewModel) // Переход на SignUpView, если isAccountExists == false
             }
             .overlay {
-                if isLoading {
+                if viewModel.isLoading {
                     ProgressView() // Индикатор загрузки
                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
                         .scaleEffect(2)
@@ -49,44 +54,39 @@ struct AuthView: View {
             }
         }
     }
-    
+
     func textField(_ text: Binding<String>) -> some View {
         VStack {
             Text("Введите ваш номер телефона")
                 .fontWeight(.medium)
                 .foregroundColor(.white.opacity(0.69))
             TextField("Введите ваш номер телефона", text: text,
-                      prompt: Text("+_"+"(___)___-__-__")
-                .foregroundColor(.white.opacity(0.15)))
-            .font(.system(size: 32, weight: .light))
-            .foregroundStyle(.white)
-            .padding()
-            .background {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(lineWidth: 1)
-                    .fill(Color(.systemGray4))
-                    .background {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(.white.opacity(0.1))
-                    }
-            }
-            .frame(width: 320)
-            .padding()
+                      prompt: Text("+_" + "(___)___-__-__")
+                          .foregroundColor(.white.opacity(0.15)))
+                .font(.system(size: 32, weight: .light))
+                .foregroundStyle(.white)
+                .padding()
+                .background {
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(lineWidth: 1)
+                        .fill(Color(.systemGray4))
+                        .background {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(.white.opacity(0.1))
+                        }
+                }
+                .frame(width: 320)
+                .padding()
         }
         .foregroundStyle(.white)
     }
-    
+
     var button: some View {
         Button {
             Task {
-                isLoading = true // Показываем индикатор загрузки
-                do {
-                    let response = try await NetworkingClient.shared.checkAccount(phoneNumber: phoneNumber)
-                    isAccountExists = response.exists // Обновляем состояние для перехода
-                } catch {
-                    print("Ошибка в AuthView: " + error.localizedDescription)
-                }
-                isLoading = false // Скрываем индикатор загрузки
+                viewModel.isLoading = true // Показываем индикатор загрузки
+                viewModel.checkAccountExists()
+                viewModel.isLoading = false // Скрываем индикатор загрузки
             }
         } label: {
             Text("Продолжить")
@@ -98,22 +98,22 @@ struct AuthView: View {
                 .cornerRadius(23)
                 .padding()
         }
-        .disabled(isLoading) // Блокируем кнопку во время загрузки
+        .disabled(viewModel.isLoading) // Блокируем кнопку во время загрузки
     }
-    
+
     var logo: some View {
         VStack(spacing: 0) {
-            Image("FlowLink")
+            Image("flowlink")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100, height: 100)
-            Text("FlowLink")
+            Text("flowlink")
                 .font(.system(size: 40, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
         }
     }
 }
 
-#Preview {
-    AuthView(isLoggedIn: .constant(false))
-}
+// #Preview {
+//    AuthView(isLoggedIn: .constant(false))
+// }

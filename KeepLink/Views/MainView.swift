@@ -5,18 +5,17 @@
 //  Created by Андрей Степанов on 17.02.2025.
 //
 
-
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 struct MainView: View {
     @State private var activeTab: TabModel = .contacts
     @State private var isTabBarHidden = false
-    
+
     var body: some View {
         Group {
-            if #available(iOS 18.0, *){
-                TabView(selection: $activeTab){
+            if #available(iOS 18.0, *) {
+                TabView(selection: $activeTab) {
                     Tab(value: .contacts) {
                         ContactsView()
                             .toolbarVisibility(.hidden, for: .tabBar)

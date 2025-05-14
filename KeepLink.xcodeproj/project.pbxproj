@@ -33,9 +33,22 @@
 		38DB0F592D036C1A00285C9B /* KeepLink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeepLink.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		38A3BB0A2DC4FA5F003EADFD /* Exceptions for "KeepLink" folder in "KeepLink" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 38DB0F582D036C1A00285C9B /* KeepLink */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		38DB0F5B2D036C1A00285C9B /* KeepLink */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				38A3BB0A2DC4FA5F003EADFD /* Exceptions for "KeepLink" folder in "KeepLink" target */,
+			);
 			path = KeepLink;
 			sourceTree = "<group>";
 		};
@@ -302,9 +315,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"KeepLink/Preview Content\"";
-				DEVELOPMENT_TEAM = 38PC9VM7ZB;
+				DEVELOPMENT_TEAM = 3DZAF454Q2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KeepLink/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FlowLink;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -333,9 +347,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"KeepLink/Preview Content\"";
-				DEVELOPMENT_TEAM = 38PC9VM7ZB;
+				DEVELOPMENT_TEAM = 3DZAF454Q2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KeepLink/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FlowLink;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

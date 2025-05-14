@@ -5,17 +5,17 @@
 //  Created by Андрей Степанов on 08.03.2025.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 struct MeetingsView: View {
     @StateObject private var viewModel = MeetingsViewModel()
-    @ObservedResults(Meeting.self) var meetings
-    
+    @ObservedResults(Meeting.self, where: { $0.deleteDate == nil }) var meetings
+
     var body: some View {
         NavigationStack {
             List {
-                ForEach (meetings) { meeting in
+                ForEach(meetings) { meeting in
                     MeetingView(meeting: meeting, isOnMeetingsView: true)
                         .onTapGesture {
                             viewModel.selectMeeting(meeting)

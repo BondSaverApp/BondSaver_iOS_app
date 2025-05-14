@@ -5,14 +5,14 @@
 //  Created by Maria Mayorova on 20.12.2024.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 struct ContactEditView: View {
     @ObservedRealmObject var contact: Contact // Привязка объекта Realm
-    @Binding var isPresented: Bool 
+    @Binding var isPresented: Bool
     @StateObject var viewModel = ContactEditViewModel()
-    
+
     var body: some View {
         NavigationStack {
             Form {
@@ -88,21 +88,21 @@ struct ContactEditView: View {
             }
         }
     }
-    
+
     private func deleteContact() {
         do {
             let realm = try Realm()
-            
+
             // Поиск контакта по id в текущем Realm
             guard let contactToDelete = realm.object(ofType: Contact.self, forPrimaryKey: contact.id) else {
                 print("Ошибка: Контакт с id \(contact.id) не найден в текущем Realm.")
                 return
             }
-            
+
             try realm.write {
                 contactToDelete.updateDeleteDate() // Обновляем дату удаления найденного контакта
             }
-            
+
             isPresented = false
         } catch {
             print("Ошибка удаления контакта из Realm: \(error.localizedDescription)")
@@ -110,6 +110,6 @@ struct ContactEditView: View {
     }
 }
 
-#Preview {
-    ContentView()
-}
+// #Preview {
+//    ContentView()
+// }

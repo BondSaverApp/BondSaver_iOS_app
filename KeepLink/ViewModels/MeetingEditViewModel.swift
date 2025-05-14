@@ -5,24 +5,24 @@
 //  Created by Андрей Степанов on 12.03.2025.
 //
 
-import SwiftUI
-import RealmSwift
 import Combine
+import RealmSwift
+import SwiftUI
 
 final class MeetingEditViewModel: ObservableObject {
     @Published var selectedContacts: [Contact] = []
     @Published var topics: [EditTopic] = [EditTopic()]
     @Published var isSelectingContacts = false
     @Published var contacsText: String = ""
-    
-    @Published var date: Date = Date()
+
+    @Published var date: Date = .init()
     @Published var describtion = ""
     @Published var isAlertPresented = false
-    
+
     @ObservedResults(Contact.self) var allContacts
-    
+
     private var cancellables: Set<AnyCancellable> = []
-    
+
     init() {
         $selectedContacts
             .sink(receiveValue: { [weak self] _ in
@@ -30,13 +30,13 @@ final class MeetingEditViewModel: ObservableObject {
             })
             .store(in: &cancellables)
     }
-    
+
     func loadData(from meeting: Meeting) {
         var contacts: [Contact] = []
         for id in meeting.contactIds {
             contacts.append(DataBase.shared.contacts.first { $0.id == id } ?? Contact())
         }
-        
+
         selectedContacts = contacts
         for topic in meeting.topics {
             let editTopic = EditTopic(title: topic.title, description: topic.describe)
@@ -45,7 +45,7 @@ final class MeetingEditViewModel: ObservableObject {
         date = meeting.date
         describtion = meeting.describe
     }
-    
+
     private func updateContactsText() {
         let count = selectedContacts.count
         switch count {
@@ -56,11 +56,11 @@ final class MeetingEditViewModel: ObservableObject {
         case 2:
             contacsText = selectedContacts.map {
                 $0.firstName
-            }[0...1].joined(separator: ", ")
+            }[0 ... 1].joined(separator: ", ")
         default:
             contacsText = selectedContacts.map {
                 $0.firstName
-            }[0...1].joined(separator: ", ") + " и \(selectedContacts.count - 2) других"
+            }[0 ... 1].joined(separator: ", ") + " и \(selectedContacts.count - 2) других"
         }
     }
 
@@ -71,20 +71,20 @@ final class MeetingEditViewModel: ObservableObject {
             selectedContacts.append(contact)
         }
     }
-    
+
     func saveMeeting(_ meeting: Meeting) {
         guard let thawedMeeting = meeting.thaw() else {
             print("Ошибка: Не удалось разморозить объект.")
             return
         }
-        
+
         do {
             let realm = try Realm()
-            
+
             let contactIds = selectedContacts.map { $0.id }
             let contactIdsList = RealmSwift.List<ObjectId>()
             contactIdsList.append(objectsIn: contactIds)
-            
+
             let topicsList = RealmSwift.List<Topic>()
             for topic in topics {
                 let newTopic = Topic()
@@ -92,12 +92,14 @@ final class MeetingEditViewModel: ObservableObject {
                 newTopic.title = topic.title
                 topicsList.append(newTopic)
             }
-            
+
             try realm.write {
                 thawedMeeting.date = date
                 thawedMeeting.describe = describtion
                 thawedMeeting.contactIds = contactIdsList
-                thawedMeeting.topics = RealmSwift.List<Topic>()//topicsList
+                thawedMeeting.topics = RealmSwift.List<Topic>() // topicsList
+
+                thawedMeeting.updateClientModifiedDate()
             }
         } catch {
             print("Ошибка сохранения в Realm: \(error.localizedDescription)")
@@ -109,7 +111,7 @@ final class MeetingEditViewModel: ObservableObject {
             topics.append(EditTopic())
         }
     }
-    
+
     func deleteTopic() {
         withAnimation {
             if topics.count > 1 {
@@ -118,7 +120,6 @@ final class MeetingEditViewModel: ObservableObject {
         }
     }
 }
-
 
 struct EditTopic: Identifiable {
     let id = UUID()

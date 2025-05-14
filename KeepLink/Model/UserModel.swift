@@ -10,11 +10,22 @@ import RealmSwift
 
 final class User: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) var id: ObjectId
-    
+
     @Persisted var phoneNumber: String
     @Persisted var email: String
     @Persisted var username: String
     @Persisted var passwordHash: Data // Для хранения [UInt8]
     @Persisted var role: String
     @Persisted var contacts = List<Contact>() // Связь один-ко-многим
+}
+
+struct CheckAccountResponse: Codable {
+    let exists: Bool
+}
+
+struct AuthResponse: Codable {
+    let accessToken: String
+    let accessTokenDuration: String
+    let tokenType: String
+    let userId: String
 }

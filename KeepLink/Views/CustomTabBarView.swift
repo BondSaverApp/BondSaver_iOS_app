@@ -10,9 +10,9 @@ import SwiftUI
 struct CustomTabBarView: View {
     @Binding var activeTab: TabModel
     @StateObject var viewModel = CustomTabBarViewModel()
-    
+
     var body: some View {
-        ZStack{
+        ZStack {
             Rectangle()
                 .fill(.ultraThinMaterial)
                 .mask {
@@ -20,7 +20,7 @@ struct CustomTabBarView: View {
                         LinearGradient(
                             colors: [
                                 Color.black.opacity(1),
-                                Color.black.opacity(0)
+                                Color.black.opacity(0),
                             ],
                             startPoint: .bottom,
                             endPoint: .center
@@ -37,7 +37,7 @@ struct CustomTabBarView: View {
                         LinearGradient(
                             colors: [
                                 Color.black.opacity(1),
-                                Color.black.opacity(0)
+                                Color.black.opacity(0),
                             ],
                             startPoint: .bottom,
                             endPoint: .center
@@ -57,7 +57,7 @@ struct CustomTabBarView: View {
             .offset(y: 50)
         }
     }
-    
+
     var plusButton: some View {
         Button {
             viewModel.isSheetPresented = true
@@ -73,8 +73,8 @@ struct CustomTabBarView: View {
             ContactAddView(isPresented: $viewModel.isSheetPresented)
         }
     }
-    
-    func tabBarItem(_ tab: TabModel) -> some View{
+
+    func tabBarItem(_ tab: TabModel) -> some View {
         Button {
             activeTab = tab
         } label: {
@@ -94,22 +94,22 @@ struct CustomTabBarView: View {
     }
 }
 
-struct TabBarItem: Identifiable{
+struct TabBarItem: Identifiable {
     let id = UUID()
-    
+
     let name: String?
     let image: String
 }
 
 #Preview {
     @Previewable @State var active: TabModel = .contacts
-    HStack(){
+    HStack {
         Color.black
         Color.white
     }
     .ignoresSafeArea()
     .overlay {
-        VStack{
+        VStack {
             Spacer()
             CustomTabBarView(activeTab: $active)
         }

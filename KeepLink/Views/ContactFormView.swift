@@ -1,12 +1,12 @@
 //
-//  ContactStructureView.swift
+//  ContactFormView.swift
 //  KeepLink
 //
 //  Created by Maria Mayorova on 09.02.2025.
 //
 
-import SwiftUI
 import PhotosUI
+import SwiftUI
 import SwiftyCrop
 
 struct ContactFormView: View {
@@ -28,60 +28,58 @@ struct ContactFormView: View {
     @Binding var dateOfBirth: Date
     @Binding var selectedImageData: Data?
     @Binding var selectedTags: [String]
-    
+
     @Binding var isShowingContextsOfMeeting: Bool
     @Binding var isShowingTags: Bool
-    
+
     @State private var selectedItem: PhotosPickerItem? = nil
     @State var showPhotosPicker = false
     @State var showImageCropper = false
     @State var showActionSheet = false
-    
+
     var body: some View {
         Group {
             avatarSection
-            
+
             nameSection
-            
+
             phoneSection
-            
+
             meetingContextSection
-            
-            
+
             appearanceSection
-            
+
             noteSection
-            
+
             tagSection
-            
+
             dateSection
-            
+
             adressSection
-            
+
             websiteSection
-            
+
             networkSection
-            
+
             professionSection
-            
+
             emailSection
         }
     }
-    
-    
+
     private var tagSection: some View {
         Section {
             Button {
                 isShowingTags = true
             } label: {
-                HStack(alignment: .top){
+                HStack(alignment: .top) {
                     Text("Теги: ")
                         .padding(.vertical, 5)
                     LazyVStack(alignment: .leading) {
                         ForEach(selectedTags, id: \.self) {
                             Text($0)
                                 .padding(5)
-                                .background{
+                                .background {
                                     RoundedRectangle(cornerRadius: 10)
                                         .fill(Color(UIColor.systemGray6))
                                 }
@@ -91,12 +89,13 @@ struct ContactFormView: View {
             }
         }
     }
-    
+
     private var avatarSection: some View {
         Section {
             HStack {
                 if let selectedImageData,
-                   let uiImage = UIImage(data: selectedImageData) {
+                   let uiImage = UIImage(data: selectedImageData)
+                {
                     Image(uiImage: uiImage)
                         .resizable()
                         .clipShape(Circle())
@@ -108,10 +107,11 @@ struct ContactFormView: View {
                         .frame(width: 50, height: 50)
                         .foregroundColor(.gray)
                 }
-                
+
                 Button("Выбрать фото") {
                     if let selectedImageData,
-                       let _ = UIImage(data: selectedImageData) {
+                       let _ = UIImage(data: selectedImageData)
+                    {
                         showActionSheet = true
                     } else {
                         showPhotosPicker = true
@@ -128,7 +128,8 @@ struct ContactFormView: View {
                 }
                 .fullScreenCover(isPresented: $showImageCropper) {
                     if let selectedImageData,
-                       let uiImage = UIImage(data: selectedImageData) {
+                       let uiImage = UIImage(data: selectedImageData)
+                    {
                         SwiftyCropView(
                             imageToCrop: uiImage,
                             maskShape: .circle,
@@ -159,8 +160,6 @@ struct ContactFormView: View {
         }
     }
 
-    
-    
     private var nameSection: some View {
         Section {
             TextField("Имя", text: $nameTextField)
@@ -168,8 +167,7 @@ struct ContactFormView: View {
             TextField("Отчество", text: $patronymicTextField)
         }
     }
-    
-    
+
     private var phoneSection: some View {
         Section {
             TextField("Номер телефона", text: $phoneTextField)
@@ -177,20 +175,19 @@ struct ContactFormView: View {
             Text("Номер телефона")
         }
     }
-    
-    
+
     private var meetingContextSection: some View {
         Section {
             Button {
                 isShowingContextsOfMeeting = true
             } label: {
                 if !contextTextField.isEmpty {
-                    HStack(spacing: 20){
+                    HStack(spacing: 20) {
                         Image(systemName: "plus.circle.fill")
                         Text(contextTextField)
                     }
                 } else {
-                    HStack(spacing: 20){
+                    HStack(spacing: 20) {
                         Image(systemName: "plus.circle.fill")
                         Text("Добавить место")
                     }
@@ -200,14 +197,13 @@ struct ContactFormView: View {
             Text("Контекст знакомства")
         }
     }
-    
+
     private var noteSection: some View {
         Section {
             TextField("Заметка...", text: $noteTextField)
         }
     }
-    
-    
+
     private var appearanceSection: some View {
         Section {
             TextField("Внешние особенности", text: $appearanceTextField)
@@ -215,8 +211,7 @@ struct ContactFormView: View {
             Text("Внешность")
         }
     }
-    
-    
+
     private var dateSection: some View {
         Section {
             DatePicker("Дата рождения", selection: $dateOfBirth, displayedComponents: .date)
@@ -225,8 +220,7 @@ struct ContactFormView: View {
         }
         .transition(.move(edge: .top))
     }
-    
-    
+
     private var adressSection: some View {
         Section {
             TextField("Город", text: $cityTextField)
@@ -238,8 +232,7 @@ struct ContactFormView: View {
         }
         .transition(.move(edge: .top))
     }
-    
-    
+
     private var websiteSection: some View {
         Section {
             TextField("Сайт", text: $websiteTextField)
@@ -248,8 +241,7 @@ struct ContactFormView: View {
         }
         .transition(.move(edge: .top))
     }
-    
-    
+
     private var networkSection: some View {
         Section {
             TextField("Социальная сеть", text: $networkTextField)
@@ -258,8 +250,7 @@ struct ContactFormView: View {
         }
         .transition(.move(edge: .top))
     }
-    
-    
+
     private var professionSection: some View {
         Section {
             TextField("Профессия", text: $professionTextField)
@@ -268,8 +259,7 @@ struct ContactFormView: View {
         }
         .transition(.move(edge: .top))
     }
-    
-    
+
     private var emailSection: some View {
         Section(header: Text("Email")) {
             TextField("Email", text: $emailTextField)
@@ -286,14 +276,14 @@ func compressImage(_ image: UIImage?, maxSizeMB: Double = 1.0) -> Data? {
     var compression: CGFloat = 1.0 // Начинаем с максимального качества
     if let image {
         var imageData = image.jpegData(compressionQuality: compression)
-        
+
         while let data = imageData, data.count > maxSizeBytes, compression > 0.1 {
             compression -= 0.1 // Понижаем качество на 10%
             imageData = image.jpegData(compressionQuality: compression)
         }
-        
+
         return imageData
     }
-    
+
     return .none
 }

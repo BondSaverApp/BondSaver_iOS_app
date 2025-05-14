@@ -5,14 +5,14 @@
 //  Created by Андрей Степанов on 11.03.2025.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 struct MeetingEditView: View {
     @ObservedRealmObject var meeting: Meeting
     @StateObject private var viewModel = MeetingEditViewModel()
     @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         NavigationView {
             VStack {
@@ -31,16 +31,16 @@ struct MeetingEditView: View {
                             }
                         }
                     }
-                    
+
                     Section {
                         TextField("Описание встречи", text: $viewModel.describtion)
                     }
-                    
+
                     Section {
                         DatePicker("Дата встречи", selection: $viewModel.date, displayedComponents: .date)
                         DatePicker("Время встречи", selection: $viewModel.date, displayedComponents: .hourAndMinute)
                     }
-                    
+
                     ForEach($viewModel.topics) { $topic in
                         Section {
                             VStack(alignment: .leading) {
@@ -48,8 +48,8 @@ struct MeetingEditView: View {
                                 Divider()
                                 TextField("Описание темы...", text: $topic.description)
                             }
-                            
-                            if topic.id == viewModel.topics.last?.id && viewModel.topics.count > 1{
+
+                            if topic.id == viewModel.topics.last?.id && viewModel.topics.count > 1 {
                                 Button(action: viewModel.deleteTopic) {
                                     HStack {
                                         Image(systemName: "minus.circle.fill")
@@ -60,7 +60,7 @@ struct MeetingEditView: View {
                             }
                         }
                     }
-                    
+
                     Button(action: viewModel.addTopic) {
                         HStack {
                             Image(systemName: "plus.circle.fill")
@@ -68,7 +68,7 @@ struct MeetingEditView: View {
                         }
                     }
                     .foregroundStyle(.blue)
-                    
+
                     deleteSection
                 }
             }
@@ -88,14 +88,14 @@ struct MeetingEditView: View {
                 }
             }
             .onAppear {
-                viewModel.loadData(from: meeting )
+                viewModel.loadData(from: meeting)
             }
             .sheet(isPresented: $viewModel.isSelectingContacts) {
                 contactListView
             }
         }
     }
-    
+
     private var deleteSection: some View {
         Section {
             Button {
@@ -117,27 +117,27 @@ struct MeetingEditView: View {
             }
         }
     }
-    
+
     private func deleteMeeting() {
         do {
             let realm = try Realm()
-            
+
             // Поиск встречи по id в текущем Realm
             guard let meetingToDelete = realm.object(ofType: Meeting.self, forPrimaryKey: meeting.id) else {
                 print("Ошибка: Встреча с id \(meeting.id) не найдена в текущем Realm.")
                 return
             }
-            
+
             try realm.write {
-                realm.delete(meetingToDelete)
+                meetingToDelete.updateDeleteDate() // soft delete
             }
-            
+
             dismiss()
         } catch {
             print("Ошибка удаления контакта из Realm: \(error.localizedDescription)")
         }
     }
-    
+
     @ViewBuilder
     var contactListView: some View {
         List {
@@ -145,12 +145,12 @@ struct MeetingEditView: View {
                 HStack(spacing: 20) {
                     HStack(spacing: 20) {
                         avatarView(for: contact)
-                        
+
                         VStack(alignment: .leading) {
                             Text("\(contact.firstName) \(contact.lastName)")
                                 .font(.system(size: 16))
                                 .fontWeight(.regular)
-                            
+
                             if !contact.notes.isEmpty {
                                 Text(contact.notes)
                                     .font(.system(size: 12))
@@ -164,7 +164,7 @@ struct MeetingEditView: View {
                     }
 
                     Spacer()
-                    
+
                     if viewModel.selectedContacts.contains(contact) {
                         Image(systemName: "checkmark")
                             .foregroundColor(.blue)
@@ -174,11 +174,12 @@ struct MeetingEditView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     func avatarView(for contact: Contact) -> some View {
         if let avatarData = contact.avatarData,
-           let uiImage = UIImage(data: avatarData) {
+           let uiImage = UIImage(data: avatarData)
+        {
             Image(uiImage: uiImage)
                 .resizable()
                 .clipShape(Circle())
