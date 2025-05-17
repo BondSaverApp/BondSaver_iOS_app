@@ -12,9 +12,9 @@ final class AuthViewModel: ObservableObject {
     @Published var isAccountExists: Bool? = nil // Состояние для управления переходом
     @Published var isLoading = false // Состояние для отображения индикатора загрузки
 
-    let networkManager: NetworkManager
+    let networkManager: NetworkManagerProtocol
 
-    init(networkManager: NetworkManager) {
+    init(networkManager: NetworkManagerProtocol) {
         self.networkManager = networkManager
     }
 

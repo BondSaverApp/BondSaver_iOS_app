@@ -37,6 +37,9 @@ struct ContactEditView: View {
                                 isShowingContextsOfMeeting: $viewModel.isShowingContextsOfMeeting,
                                 isShowingTags: $viewModel.isShowingTags)
                 deleteSection
+                Rectangle()
+                    .frame(height: 30)
+                    .opacity(0)
             }
             .navigationTitle("Редактировать контакт")
             .navigationBarTitleDisplayMode(.inline)

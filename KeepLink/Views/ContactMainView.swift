@@ -38,7 +38,7 @@ struct ContactMainView: View {
                             MeetingView(meeting: Meeting())
                             MeetingView(meeting: Meeting())
                         }
-                        .padding(.top, 20)
+                        .padding(20)
                     }
                     .tag(ContactMainTab.meetings)
                     .scrollIndicators(.hidden)

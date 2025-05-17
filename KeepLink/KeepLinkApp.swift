@@ -64,13 +64,14 @@ struct KeepLinkApp: SwiftUI.App {
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
 
-        networkManager =
-            NetworkManager(service: APIService(urlSession: URLSession(configuration: config)), logging: logging)
+//        networkManager =
+//            NetworkManager(service: APIService(urlSession: URLSession(configuration: config)), logging: logging)
+        networkManager = FakeNetworkManager(logging: logging)
 
         appViewModel = AppViewModel(logging: logging,
-                                    authViewModel: AuthViewModel(networkManager: networkManager as! NetworkManager),
-                                    signUpViewModel: SignUpViewModel(networkManager: networkManager as! NetworkManager),
-                                    loginViewModel: LoginViewModel(networkManager: networkManager as! NetworkManager))
+                                    authViewModel: AuthViewModel(networkManager: networkManager),
+                                    signUpViewModel: SignUpViewModel(networkManager: networkManager),
+                                    loginViewModel: LoginViewModel(networkManager: networkManager))
     }
 
     var body: some Scene {
@@ -88,7 +89,7 @@ struct KeepLinkApp: SwiftUI.App {
                     }
 //                    if NetworkingClient.shared.isUserAuthorized() {
                     Task {
-                        await ContactsRepository(networkManager: networkManager as! NetworkManager).syncContacts()
+                        await ContactsRepository(networkManager: networkManager).syncContacts()
                     }
 //                    }
                 }

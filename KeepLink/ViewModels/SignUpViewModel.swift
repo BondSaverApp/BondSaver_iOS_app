@@ -16,9 +16,9 @@ final class SignUpViewModel: ObservableObject {
     @Published var showError = false // Состояние для отображения ошибки
     @Published var errorMessage = "" // Сообщение об ошибке
 
-    let networkManager: NetworkManager
+    let networkManager: NetworkManagerProtocol
 
-    init(networkManager: NetworkManager) {
+    init(networkManager: NetworkManagerProtocol) {
         self.networkManager = networkManager
     }
 

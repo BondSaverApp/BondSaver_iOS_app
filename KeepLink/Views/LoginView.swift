@@ -94,7 +94,7 @@ struct LoginView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100, height: 100)
-            Text("flowlink")
+            Text("BondSaver")
                 .font(.system(size: 40, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
         }

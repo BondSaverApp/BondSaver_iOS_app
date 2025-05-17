@@ -11,9 +11,9 @@ import SwiftUI
 
 final class ContactsRepository {
     @ObservedResults(Contact.self) var contacts
-    let networkManager: NetworkManager
+    let networkManager: NetworkManagerProtocol
 
-    init(networkManager: NetworkManager) {
+    init(networkManager: NetworkManagerProtocol) {
         self.networkManager = networkManager
     }
 
