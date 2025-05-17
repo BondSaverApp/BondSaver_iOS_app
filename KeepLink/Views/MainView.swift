@@ -21,11 +21,11 @@ struct MainView: View {
                             .toolbarVisibility(.hidden, for: .tabBar)
                     }
                     Tab(value: .settings) {
-                        Text("Settings")
+                        SettingsView()
                             .toolbarVisibility(.hidden, for: .tabBar)
                     }
                     Tab(value: .notifications) {
-                        Text("Notifications")
+                        NotificationsView()
                             .toolbarVisibility(.hidden, for: .tabBar)
                     }
                     Tab(value: .profile) {
