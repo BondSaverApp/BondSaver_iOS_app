@@ -302,9 +302,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"KeepLink/Preview Content\"";
-				DEVELOPMENT_TEAM = 38PC9VM7ZB;
+				DEVELOPMENT_TEAM = 3DZAF454Q2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KeepLink/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FlowLink;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -333,9 +334,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"KeepLink/Preview Content\"";
-				DEVELOPMENT_TEAM = 38PC9VM7ZB;
+				DEVELOPMENT_TEAM = 3DZAF454Q2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KeepLink/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = FlowLink;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
