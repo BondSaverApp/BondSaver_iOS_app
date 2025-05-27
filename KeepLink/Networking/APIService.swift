@@ -15,7 +15,7 @@ enum APIError: Error {
 }
 
 protocol Service {
-    func makeRequest<T: Codable>(with request: URLRequest, respModel: T.Type, logging: @escaping Logging, completion: @escaping (T?, APIError?) -> Void)
+    func makeRequest<T: Codable>(with request: URLRequest, respModel: T.Type, logging: @escaping Logging, completion: @escaping (T?, HTTPURLResponse?, APIError?) -> Void)
 }
 
 class APIService: Service {
@@ -29,23 +29,27 @@ class APIService: Service {
         with request: URLRequest,
         respModel: T.Type,
         logging: @escaping Logging,
-        completion: @escaping (T?, APIError?) -> Void
+        completion: @escaping (T?, HTTPURLResponse?, APIError?) -> Void
     ) {
         
         urlSession.dataTask(with: request) { data, resp, error in
             if let error = error {
-                completion(nil, .urlSessionError(error.localizedDescription))
+                completion(nil, nil, .urlSessionError(error.localizedDescription))
                 return
             }
             
-            if let resp = resp as? HTTPURLResponse, 500..<600 ~= resp.statusCode {
-                print(resp.statusCode)
-                completion(nil, .serverError())
+            guard let httpResponse = resp as? HTTPURLResponse else {
+                completion(nil, nil, .invalidResponse())
+                return
+            }
+            
+            if 500..<600 ~= httpResponse.statusCode {
+                completion(nil, httpResponse, .serverError())
                 return
             }
             
             guard let data = data else {
-                completion(nil,  .invalidResponse())
+                completion(nil,  httpResponse, .invalidResponse())
                 return
             }
             print("📥 Server response raw JSON:")
@@ -60,22 +64,22 @@ class APIService: Service {
                 if let errorResponse = try? JSONDecoder().decode([String: String].self, from: data),
                     let detail = errorResponse["detail"]
                 {
-                    completion(nil, .serverError(detail))
+                    completion(nil, httpResponse, .serverError(detail))
                     return
                 }
                 
                 if T.self == Data.self {
                     print(data)
                     print("printed")
-                    completion(data as? T, nil)
+                    completion(data as? T, httpResponse, nil)
                     return
                 }
                 
                 let result = try JSONDecoder().decode(T.self, from: data)
                 print("Result: ", result)
-                completion(result, nil)
+                completion(result, httpResponse, nil)
             } catch {
-                completion(nil, .decodingError())
+                completion(nil, httpResponse, .decodingError())
             }
             
         }.resume()

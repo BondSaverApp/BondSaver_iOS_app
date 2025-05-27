@@ -57,7 +57,3 @@ final class TokenManager {
         keychain.delete(Keys.refreshTokenExpiry)
     }
 }
-
-extension TokenManager {
-    
-}

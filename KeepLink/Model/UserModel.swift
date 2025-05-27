@@ -25,7 +25,7 @@ struct CheckAccountResponse: Codable {
 
 struct AuthResponse: Codable {
     let accessToken: String
-    let accessTokenDuration: String
+    let accessTokenDuration: Int
     let tokenType: String
     let userId: String
 }

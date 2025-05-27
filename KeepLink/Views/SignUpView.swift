@@ -10,7 +10,7 @@ import SwiftUI
 struct SignUpView: View {
     var appViewModel: AppViewModel
     @Binding var isLoggedIn: Bool
-    @Binding var phoneNumber: String
+    @Binding var email: String
     @ObservedObject var viewModel: SignUpViewModel
     
     var body: some View {
@@ -25,10 +25,10 @@ struct SignUpView: View {
                     Text("Давайте знакомиться!")
                         .fontWeight(.medium)
                         .foregroundColor(.white.opacity(0.69))
-                    textField(prompt: "+_"+"(___)___-__-__", $phoneNumber)
+                    textField(prompt: "_____________@____.__", $email)
                     textField(prompt: "Пароль", $viewModel.password)
                     textField(prompt: "Пароль ещё раз", $viewModel.passwordAgain)
-                    textField(prompt: "Как вас зовут?", $viewModel.name)
+                    textField(prompt: "Как вас зовут?", $viewModel.username)
                     button
                 }
                 .scaledToFill()
@@ -76,7 +76,7 @@ struct SignUpView: View {
     var button: some View {
         Button {
             Task {
-                await viewModel.createAccount(with: phoneNumber)
+                viewModel.createAccount(with: email)
                 isLoggedIn = true
             }
         } label: {

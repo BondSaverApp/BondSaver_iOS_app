@@ -36,7 +36,7 @@ struct OnboardingView: View {
                      isLoggedIn: $isLoggedIn,
                      viewModel: appViewModel.authViewModel)
         } label: {
-            Text("Продолжить с номером телефона")
+            Text("Продолжить с электронной почтой")
                 .font(.system(size: 19, weight: .medium, design: .rounded))
                 .foregroundColor(.white)
                 .padding()

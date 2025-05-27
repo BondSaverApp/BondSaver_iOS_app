@@ -8,9 +8,10 @@
 import SwiftUI
 
 final class AuthViewModel: ObservableObject {
-    @Published var phoneNumber = ""
-    @Published var isAccountExists: Bool? = nil // Состояние для управления переходом
+    @Published var email = ""
+    @Published var isAccountExists: Bool = false // Состояние для управления переходом
     @Published var isLoading = false // Состояние для отображения индикатора загрузки
+    @Published var navigate: Bool = false
     
     let networkManager: NetworkManager
     
@@ -19,11 +20,12 @@ final class AuthViewModel: ObservableObject {
     }
     
     func checkAccountExists() {
-        networkManager.checkAccount(phoneNumber: phoneNumber) { [weak self] isExists in
+        networkManager.checkAccount(email: email) { [weak self] isExists in
+            print("Network response: \(isExists)")
             DispatchQueue.main.async {
                 self?.isAccountExists = isExists
+                self?.navigate = true
             }
         }
     }
-    
 }

@@ -21,14 +21,14 @@ struct NetworkManager: NetworkManagerProtocol {
     
     // MARK: - Check account existence
     
-    func checkAccount(phoneNumber: String, completion: @escaping (Bool) -> Void) {
-        guard let request = Endpoint.checkAccount(phoneNumber: phoneNumber).request else {
+    func checkAccount(email: String, completion: @escaping (Bool) -> Void) {
+        guard let request = Endpoint.checkAccount(email: email).request else {
             logging("Error: Failed to create request")
             completion(false)
             return
         }
         
-        service.makeRequest(with: request, respModel: CheckAccountResponse.self, logging: logging) { response, error in
+        service.makeRequest(with: request, respModel: CheckAccountResponse.self, logging: logging) { response, _, error in
             if let error = error {
                 logging(error.localizedDescription)
                 completion(false)
@@ -41,11 +41,11 @@ struct NetworkManager: NetworkManagerProtocol {
     
     // MARK: - Sign up
     
-    func signup(phoneNumber: String, password: String, email: String?, username: String, completion: @escaping (String) -> Void) {
+    func signup(email: String, password: String, username: String, completion: @escaping (String) -> Void) {
+        
         guard let request = Endpoint.userSignup(
-            phoneNumber: phoneNumber,
-            password: password,
             email: email,
+            password: password,
             username: username
         ).request else {
             logging("Error: Failed to create request")
@@ -53,16 +53,46 @@ struct NetworkManager: NetworkManagerProtocol {
             return
         }
         
-        service.makeRequest(with: request, respModel: AuthResponse.self, logging: logging) { response, error in
+        service.makeRequest(with: request, respModel: AuthResponse.self, logging: logging) { response, httpResponse, error in
             if let error = error {
                 logging(error.localizedDescription)
                 completion("")
                 return
             }
             
-            let keychain = KeychainSwift()
-            keychain.set(response?.accessToken ?? "", forKey: "accessToken")
-            keychain.set(response?.userId ?? "", forKey: "userId")
+            print("happy")
+            
+            var refreshToken: String? = nil
+            var refreshTokenDuration: TimeInterval? = nil
+            var accessTokenDuration : TimeInterval? = nil
+            let cookieNameRefresh = "refreshToken="
+            let delimiter = ";"
+            let cookieNameMaxAge = " Max-Age="
+            
+            guard let durationInt = response?.accessTokenDuration else { return }
+            accessTokenDuration = TimeInterval(durationInt)
+            
+            var cookies: String? = httpResponse?.value(forHTTPHeaderField: "Set-Cookie") ?? nil
+            if let cookiesString = cookies {
+                let refreshTokenField = cookiesString.split(separator: delimiter).first (where: { $0.hasPrefix(cookieNameRefresh)})
+                
+                let maxAgeField = cookiesString.split(separator: delimiter).first (where: { $0.hasPrefix(cookieNameMaxAge)})
+                
+                guard let refreshTokenField,
+                      let equalIndexRefresh = refreshTokenField.firstIndex(of: "=") else { return }
+                
+                guard let maxAgeField,
+                      let equalIndexMaxAge = maxAgeField.firstIndex(of: "=") else { return }
+                  
+                refreshToken = String(refreshTokenField.suffix(from: refreshTokenField.index(after: equalIndexRefresh)))
+                let maxAge = String(maxAgeField.suffix(from: maxAgeField.index(after: equalIndexMaxAge)))
+                refreshTokenDuration = TimeInterval(maxAge) ?? 0
+            }
+            
+            tokenManager.saveTokens(accessToken: response?.accessToken ?? "",
+                                    refreshToken: refreshToken ?? "",
+                                    accessTokenExpiry: Date().addingTimeInterval(accessTokenDuration ?? 0),
+                                    refreshTokenExpiry: Date().addingTimeInterval(refreshTokenDuration ?? 0))
             
             completion(response?.accessToken ?? "")
         }
@@ -70,23 +100,51 @@ struct NetworkManager: NetworkManagerProtocol {
     
     // MARK: - Login
     
-    func login(phoneNumber: String, password: String, completion: @escaping (String) -> Void) {
-        guard let request = Endpoint.userLogin(phoneNumber: phoneNumber, password: password).request else {
+    func login(email: String, password: String, completion: @escaping (String) -> Void) {
+        guard let request = Endpoint.userLogin(email: email, password: password).request else {
             logging("Error: Failed to create request")
             completion("")
             return
         }
         
-        service.makeRequest(with: request, respModel: AuthResponse.self, logging: logging) { response, error in
+        service.makeRequest(with: request, respModel: AuthResponse.self, logging: logging) { response, httpResponse, error in
             if let error = error {
                 logging(error.localizedDescription)
                 completion("")
                 return
             }
             
-            let keychain = KeychainSwift()
-            keychain.set(response?.accessToken ?? "", forKey: "accessToken")
-            keychain.set(response?.userId ?? "", forKey: "userId")
+            var refreshToken: String? = nil
+            var refreshTokenDuration: TimeInterval? = nil
+            var accessTokenDuration : TimeInterval? = nil
+            let cookieNameRefresh = "refreshToken="
+            let delimiter = ";"
+            let cookieNameMaxAge = " Max-Age="
+            
+            guard let durationInt = response?.accessTokenDuration else { return }
+            accessTokenDuration = TimeInterval(durationInt)
+            
+            var cookies: String? = httpResponse?.value(forHTTPHeaderField: "Set-Cookie") ?? nil
+            if let cookiesString = cookies {
+                let refreshTokenField = cookiesString.split(separator: delimiter).first (where: { $0.hasPrefix(cookieNameRefresh)})
+                
+                let maxAgeField = cookiesString.split(separator: delimiter).first (where: { $0.hasPrefix(cookieNameMaxAge)})
+                
+                guard let refreshTokenField,
+                      let equalIndexRefresh = refreshTokenField.firstIndex(of: "=") else { return }
+                
+                guard let maxAgeField,
+                      let equalIndexMaxAge = maxAgeField.firstIndex(of: "=") else { return }
+                  
+                refreshToken = String(refreshTokenField.suffix(from: refreshTokenField.index(after: equalIndexRefresh)))
+                let maxAge = String(maxAgeField.suffix(from: maxAgeField.index(after: equalIndexMaxAge)))
+                refreshTokenDuration = TimeInterval(maxAge) ?? 0
+            }
+            
+            tokenManager.saveTokens(accessToken: response?.accessToken ?? "",
+                                    refreshToken: refreshToken ?? "",
+                                    accessTokenExpiry: Date().addingTimeInterval(accessTokenDuration ?? 0),
+                                    refreshTokenExpiry: Date().addingTimeInterval(refreshTokenDuration ?? 0))
             
             completion(response?.accessToken ?? "")
         }
@@ -102,7 +160,7 @@ struct NetworkManager: NetworkManagerProtocol {
             return
         }
         
-        service.makeRequest(with: request, respModel: AuthResponse.self, logging: logging) { _, error in
+        service.makeRequest(with: request, respModel: AuthResponse.self, logging: logging) { _, _, error in
             if let error = error {
                 logging(error.localizedDescription)
                 completion(false)
@@ -128,7 +186,7 @@ struct NetworkManager: NetworkManagerProtocol {
             return
         }
         
-        service.makeRequest(with: request, respModel: Data.self, logging: logging) { response, error in
+        service.makeRequest(with: request, respModel: SyncResponse.self, logging: logging) { response, _, error in
             if let error = error {
                 logging(error.localizedDescription)
                 completion(false)
@@ -152,7 +210,7 @@ struct NetworkManager: NetworkManagerProtocol {
             return
         }
         
-        service.makeRequest(with: request, respModel: Data.self, logging: logging) { response, error in
+        service.makeRequest(with: request, respModel: Data.self, logging: logging) { response, _, error in
             if let error = error {
                 logging(error.localizedDescription)
                 completion(false)

@@ -56,6 +56,7 @@ struct KeepLinkApp: SwiftUI.App {
     let logging: Logging
     var appViewModel: AppViewModel
     @StateObject private var networkMonitor = NetworkMonitor()
+    @State private var isLoggedIn: Bool = false
     
     init() {
         logging = { message in
@@ -82,13 +83,15 @@ struct KeepLinkApp: SwiftUI.App {
     }
     var body: some Scene {
         WindowGroup {
-            ContentView(appViewModel: appViewModel)
+            ContentView(appViewModel: appViewModel, isLoggedIn: $isLoggedIn)
                 .environment(\.isNetworkConnected, networkMonitor.isConnected)
                 .environment(\.connectionType, networkMonitor.connectionType)
                 .onAppear {
                     Realm.Configuration.defaultConfiguration = config
+                    tokenManager.clearTokens()
                     authService.checkAuthStatus { authenticated in
                         if authenticated {
+                            isLoggedIn = true
                             Task {
                                 await ContactsRepository(networkManager: networkManager as! NetworkManager).syncContacts()
                             }

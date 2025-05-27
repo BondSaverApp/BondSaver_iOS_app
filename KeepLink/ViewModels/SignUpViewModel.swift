@@ -9,8 +9,8 @@ import SwiftUI
 
 final class SignUpViewModel: ObservableObject {
     @Published var password = ""
+    @Published var username = ""
     @Published var passwordAgain = ""
-    @Published var name = ""
     
     @Published var isLoading = false // Состояние для отображения индикатора загрузки
     @Published var showError = false // Состояние для отображения ошибки
@@ -22,25 +22,24 @@ final class SignUpViewModel: ObservableObject {
         self.networkManager = networkManager
     }
     
-    func createAccount(with phoneNumber: String) async {
+    func createAccount(with email: String) {
         // Проверка паролей
         guard password == passwordAgain else {
             errorMessage = "Пароли не совпадают"
             showError = true
             return
         }
+        /*isLoading = true*/ // Показываем индикатор загрузки
         
-        isLoading = true // Показываем индикатор загрузки
         
-        networkManager.signup(phoneNumber: phoneNumber,
+        networkManager.signup(email: email,
                               password: password,
-                              email: nil,
-                              username: name) { token in
+                              username: username) { token in
             // Обработка успешного создания аккаунта
             print("Аккаунт успешно создан: \(token)")
             // Здесь можно перейти на следующий экран, например, на главный экран приложения
         }
-        isLoading = false // Скрываем индикатор загрузки
+        /*isLoading = false*/ // Скрываем индикатор загрузки
     }
     
 }

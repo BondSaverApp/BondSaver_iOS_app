@@ -8,9 +8,9 @@
 import Foundation
 
 enum Endpoint {
-    case checkAccount(url: String = Constants.apiPath, url1: String = Constants.authPath, url2: String = Constants.checkAccount, phoneNumber: String)
-    case userSignup(url: String = Constants.apiPath, url1: String = Constants.authPath, url2: String = Constants.signUpPath, phoneNumber: String, password: String, email: String?, username: String)
-    case userLogin(url: String = Constants.apiPath, url1: String = Constants.authPath, url2: String = Constants.loginPath, phoneNumber: String, password: String)
+    case checkAccount(url: String = Constants.apiPath, url1: String = Constants.authPath, url2: String = Constants.checkAccount, email: String)
+    case userSignup(url: String = Constants.apiPath, url1: String = Constants.authPath, url2: String = Constants.signUpPath, email: String, password: String, username: String)
+    case userLogin(url: String = Constants.apiPath, url1: String = Constants.authPath, url2: String = Constants.loginPath, email: String, password: String)
     case refreshToken(url: String = Constants.apiPath, url1: String = Constants.authPath, url2: String = Constants.refreshPath, refreshToken: String = "")
     case userLogout(url: String = Constants.apiPath, url1: String = Constants.authPath, url2: String = Constants.logoutPath)
     case synchronizeContacts(url: String = Constants.apiPath, url1: String = Constants.contactsPath, url2: String = Constants.synchronizePath, request: SyncRequest)
@@ -37,7 +37,7 @@ enum Endpoint {
     private var path: String {
         switch self {
         case let .checkAccount(url, url1, url2, _),
-             let .userSignup(url, url1, url2, _, _, _, _),
+             let .userSignup(url, url1, url2, _, _, _),
              let .userLogin(url, url1, url2, _, _),
              let .refreshToken(url, url1, url2, _),
              let .userLogout(url, url1, url2),
@@ -66,21 +66,20 @@ enum Endpoint {
     
     private var httpBody: Data? {
         switch self {
-        case let .checkAccount(_, _, _, phoneNumber):
-            let requestBody = try? JSONEncoder().encode(["phoneNumber": phoneNumber])
+        case let .checkAccount(_, _, _, email):
+            let requestBody = try? JSONEncoder().encode(["email": email])
             return requestBody
             
-        case let .userSignup(_, _, _, phoneNumber, password, email, username):
-            let requestBody: [String: Any?] = [
-                "phoneNumber": phoneNumber,
-                "password": password,
+        case let .userSignup(_, _, _, email, password, username):
+            let requestBody = try? JSONEncoder().encode([
                 "email": email,
+                "password": password,
                 "username": username
-            ]
-            return try? JSONSerialization.data(withJSONObject: requestBody.compactMapValues { $0 }, options: [])
+            ])
+            return requestBody
             
-        case let .userLogin(_, _, _, phoneNumber, password):
-            let requestBody = try? JSONEncoder().encode(["phoneNumber": phoneNumber, "password": password])
+        case let .userLogin(_, _, _, email, password):
+            let requestBody = try? JSONEncoder().encode(["email": email, "password": password])
             return requestBody
             
         case let .synchronizeContacts(_, _, _, request):

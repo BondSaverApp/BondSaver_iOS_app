@@ -3,7 +3,7 @@ import SwiftUI
 struct LoginView: View {
     var appViewModel: AppViewModel
     @Binding var isLoggedIn: Bool
-    let phoneNumber: String
+    @Binding var email: String
     @ObservedObject var viewModel: LoginViewModel
     
 
@@ -16,7 +16,7 @@ struct LoginView: View {
                     Rectangle()
                         .frame(height: 170)
                     logo
-                    phoneNumberText
+                    emailText
                     textField($viewModel.password)
                     button
                 }
@@ -37,8 +37,8 @@ struct LoginView: View {
         }
     }
 
-    var phoneNumberText: some View {
-        Text(phoneNumber)
+    var emailText: some View {
+        Text(email)
             .font(.system(size: 28, weight: .ultraLight))
             .foregroundColor(.white)
             .padding(.bottom, 5)
@@ -73,7 +73,7 @@ struct LoginView: View {
     var button: some View {
         Button {
             Task {
-                await viewModel.login(with: phoneNumber)
+                viewModel.login(with: email)
                 isLoggedIn = true
             }
         } label: {

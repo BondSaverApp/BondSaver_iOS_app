@@ -20,10 +20,10 @@ final class LoginViewModel: ObservableObject {
     }
     
     // Функция для входа
-    func login(with phoneNumber: String) async {
+    func login(with email: String) {
         isLoading = true // Показываем индикатор загрузки
 
-        networkManager.login(phoneNumber: phoneNumber,
+        networkManager.login(email: email,
                              password: password) { token in
             // Обработка успешного входа
             print("Успешный вход: \(token)")

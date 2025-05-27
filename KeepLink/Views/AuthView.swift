@@ -21,28 +21,23 @@ struct AuthView: View {
                     Rectangle()
                         .frame(height: 170)
                     logo
-                    textField($viewModel.phoneNumber)
+                    textField($viewModel.email)
                     button
                 }
                 .frame(maxHeight: .infinity, alignment: .top)
             }
-            .navigationDestination(isPresented: Binding<Bool>(
-                get: { viewModel.isAccountExists == true },
-                set: { _ in }
-            )) {
-                LoginView(appViewModel: appViewModel,
-                          isLoggedIn: $isLoggedIn,
-                          phoneNumber: viewModel.phoneNumber,
-                          viewModel: appViewModel.loginViewModel) // Переход на LoginView, если isAccountExists == true
-            }
-            .navigationDestination(isPresented: Binding<Bool>(
-                get: { viewModel.isAccountExists == false },
-                set: { _ in }
-            )) {
-                SignUpView(appViewModel: appViewModel,
-                           isLoggedIn: $isLoggedIn,
-                           phoneNumber: $viewModel.phoneNumber,
-                           viewModel: appViewModel.signUpViewModel) // Переход на SignUpView, если isAccountExists == false
+            .navigationDestination(isPresented: $viewModel.navigate) {
+                if viewModel.isAccountExists == true {
+                    LoginView(appViewModel: appViewModel,
+                              isLoggedIn: $isLoggedIn,
+                              email: $viewModel.email,
+                              viewModel: appViewModel.loginViewModel)
+                } else {
+                    SignUpView(appViewModel: appViewModel,
+                               isLoggedIn: $isLoggedIn,
+                               email: $viewModel.email,
+                               viewModel: appViewModel.signUpViewModel)
+                }
             }
             .overlay {
                 if viewModel.isLoading {
@@ -57,11 +52,11 @@ struct AuthView: View {
     
     func textField(_ text: Binding<String>) -> some View {
         VStack {
-            Text("Введите ваш номер телефона")
+            Text("Введите ваш адрес электронной почты")
                 .fontWeight(.medium)
                 .foregroundColor(.white.opacity(0.69))
-            TextField("Введите ваш номер телефона", text: text,
-                      prompt: Text("+_"+"(___)___-__-__")
+            TextField("Введите ваш адрес электронной почты", text: text,
+                      prompt: Text("_______________@____.__")
                 .foregroundColor(.white.opacity(0.15)))
             .font(.system(size: 32, weight: .light))
             .foregroundStyle(.white)
