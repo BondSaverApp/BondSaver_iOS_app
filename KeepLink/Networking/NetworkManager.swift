@@ -9,11 +9,13 @@ import Foundation
 import KeychainSwift
 
 struct NetworkManager: NetworkManagerProtocol {
+    let tokenManager: TokenManager
     private let service: APIService
     let logging: Logging
-
-    init(service: APIService, logging: @escaping Logging) {
+    
+    init(service: APIService, tokenManager: TokenManager, logging: @escaping Logging) {
         self.service = service
+        self.tokenManager = tokenManager
         self.logging = logging
     }
 
@@ -32,7 +34,7 @@ struct NetworkManager: NetworkManagerProtocol {
                 completion(false)
                 return
             }
-
+            print(response?.exists)
             completion(response?.exists ?? false)
         }
     }
@@ -93,7 +95,8 @@ struct NetworkManager: NetworkManagerProtocol {
     // MARK: - Refresh token
 
     func refreshToken(refreshToken: String = "", completion: @escaping (Bool) -> Void) {
-        guard var request = Endpoint.refreshToken(refreshToken: refreshToken).request else {
+        let tokenToSend = tokenManager.getRefreshToken() ?? ""
+        guard var request = Endpoint.refreshToken(refreshToken: tokenToSend).request else {
             logging("Error: Failed to create request")
             completion(false)
             return
@@ -124,13 +127,18 @@ struct NetworkManager: NetworkManagerProtocol {
             completion(false)
             return
         }
-
-        service.makeRequest(with: request, respModel: Data.self, logging: logging) { _, error in
+        
+        service.makeRequest(with: request, respModel: Data.self, logging: logging) { response, error in
             if let error = error {
                 logging(error.localizedDescription)
                 completion(false)
                 return
             }
+            
+            if let response = response {
+                
+            }
+            
             completion(true)
         }
     }

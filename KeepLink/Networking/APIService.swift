@@ -46,7 +46,14 @@ class APIService: Service {
                 completion(nil, .invalidResponse())
                 return
             }
-
+            print("📥 Server response raw JSON:")
+            
+            if let responseString = String(data: data, encoding: .utf8) {
+                print(responseString)
+            } else {
+                print("Не удалось декодировть")
+            }
+            
             do {
                 if let errorResponse = try? JSONDecoder().decode([String: String].self, from: data),
                    let detail = errorResponse["detail"]
@@ -56,11 +63,14 @@ class APIService: Service {
                 }
 
                 if T.self == Data.self {
+                    print(data)
+                    print("printed")
                     completion(data as? T, nil)
                     return
                 }
 
                 let result = try JSONDecoder().decode(T.self, from: data)
+                print("Result: ", result)
                 completion(result, nil)
             } catch {
                 completion(nil, .decodingError())

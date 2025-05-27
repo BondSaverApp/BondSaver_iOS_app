@@ -52,6 +52,8 @@ struct KeepLinkApp: SwiftUI.App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     let networkManager: NetworkManagerProtocol
+    let tokenManager: TokenManager
+    let authService: AuthService
     let logging: Logging
     var appViewModel: AppViewModel
     @StateObject private var networkMonitor = NetworkMonitor()
@@ -63,11 +65,14 @@ struct KeepLinkApp: SwiftUI.App {
 
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
-
-//        networkManager =
-//            NetworkManager(service: APIService(urlSession: URLSession(configuration: config)), logging: logging)
-        networkManager = FakeNetworkManager(logging: logging)
-
+        tokenManager = TokenManager()
+        
+        networkManager =
+        NetworkManager(service: APIService(urlSession: URLSession(configuration: config)),
+                       tokenManager: tokenManager,
+                       logging: logging)
+        
+        authService = AuthService(tokenManager: tokenManager, networkManager: networkManager)
         appViewModel = AppViewModel(logging: logging,
                                     authViewModel: AuthViewModel(networkManager: networkManager),
                                     signUpViewModel: SignUpViewModel(networkManager: networkManager),
@@ -87,11 +92,13 @@ struct KeepLinkApp: SwiftUI.App {
                             print("Notification authorization error: \(error)")
                         }
                     }
-//                    if NetworkingClient.shared.isUserAuthorized() {
-                    Task {
-                        await ContactsRepository(networkManager: networkManager).syncContacts()
+                    authService.checkAuthStatus { authenticated in
+                        if authenticated {
+                            Task {
+                                await ContactsRepository(networkManager: networkManager as! NetworkManager).syncContacts()
+                            }
+                        }
                     }
-//                    }
                 }
         }
     }

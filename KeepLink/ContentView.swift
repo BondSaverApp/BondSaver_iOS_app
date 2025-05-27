@@ -23,20 +23,6 @@ struct ContentView: View {
                            isLoggedIn: $isLoggedIn)
         } else {
             MainView()
-//            NavigationStack {
-//                List {
-//                    Section ("Status") {
-//                        Text((isConnected ?? false) ? "Connected" : "No internet")
-//                    }
-//
-//                    if let connectionType {
-//                        Section {
-//                            Text(String(describing: connectionType).capitalized)
-//                        }
-//                    }
-//                }
-//                .navigationTitle(Text("NetworkMonitor"))
-//            }
         }
     }
 }
