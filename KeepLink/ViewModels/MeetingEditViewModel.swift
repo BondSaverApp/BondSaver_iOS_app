@@ -11,10 +11,12 @@ import SwiftUI
 
 final class MeetingEditViewModel: ObservableObject {
     @Published var selectedContacts: [Contact] = []
-    @Published var topics: [EditTopic] = [EditTopic()]
+    @Published var topics: [Topic] = []
     @Published var isSelectingContacts = false
     @Published var contacsText: String = ""
 
+    @Published var isGeneratingTopic = false
+    @Published var isGeneratedTopicPresented = false
     @Published var date: Date = .init()
     @Published var describtion = ""
     @Published var isAlertPresented = false
@@ -39,7 +41,7 @@ final class MeetingEditViewModel: ObservableObject {
 
         selectedContacts = contacts
         for topic in meeting.topics {
-            let editTopic = EditTopic(title: topic.title, description: topic.describe)
+            let editTopic = Topic(title: topic.title, describe: topic.describe)
             topics.append(editTopic)
         }
         date = meeting.date
@@ -72,6 +74,21 @@ final class MeetingEditViewModel: ObservableObject {
         }
     }
 
+    func generateTopic() {
+        isGeneratingTopic = true
+        isGeneratedTopicPresented = false
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            let generated = Topic(
+                title: "Сгенерированная тема",
+                describe: "Описание темы, предложенное ИИ"
+            )
+            self.topics.append(generated)
+            self.isGeneratingTopic = false
+            self.isGeneratedTopicPresented = true
+        }
+    }
+
     func saveMeeting(_ meeting: Meeting) {
         guard let thawedMeeting = meeting.thaw() else {
             print("Ошибка: Не удалось разморозить объект.")
@@ -86,18 +103,13 @@ final class MeetingEditViewModel: ObservableObject {
             contactIdsList.append(objectsIn: contactIds)
 
             let topicsList = RealmSwift.List<Topic>()
-            for topic in topics {
-                let newTopic = Topic()
-                newTopic.describe = topic.description
-                newTopic.title = topic.title
-                topicsList.append(newTopic)
-            }
+            topicsList.append(objectsIn: topics)
 
             try realm.write {
                 thawedMeeting.date = date
                 thawedMeeting.describe = describtion
                 thawedMeeting.contactIds = contactIdsList
-                thawedMeeting.topics = RealmSwift.List<Topic>() // topicsList
+                thawedMeeting.topics = topicsList
 
                 thawedMeeting.updateClientModifiedDate()
             }
@@ -108,7 +120,7 @@ final class MeetingEditViewModel: ObservableObject {
 
     func addTopic() {
         withAnimation {
-            topics.append(EditTopic())
+            topics.append(Topic())
         }
     }
 
@@ -119,10 +131,4 @@ final class MeetingEditViewModel: ObservableObject {
             }
         }
     }
-}
-
-struct EditTopic: Identifiable {
-    let id = UUID()
-    var title: String = ""
-    var description: String = ""
 }
