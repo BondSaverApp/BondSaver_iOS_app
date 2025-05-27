@@ -23,9 +23,11 @@ struct CheckAccountResponse: Codable {
     let exists: Bool
 }
 
-struct AuthResponse: Codable {
+struct AuthResponse: refreshTokenCodable {
     let accessToken: String
-    let accessTokenDuration: String
+    let accessTokenDuration: Int
+    var refreshToken: String?
+    var refreshTokenDuration: Int?
     let tokenType: String
     let userId: String
 }

@@ -18,11 +18,19 @@ final class TokenManager {
         static let refreshTokenExpiry = "refreshTokenExpiry"
     }
 
-    func saveTokens(accessToken: String, refreshToken: String, accessTokenExpiry: Date, refreshTokenExpiry: Date) {
-        keychain.set(accessToken, forKey: Keys.accessToken)
-        keychain.set(refreshToken, forKey: Keys.refreshToken)
-        keychain.set("\(accessTokenExpiry.timeIntervalSince1970)", forKey: Keys.accessTokenExpiry)
-        keychain.set("\(refreshTokenExpiry.timeIntervalSince1970)", forKey: Keys.refreshTokenExpiry)
+    func saveTokens(accessToken: String?, refreshToken: String?, accessTokenExpiry: Int?, refreshTokenExpiry: Int?) {
+        if let accessToken = accessToken {
+            keychain.set(accessToken, forKey: Keys.accessToken)
+        }
+        if let refreshToken = refreshToken {
+            keychain.set(refreshToken, forKey: Keys.refreshToken)
+        }
+        if let accessTokenExpiry = accessTokenExpiry {
+            keychain.set(Date().addingTimeInterval(Double(accessTokenExpiry)).timeIntervalSince1970.description, forKey: Keys.accessTokenExpiry)
+        }
+        if let refreshTokenExpiry = refreshTokenExpiry {
+            keychain.set(Date().addingTimeInterval(Double(refreshTokenExpiry)).timeIntervalSince1970.description, forKey: Keys.refreshTokenExpiry)
+        }
     }
 
     // MARK: Получение токенов

@@ -57,11 +57,11 @@ struct AuthView: View {
 
     func textField(_ text: Binding<String>) -> some View {
         VStack {
-            Text("Введите ваш номер телефона")
+            Text("Введите ваш email")
                 .fontWeight(.medium)
                 .foregroundColor(.white.opacity(0.69))
-            TextField("Введите ваш номер телефона", text: text,
-                      prompt: Text("+_" + "(___)___-__-__")
+            TextField("Введите ваш email", text: text,
+                      prompt: Text("_______________@____.__")
                           .foregroundColor(.white.opacity(0.15)))
                 .font(.system(size: 32, weight: .light))
                 .foregroundStyle(.white)

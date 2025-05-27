@@ -34,7 +34,7 @@ struct NetworkManager: NetworkManagerProtocol {
                 completion(false)
                 return
             }
-            print(response?.exists)
+            print(response?.exists as Any)
             completion(response?.exists ?? false)
         }
     }
@@ -53,16 +53,14 @@ struct NetworkManager: NetworkManagerProtocol {
             return
         }
 
-        service.makeRequest(with: request, respModel: AuthResponse.self, logging: logging) { response, error in
+        service.makeRequestWithCookies(with: request, respModel: AuthResponse.self, logging: logging) { response, error in
             if let error = error {
                 logging(error.localizedDescription)
                 completion("")
                 return
             }
 
-            let keychain = KeychainSwift()
-            keychain.set(response?.accessToken ?? "", forKey: "accessToken")
-            keychain.set(response?.userId ?? "", forKey: "userId")
+            tokenManager.saveTokens(accessToken: response?.accessToken, refreshToken: response?.refreshToken, accessTokenExpiry: response?.accessTokenDuration, refreshTokenExpiry: response?.refreshTokenDuration)
 
             completion(response?.accessToken ?? "")
         }
@@ -77,16 +75,13 @@ struct NetworkManager: NetworkManagerProtocol {
             return
         }
 
-        service.makeRequest(with: request, respModel: AuthResponse.self, logging: logging) { response, error in
+        service.makeRequestWithCookies(with: request, respModel: AuthResponse.self, logging: logging) { response, error in
             if let error = error {
                 logging(error.localizedDescription)
                 completion("")
                 return
             }
-
-            let keychain = KeychainSwift()
-            keychain.set(response?.accessToken ?? "", forKey: "accessToken")
-            keychain.set(response?.userId ?? "", forKey: "userId")
+            tokenManager.saveTokens(accessToken: response?.accessToken, refreshToken: response?.refreshToken, accessTokenExpiry: response?.accessTokenDuration, refreshTokenExpiry: response?.refreshTokenDuration)
 
             completion(response?.accessToken ?? "")
         }

@@ -11,8 +11,8 @@ enum Constants {
     // MARK: - API
 
     static let scheme = "http"
-    static let baseURL = "localhost"
-    static let port: Int? = 8080
+    static let baseURL = "176.108.249.153"
+    static let port: Int? = 8081
 
     static let apiPath = "/api"
 

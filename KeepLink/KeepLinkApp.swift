@@ -81,7 +81,7 @@ struct KeepLinkApp: SwiftUI.App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView(appViewModel: appViewModel)
+            ContentView(appViewModel: appViewModel, authService: authService)
                 .environment(\.isNetworkConnected, networkMonitor.isConnected)
                 .environment(\.connectionType, networkMonitor.connectionType)
                 .onAppear {
