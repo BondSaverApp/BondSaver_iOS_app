@@ -17,31 +17,31 @@ struct FakeNetworkManager: NetworkManagerProtocol {
 
     // MARK: - Check account existence
 
-    func checkAccount(phoneNumber: String, completion: @escaping (Bool) -> Void) {
-        completion(false)
+    func checkAccount(phoneNumber _: String, completion: @escaping (Bool) -> Void) {
+        completion(true)
     }
 
     // MARK: - Sign up
 
-    func signup(phoneNumber: String, password: String, email: String?, username: String, completion: @escaping (String) -> Void) {
+    func signup(phoneNumber _: String, password _: String, email _: String?, username _: String, completion: @escaping (String) -> Void) {
         completion("")
     }
 
     // MARK: - Login
 
-    func login(phoneNumber: String, password: String, completion: @escaping (String) -> Void) {
+    func login(phoneNumber _: String, password _: String, completion: @escaping (String) -> Void) {
         completion("")
     }
 
     // MARK: - Refresh token
 
-    func refreshToken(refreshToken: String = "", completion: @escaping (Bool) -> Void) {
-            completion(true)
+    func refreshToken(refreshToken _: String = "", completion: @escaping (Bool) -> Void) {
+        completion(true)
     }
 
     // MARK: - Synchronize contacts
 
-    func syncContacts(request: SyncRequest, completion: @escaping (Bool) -> Void) {
+    func syncContacts(request _: SyncRequest, completion: @escaping (Bool) -> Void) {
         completion(true)
     }
 

@@ -21,7 +21,9 @@ final class LoginViewModel: ObservableObject {
 
     // Функция для входа
     func login(with phoneNumber: String) async {
-        isLoading = true // Показываем индикатор загрузки
+        DispatchQueue.main.async {
+            self.isLoading = true // Показываем индикатор загрузки
+        }
 
         networkManager.login(phoneNumber: phoneNumber,
                              password: password)
@@ -29,6 +31,9 @@ final class LoginViewModel: ObservableObject {
             // Обработка успешного входа
             print("Успешный вход: \(token)")
         }
-        isLoading = false // Скрываем индикатор загрузки
+
+        DispatchQueue.main.async {
+            self.isLoading = false // Скрываем индикатор загрузки
+        }
     }
 }

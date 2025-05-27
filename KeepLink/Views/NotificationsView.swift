@@ -5,8 +5,8 @@
 //  Created by Андрей Степанов on 17.05.2025.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 /// Экран, показывающий локально сохранённые напоминания (Reminder)
 struct NotificationsView: View {
@@ -18,8 +18,9 @@ struct NotificationsView: View {
             if reminders.isEmpty {
                 ContentUnavailableView(
                     "Пока нет напоминаний",
-                    systemImage: "bell.slash" ,
-                    description: Text("Когда придёт время предложить встречу, вы увидите уведомление здесь."))
+                    systemImage: "bell.slash",
+                    description: Text("Когда придёт время предложить встречу, вы увидите уведомление здесь.")
+                )
             } else {
                 List {
                     ForEach(reminders) { reminder in
@@ -74,6 +75,7 @@ struct ReminderRow: View {
     }
 
     // MARK: Avatars
+
     private var contactsAvatars: some View {
         HStack(spacing: -8) {
             ForEach(reminder.relatedContactIds.prefix(5), id: \ .self) { id in

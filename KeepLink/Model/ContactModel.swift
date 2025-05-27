@@ -169,6 +169,15 @@ extension Meeting {
 }
 
 class Topic: Object, ObjectKeyIdentifiable {
+    init(title: String, describe: String) {
+        self.title = title
+        self.describe = describe
+    }
+
+    override init() {
+        super.init()
+    }
+
     @Persisted var title: String
     @Persisted var describe: String
 }

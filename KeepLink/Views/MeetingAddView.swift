@@ -66,6 +66,41 @@ struct MeetingAddView: View {
                         }
                     }
                     .foregroundStyle(.blue)
+                    .frame(maxWidth: .infinity, alignment: .center)
+
+                    Group {
+                        if viewModel.isGeneratingTopic {
+                            HStack {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .purple))
+                                Text("Генерируем...")
+                                    .foregroundColor(.purple)
+                            }
+                            .padding()
+                            .background {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(.ultraThinMaterial)
+                                    .shadow(radius: 4)
+                            }
+                        } else {
+                            Button(action: {
+                                viewModel.generateTopic()
+                            }) {
+                                HStack {
+                                    Image(systemName: "sparkles")
+                                    Text("Сгенерировать тему")
+                                }
+                                .foregroundColor(.purple)
+                                .padding()
+                                .background {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(.ultraThinMaterial)
+                                        .shadow(radius: 4)
+                                }
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
             .navigationTitle("Добавить встречу")

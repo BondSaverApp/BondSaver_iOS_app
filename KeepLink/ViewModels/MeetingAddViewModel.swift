@@ -11,10 +11,12 @@ import SwiftUI
 
 class MeetingAddViewModel: ObservableObject {
     @Published var selectedContacts: [Contact] = []
-    @Published var topics: [Topic] = [Topic()] // Начальная тема
+    @Published var topics: [Topic] = []
     @Published var isSelectingContacts = false
     @Published var contacsText = "Выбрать контакты"
 
+    @Published var isGeneratingTopic = false
+    @Published var isGeneratedTopicPresented = false
     @Published var date: Date = .init()
     @Published var describtion = ""
 
@@ -79,6 +81,21 @@ class MeetingAddViewModel: ObservableObject {
             }
         } catch {
             print("Ошибка сохранения в Realm: \(error.localizedDescription)")
+        }
+    }
+
+    func generateTopic() {
+        isGeneratingTopic = true
+        isGeneratedTopicPresented = false
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            let generated = Topic(
+                title: "Сгенерированная тема",
+                describe: "Описание темы, предложенное ИИ"
+            )
+            self.topics.append(generated)
+            self.isGeneratingTopic = false
+            self.isGeneratedTopicPresented = true
         }
     }
 
