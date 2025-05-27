@@ -10,12 +10,12 @@ import Foundation
 final class AuthService: AuthServiceProtocol {
     private let tokenManager: TokenManager
     private let networkManager: NetworkManagerProtocol
-    
+
     init(tokenManager: TokenManager, networkManager: NetworkManagerProtocol) {
         self.tokenManager = tokenManager
         self.networkManager = networkManager
     }
-    
+
     func checkAuthStatus(completion: @escaping (Bool) -> Void) {
         if let accessToken = tokenManager.getAccessToken(), tokenManager.isAccessTokenValid() {
             completion(true)

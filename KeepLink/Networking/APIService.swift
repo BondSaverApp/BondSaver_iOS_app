@@ -47,13 +47,13 @@ class APIService: Service {
                 return
             }
             print("📥 Server response raw JSON:")
-            
+
             if let responseString = String(data: data, encoding: .utf8) {
                 print(responseString)
             } else {
                 print("Не удалось декодировть")
             }
-            
+
             do {
                 if let errorResponse = try? JSONDecoder().decode([String: String].self, from: data),
                    let detail = errorResponse["detail"]

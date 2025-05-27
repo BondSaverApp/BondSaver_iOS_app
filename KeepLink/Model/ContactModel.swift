@@ -65,17 +65,18 @@ extension Contact {
             notes: notes,
             site: website,
             ownerId: ownerId.stringValue,
-            tags: Array(tags.map {$0.name}),
-            emails: Array(emails.map {$0.email}),
-            telephones: Array(phoneNumbers.map { PhoneNumberDTO(type: $0.type, number: $0.number)}),
-            dates: Array(dates.map {DateEntryDTO(type: $0.type, date: $0.date)}),
+            tags: Array(tags.map { $0.name }),
+            emails: Array(emails.map { $0.email }),
+            telephones: Array(phoneNumbers.map { PhoneNumberDTO(type: $0.type, number: $0.number) }),
+            dates: Array(dates.map { DateEntryDTO(type: $0.type, date: $0.date) }),
             social: Array(socialNetworks.compactMap {
                 guard let type = NetworkType(rawValue: $0.type) else { return nil }
-                return SocialNetworkDTO(type: type, link: $0.link)}),
-            occupations: Array(professions.map {ProfessionDTO(profession: $0.position, company: $0.workplace, jobTitle: $0.title)})
+                return SocialNetworkDTO(type: type, link: $0.link)
+            }),
+            occupations: Array(professions.map { ProfessionDTO(profession: $0.position, company: $0.workplace, jobTitle: $0.title) })
         )
     }
-    
+
     func update(from dto: ContactDTO) {
         clientModifiedDate = dto.updatedAtClient
         serverModifiedDate = dto.updatedAtServer
@@ -92,38 +93,38 @@ extension Contact {
         apartment = dto.flat
         notes = dto.notes
         website = dto.site
-        
+
         if let ownerId = try? ObjectId(string: dto.ownerId) {
             self.ownerId = ownerId
         }
-        
+
         tags.append(objectsIn: dto.tags.map { tagName in
             let tag = Tag()
             tag.name = tagName
             return tag
         })
-        
+
         phoneNumbers.append(objectsIn: dto.telephones.map { phoneNumberDTO in
             let phoneNumber = PhoneNumber()
             phoneNumber.number = phoneNumberDTO.number
             phoneNumber.type = phoneNumberDTO.type
             return phoneNumber
         })
-        
+
         dates.append(objectsIn: dto.dates.map { dateDTO in
             let dateEntry = DateEntry()
             dateEntry.date = dateDTO.date
             dateEntry.type = dateDTO.type
             return dateEntry
         })
-        
+
         socialNetworks.append(objectsIn: dto.social.map { socialDTO in
             let socialNetwork = SocialNetwork()
             socialNetwork.type = socialDTO.type.rawValue
             socialNetwork.link = socialDTO.link
             return socialNetwork
         })
-        
+
         professions.append(objectsIn: dto.occupations.map { professionDTO in
             let profession = Profession()
             profession.title = professionDTO.jobTitle
@@ -131,7 +132,7 @@ extension Contact {
             profession.position = professionDTO.profession
             return profession
         })
-        
+
         emails.append(objectsIn: dto.emails.map { emailName in
             let email = Email()
             email.email = emailName

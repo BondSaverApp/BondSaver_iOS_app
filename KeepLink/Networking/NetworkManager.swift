@@ -12,7 +12,7 @@ struct NetworkManager: NetworkManagerProtocol {
     let tokenManager: TokenManager
     private let service: APIService
     let logging: Logging
-    
+
     init(service: APIService, tokenManager: TokenManager, logging: @escaping Logging) {
         self.service = service
         self.tokenManager = tokenManager
@@ -127,18 +127,16 @@ struct NetworkManager: NetworkManagerProtocol {
             completion(false)
             return
         }
-        
+
         service.makeRequest(with: request, respModel: Data.self, logging: logging) { response, error in
             if let error = error {
                 logging(error.localizedDescription)
                 completion(false)
                 return
             }
-            
-            if let response = response {
-                
-            }
-            
+
+            if let response = response {}
+
             completion(true)
         }
     }

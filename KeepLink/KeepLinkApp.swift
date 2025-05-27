@@ -66,12 +66,12 @@ struct KeepLinkApp: SwiftUI.App {
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
         tokenManager = TokenManager()
-        
+
         networkManager =
-        NetworkManager(service: APIService(urlSession: URLSession(configuration: config)),
-                       tokenManager: tokenManager,
-                       logging: logging)
-        
+            NetworkManager(service: APIService(urlSession: URLSession(configuration: config)),
+                           tokenManager: tokenManager,
+                           logging: logging)
+
         authService = AuthService(tokenManager: tokenManager, networkManager: networkManager)
         appViewModel = AppViewModel(logging: logging,
                                     authViewModel: AuthViewModel(networkManager: networkManager),
