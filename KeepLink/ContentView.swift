@@ -11,18 +11,24 @@ struct ContentView: View {
     @Environment(\.isNetworkConnected) private var isConnected
     @Environment(\.connectionType) private var connectionType
     var appViewModel: AppViewModel
-    @State private var isLoggedIn: Bool = false
+    var authService: any AuthServiceProtocol
+    @State private var isLoggedIn: Bool = false {
+        didSet {
+            authService.checkAuthStatus { _ in }
+        }
+    }
 
-    init(appViewModel: AppViewModel) {
+    init(appViewModel: AppViewModel, authService: any AuthServiceProtocol) {
         self.appViewModel = appViewModel
+        self.authService = authService
     }
 
     var body: some View {
-        if !isLoggedIn {
+        if authService.isAuthentificated || isLoggedIn {
+            MainView()
+        } else {
             OnboardingView(appViewModel: appViewModel,
                            isLoggedIn: $isLoggedIn)
-        } else {
-            MainView()
         }
     }
 }

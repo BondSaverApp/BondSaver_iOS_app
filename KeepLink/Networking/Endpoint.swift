@@ -109,3 +109,34 @@ extension URLRequest {
         setValue(cookieHeader, forHTTPHeaderField: "Cookie")
     }
 }
+
+extension URLSession {
+    func dataTaskWithCookies(
+        for request: URLRequest,
+        completion: @escaping (Data?, URLResponse?, Error?, String?, Int?) -> Void
+    ) {
+        let task = dataTask(with: request) { data, response, error in
+            var refreshToken: String?
+            var maxAge: Int?
+
+            if let httpResponse = response as? HTTPURLResponse,
+               let headerFields = httpResponse.allHeaderFields as? [String: String],
+               let setCookieHeader = headerFields["Set-Cookie"]
+            {
+                let parts = setCookieHeader.components(separatedBy: ";")
+                for part in parts {
+                    let trimmed = part.trimmingCharacters(in: .whitespaces)
+                    if trimmed.starts(with: "refreshToken=") {
+                        refreshToken = trimmed.replacingOccurrences(of: "refreshToken=", with: "")
+                    } else if trimmed.starts(with: "Max-Age=") {
+                        maxAge = Int(trimmed.replacingOccurrences(of: "Max-Age=", with: ""))
+                    }
+                }
+            }
+
+            completion(data, response, error, refreshToken, maxAge)
+        }
+
+        task.resume()
+    }
+}

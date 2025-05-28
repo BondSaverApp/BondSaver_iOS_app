@@ -34,10 +34,10 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		38A3BB0A2DC4FA5F003EADFD /* Exceptions for "KeepLink" folder in "KeepLink" target */ = {
+		38E85DB12DE635DE00D93A5A /* Exceptions for "KeepLink" folder in "KeepLink" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				info.plist,
 			);
 			target = 38DB0F582D036C1A00285C9B /* KeepLink */;
 		};
@@ -47,7 +47,7 @@
 		38DB0F5B2D036C1A00285C9B /* KeepLink */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				38A3BB0A2DC4FA5F003EADFD /* Exceptions for "KeepLink" folder in "KeepLink" target */,
+				38E85DB12DE635DE00D93A5A /* Exceptions for "KeepLink" folder in "KeepLink" target */,
 			);
 			path = KeepLink;
 			sourceTree = "<group>";

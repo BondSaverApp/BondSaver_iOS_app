@@ -7,6 +7,7 @@
 
 import Foundation
 
-protocol AuthServiceProtocol {
+protocol AuthServiceProtocol: ObservableObject {
+    var isAuthentificated: Bool { get }
     func checkAuthStatus(completion: @escaping (Bool) -> Void)
 }
